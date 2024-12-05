@@ -17,27 +17,27 @@ import {
 export const navBarList = [
   {
     _id: 1001,
-    title: "Home",
+    title: "What to cook",
     link: "/",
   },
   {
     _id: 1002,
-    title: "Shop",
+    title: "Recipes",
     link: "/shop",
   },
   {
     _id: 1003,
-    title: "About",
+    title: "Ingredients",
     link: "/about",
   },
   {
     _id: 1004,
-    title: "Contact",
+    title: "Nutrition Tracking",
     link: "contact",
   },
   {
     _id: 1005,
-    title: "Journal",
+    title: "About Us",
     link: "/journal",
   },
 ];

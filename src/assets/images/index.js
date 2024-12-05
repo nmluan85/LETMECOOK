@@ -1,8 +1,8 @@
-import logo from "./orebiLogo.png";
+import logo from "./letmecookLogo.png";
 import logoLight from "./logoLight.png";
-import bannerImgOne from "./banner/bannerImgOne.webp";
-import bannerImgTwo from "./banner/bannerImgTwo.webp";
-import bannerImgThree from "./banner/bannerImgThree.webp";
+import bannerImgOne from "./banner/banner1.webp";
+import bannerImgTwo from "./banner/banner2.webp";
+import bannerImgThree from "./banner/banner3.webp";
 import saleImgOne from "./sale/saleImgOne.webp";
 import saleImgTwo from "./sale/saleImgTwo.webp";
 import saleImgThree from "./sale/saleImgThree.webp";
@@ -30,6 +30,7 @@ import productOfTheYear from "./products/productOfTheYear.webp";
 // ============== Products End here ======================
 import paymentCard from "./payment.png";
 import emptyCart from "../images/emptyCart.png";
+import snackCakes from "../images/snack-cakes.png";
 
 export {
   logo,
@@ -64,4 +65,5 @@ export {
   // ===================== Products End here ==============
   paymentCard,
   emptyCart,
+  snackCakes,
 };
