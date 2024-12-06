@@ -1,12 +1,9 @@
-import Header from '../../components/header/header';
-import Footer from '../../components/footer/footer';
 import Item from '../../components/item/item';
 import Banner from '../../assets/icons/banner.png'
 import TrendingDishes from '../../components/trending_dishes/trending_dishes';
 const Home = () => {
     return (
         <div>
-            <Header/>
             <main>
                 <section className="relative">
                     <img src={Banner} alt="Cooking background" className="w-full h-96 object-cover"/>
@@ -38,7 +35,6 @@ const Home = () => {
 
                 <TrendingDishes />
             </main>
-            <Footer/>
         </div>
     );
 }
