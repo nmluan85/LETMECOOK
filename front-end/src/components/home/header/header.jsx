@@ -1,13 +1,16 @@
-import ChefIcon from '../../../assets/icons/chef.png'
-import SearchIcon from '../../../assets/icons/search.png' 
+import ChefIcon from '../../assets/icons/chef.png'
+import SearchIcon from '../../assets/icons/search.png'
+import { Link } from "react-router-dom";
 const Header = () => {
     return (
-        <header className="bg-white shadow w-full">
-            <div className="container mx-auto flex justify-between items-center py-4">
-                <div className="flex items-center">
-                    <img src={ChefIcon} alt="Logo" className="h-10 w-10 mr-2"/>
-                    <span className="text-xl font-bold primary-color">LETMECOOK</span>
-                </div>
+        <div className="bg-white shadow w-full">
+            <div className="container mx-auto flex justify-between items-center py-4 px-6">
+                <Link to="/">
+                    <div className="flex items-center">
+                        <img src={ChefIcon} alt="Logo" className="h-10 w-10 mr-2"/>
+                        <span className="text-xl font-bold primary-color">LETMECOOK</span>
+                    </div>
+                </Link>
                 <div className="flex items-center space-x-4">
                     <div className="relative w-[450px]">
                         <input
@@ -31,7 +34,7 @@ const Header = () => {
                     <button className="bg-primary-default text-white font-medium py-2 px-4 rounded-full">Login</button>
                 </div>
             </div>
-        </header>
+        </div>
     )
 }
 
