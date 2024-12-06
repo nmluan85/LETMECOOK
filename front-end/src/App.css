@@ -1,10 +1,3 @@
-/* #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 0;
-  text-align: center;
-} */
-
 .logo {
   height: 6em;
   padding: 1.5em;
@@ -49,40 +42,36 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
-.containerScroll {
-  width: 100vw;
-  height: 500px;
+.button {
+  position: absolute;
   display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
-  background-color: transparent;
-}
-.content-box{
-  width: 1600px;
-  display: flex;
   align-items: center;
-  gap: 20px;
+  opacity: 1;
+  background-color: #1751D0;
 }
-.action-btns{
-  display: flex;
-  align-items: center;
-  gap: 60px;
-  margin-top: 50px;
+.button .icon {
+  width: 16px;
+  height: 16px;
+  fill: #FFFFFF;
 }
-.action-btns button{
-  font-size: 15px;
-  font-weight: 600;
-  color: #1751D0FF;
-  background-color: aquamarine;
-  border-radius: 6px;
-  padding:  10px 20px;
-  border: none;
-  cursor: pointer;
-  transition: all 0.3s ease; 
+.button:hover {
+  color: #FFFFFF;
+  background-color: #1343AA;
+}
+.button:hover:active {
+  color: #FFFFFF;
+  background-color: #0F3485;
+}
+.button:disabled {
+  opacity: 0.4;
 }
 
-.action-btns button:hover{
-  color: white;
-  background-color: black;
+
+.tag {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 1;
 }

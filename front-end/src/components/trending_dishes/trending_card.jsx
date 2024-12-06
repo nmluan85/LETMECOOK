@@ -1,5 +1,5 @@
-import { FaBookmark, FaStar } from "react-icons/fa"
-
+import SaveButton from "../recipeCard/saveButton";
+import Rating from "../layout/rating";
 const DishCard = ({dishName, cookTime, author, description}) => {
     return (
         <div className="flex bg-white shadow-lg rounded-lg overflow-hidden">
@@ -15,7 +15,7 @@ const DishCard = ({dishName, cookTime, author, description}) => {
                             {cookTime}
                         </p>
                     </div>
-                    <FaBookmark className="far fa-bookmark text-blue-600"/>
+                    <SaveButton/>
                 </div>
                 <div className="flex items-center mt-2">
                     <img alt="Jennifer King" className="w-8 h-8 rounded-full" height="30" src="https://storage.googleapis.com/a1aa/image/LfeF62dMscvPXUwP7Wxy4tP0kj4t1fAVP6LnZtZTyuS0VuvnA.jpg" width="30"/>
@@ -26,24 +26,7 @@ const DishCard = ({dishName, cookTime, author, description}) => {
                 <p class="text-gray-600 mt-2">
                     {description}
                 </p>
-
-                <div class="flex items-center mt-2 justify-end">
-                    <span class="text-yellow-400">
-                        <FaStar />
-                    </span>
-                    <span class="text-yellow-400">
-                        <FaStar />
-                    </span>
-                    <span class="text-yellow-400">
-                        <FaStar />
-                    </span>
-                    <span class="text-yellow-400">
-                        <FaStar />
-                    </span>
-                    <span class="text-gray-300">
-                        <FaStar />
-                    </span>
-                </div>
+                <Rating/>
             </div>
         </div>
     );

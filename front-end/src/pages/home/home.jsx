@@ -1,22 +1,17 @@
 import React, {useRef, useState} from 'react';
-import Header from '../../components/header/header';
-import Footer from '../../components/footer/footer';
-import Item from '../../components/item/item';
-import Banner from '../../assets/icons/banner.png'
-const ITEM_WIDTH = 260;
+import Slider from 'react-slick';
+import Header from '../../components/home/header/header';
+import SeasonRecipe from '../../components/home/seasonRecipe/seasonRecipe';
+import Banner from '../../components/home/banner/banner';
+import Footer from '../../components/home/footer/footer';
+import Item from '../../components/recipeCard/recipeCard';
+import TrendingDishes from '../../components/trending_dishes/trending_dishes';
+import NextArrow from '../../components/home/seasonRecipe/NextArrow';
 const Home = () => {
-    const [scrollPosition, setScrollPosition] = useState(0);
-    const containerRef = useRef();
-
-    const handleScroll = (scrollAmount) => {
-        const newSrollPosition = scrollAmount + scrollPosition;
-        setScrollPosition(newSrollPosition);
-        containerRef.current.scrollLeft = newSrollPosition;
-    };
     return (
         <div>
             <main>
-                <section className="relative">
+                {/* <section className="relative pd-10">
                     <img src={Banner} alt="Cooking background" className="w-full h-96 object-cover"/>
                     <div className="absolute inset-0 flex items-center justify-center">
                         <div className="bg-white p-8 rounded-lg shadow-lg text-center max-w-md">
@@ -30,39 +25,12 @@ const Home = () => {
                             <button className="bg-blue-600 text-white py-2 px-4 rounded-full">View now</button>
                         </div>
                     </div>
-                </section>
-                <div className="containerScroll">
-                    <div ref={containerRef}
-                        style = {{
-                            width: "1500px",
-                            overflowX: "scroll",
-                            scrollBehavior: "smooth",
-                            scrollbarWidth: "none",
-                        }}>
-                        <div className='content-box'>
-                            {Array(6).fill().map((_, i) => (
-                                <Item/>
-                            ))}
-                        </div>
-                    </div>
-                    <div className='action-btns'>
-                        <button onClick={() => {handleScroll(-ITEM_WIDTH)}}> Left</button>
-                        <button onClick={() => {handleScroll(ITEM_WIDTH)}}> Right</button>
-                    </div>
+                </section> */}
+                <div className='pd-10 flex flex-col gap-10'>
+                    <Banner />
+                    <SeasonRecipe />
+                    <TrendingDishes />
                 </div>
-                <section className="py-12 bg-white">
-                    <div className="container mx-auto text-center">
-                        <h2 className="text-3xl font-bold text-blue-600 mb-4">This Summer Recipes</h2>
-                        <p className="text-gray-700 mb-8">We have all your Independence Day sweets covered.</p>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-                            {Array(6).fill().map((_, i) => (
-                                <Item/>
-                            ))}
-                        </div>
-                    </div>
-                </section>
-
-                <TrendingDishes />
             </main>
         </div>
     );

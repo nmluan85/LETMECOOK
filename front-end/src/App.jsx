@@ -7,16 +7,18 @@ import {
   ScrollRestoration,
 } from "react-router-dom";
 import RecipeDetails from "./pages/recipeDetails/recipeDetails";
-import { useState } from 'react'
-import './App.css'
-import Header from "./components/header/header";
-import Footer from "./components/footer/footer";
+import { useState } from 'react';
+import './App.css';
+import Header from "./components/home/header/header";
+import Footer from "./components/home/footer/footer";
 import Home from './pages/home/home'
 
 const Layout = () => {
   return (
     <div>
-      <Header />
+      <header className="sticky top-0 z-50 bg-white shadow-md">
+        <Header />
+      </header>
       <ScrollRestoration />
       <Outlet />
       <Footer />

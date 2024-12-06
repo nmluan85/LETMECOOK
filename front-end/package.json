@@ -1,6 +1,7 @@
 {
   "name": "front-end",
   "private": true,
+  "proxy": "http://localhost:3001",
   "version": "0.0.0",
   "type": "module",
   "scripts": {
@@ -15,7 +16,9 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-icons": "^5.4.0",
-    "react-router-dom": "^7.0.2"
+    "react-router-dom": "^7.0.2",
+    "react-slick": "^0.30.2",
+    "slick-carousel": "^1.8.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.15.0",
