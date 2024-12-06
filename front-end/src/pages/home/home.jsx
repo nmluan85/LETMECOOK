@@ -1,8 +1,18 @@
+import React, {useRef, useState} from 'react';
 import Header from '../../components/header/header';
 import Footer from '../../components/footer/footer';
 import Item from '../../components/item/item';
 import Banner from '../../assets/icons/banner.png'
+const ITEM_WIDTH = 260;
 const Home = () => {
+    const [scrollPosition, setScrollPosition] = useState(0);
+    const containerRef = useRef();
+
+    const handleScroll = (scrollAmount) => {
+        const newSrollPosition = scrollAmount + scrollPosition;
+        setScrollPosition(newSrollPosition);
+        containerRef.current.scrollLeft = newSrollPosition;
+    };
     return (
         <div>
             <Header/>
@@ -22,13 +32,31 @@ const Home = () => {
                         </div>
                     </div>
                 </section>
-
+                <div className="containerScroll">
+                    <div ref={containerRef}
+                        style = {{
+                            width: "1500px",
+                            overflowX: "scroll",
+                            scrollBehavior: "smooth",
+                            scrollbarWidth: "none",
+                        }}>
+                        <div className='content-box'>
+                            {Array(6).fill().map((_, i) => (
+                                <Item/>
+                            ))}
+                        </div>
+                    </div>
+                    <div className='action-btns'>
+                        <button onClick={() => {handleScroll(-ITEM_WIDTH)}}> Left</button>
+                        <button onClick={() => {handleScroll(ITEM_WIDTH)}}> Right</button>
+                    </div>
+                </div>
                 <section className="py-12 bg-white">
                     <div className="container mx-auto text-center">
                         <h2 className="text-3xl font-bold text-blue-600 mb-4">This Summer Recipes</h2>
                         <p className="text-gray-700 mb-8">We have all your Independence Day sweets covered.</p>
                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-                            {Array(4).fill().map((_, i) => (
+                            {Array(6).fill().map((_, i) => (
                                 <Item/>
                             ))}
                         </div>

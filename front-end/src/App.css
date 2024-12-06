@@ -43,3 +43,46 @@
 .primary-color{
   color: #1751D0FF
 }
+.truncate-multiline {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.containerScroll {
+  width: 100vw;
+  height: 500px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+}
+.content-box{
+  width: 1600px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.action-btns{
+  display: flex;
+  align-items: center;
+  gap: 60px;
+  margin-top: 50px;
+}
+.action-btns button{
+  font-size: 15px;
+  font-weight: 600;
+  color: #1751D0FF;
+  background-color: aquamarine;
+  border-radius: 6px;
+  padding:  10px 20px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease; 
+}
+
+.action-btns button:hover{
+  color: white;
+  background-color: black;
+}
