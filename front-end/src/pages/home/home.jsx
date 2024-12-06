@@ -1,8 +1,7 @@
 import React, {useRef, useState} from 'react';
-import Header from '../../components/header/header';
-import Footer from '../../components/footer/footer';
 import Item from '../../components/item/item';
 import Banner from '../../assets/icons/banner.png'
+import TrendingDishes from '../../components/trending_dishes/trending_dishes'
 const ITEM_WIDTH = 260;
 const Home = () => {
     const [scrollPosition, setScrollPosition] = useState(0);
