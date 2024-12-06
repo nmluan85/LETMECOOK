@@ -1,5 +1,5 @@
-import ChefIcon from '../../assets/icons/chef.png'
-import SearchIcon from '../../assets/icons/search.png'
+import ChefIcon from '../../../assets/icons/chef.png'
+import SearchIcon from '../../../assets/icons/search.png' 
 import { Link } from "react-router-dom";
 const Header = () => {
     return (

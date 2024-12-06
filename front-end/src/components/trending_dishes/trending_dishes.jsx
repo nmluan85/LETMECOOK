@@ -12,7 +12,7 @@ const TrendingDishes = () => {
                 Curated Culinary Delights: Handpicked Favorites by Our Expert Editors!
             </p>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8 mx-4">
+            <div className="ml-40 mr-40 grid grid-cols-1 md:grid-cols-2 gap-6 mt-8 mx-4">
                 <TrendingCard
                     _id="1001"
                     dishName="Strawberry Shortcake"

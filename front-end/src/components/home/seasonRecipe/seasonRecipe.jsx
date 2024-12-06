@@ -54,7 +54,7 @@ const SeasonRecipe = () => {
             </p>
             <Slider {...settings} className="ml-10 mr-10 mt-8 px-20">
                 {recipes.map((item, index) => (
-                    <div className="px-2" key={index}>
+                    <div className="pt-4 pb-6 pl-2 pr-2" key={index}>
                         <RecipeCard item={item} />
                     </div>
                 ))}

@@ -1,7 +1,8 @@
 import { FaBookmark, FaStar } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { motion } from "motion/react";
-import SaveButton from "../recipeCard/saveButton;
+import SaveButton from "../recipeCard/saveButton";
+import Rating from "../layout/rating";
 
 const TrendingCard = ({_id, dishName, cookTime, author, description, img, authorAvatar}) => {
     const idString = (_id) => {
