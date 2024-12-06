@@ -102,7 +102,7 @@ const Banner = () => {
     <div className="w-full bg-white">
       <Slider {...settings}>
           <div className="relative pd-10">
-            <Image imgSrc={bannerImgOne} className={'h-[500px] object-cover'} />
+            <Image imgSrc={bannerImgOne} className={'h-[500px] w-full object-cover'} />
             <NoteBanner 
               title = "Recipe of the day"
               author = "John Doe"
@@ -110,15 +110,15 @@ const Banner = () => {
             />
           </div>
           <div>
-            <Image imgSrc={bannerImgTwo} className={'h-[500px] object-cover'}/>
-            <NoteBanner 
+            <Image imgSrc={bannerImgTwo} className={'h-[500px] w-full object-cover'}/>
+            {/* <NoteBanner 
               title = "Recipe of the day"
               author = "John Doe"
               content = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. In euismod ipsum et dui rhoncus, nec lacinia nunc."
-            />
+            /> */}
           </div>
           <div>
-            <Image imgSrc={bannerImgThree} className={'h-[500px] object-cover'}/>
+            <Image imgSrc={bannerImgThree} className={'h-[500px] w-full object-cover'}/>
             <NoteBanner 
               title = "Recipe of the day"
               author = "John Doe"
