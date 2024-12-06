@@ -1,6 +1,6 @@
 const Footer = () => {
     return (
-        <footer className="bg-gray-900 text-white py-12">
+        <div className="bg-gray-900 text-white py-12">
             <div className="container mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
                 <div>
                     <h3 className="text-lg font-bold mb-4">About Us</h3>
@@ -43,7 +43,7 @@ const Footer = () => {
             <div className="text-center mt-4">
                 <p className="text-gray-400">Made with <img src="https://placehold.co/40x40" alt="Visily" className="inline h-6 w-6"/> Visily</p>
             </div>
-        </footer>
+        </div>
     )
 }
 

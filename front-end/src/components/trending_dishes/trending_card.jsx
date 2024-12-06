@@ -1,9 +1,32 @@
-import { FaBookmark, FaStar } from "react-icons/fa"
+import { FaBookmark, FaStar } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import { motion } from "motion/react";
 
-const DishCard = ({dishName, cookTime, author, description}) => {
+const TrendingCard = ({_id, dishName, cookTime, author, description, img, authorAvatar}) => {
+    const idString = (_id) => {
+        return String(_id).toLowerCase().split(" ").join("");
+      };
+    const rootId = idString(_id);
+
+    const navigate = useNavigate();
+    const handleRecipeDetails = () => {
+        navigate(`/recipe/${rootId}`, {
+            state: {
+                item: {dishName, cookTime, author, description, img, authorAvatar},
+            },
+        });
+    };
     return (
-        <div className="flex bg-white shadow-lg rounded-lg overflow-hidden">
-            <img alt="Stuffed sticky rice ball on a plate" className="w-1/3 object-cover" height="150" src="https://storage.googleapis.com/a1aa/image/4RfzyGbIQLy6Uyz1ZiIs0IqVZ57iSTXZKfferQ0puxXsrcfeE.jpg" width="150"/>
+        <motion.div
+            whileHover={{
+                scale: 1.05,
+                boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.2)",
+            }}
+            whileTap={{ scale: 0.98 }}
+            className="flex bg-white shadow-lg rounded-lg overflow-hidden cursor-pointer transition-all duration-300 ease-in-out"
+            onClick={handleRecipeDetails}
+        >
+            <img alt="Stuffed sticky rice ball on a plate" className="w-1/3 object-cover" height="150" src={img} width="150"/>
 
             <div className="p-4 w-2/3">
                 <div className="flex justify-between items-start">
@@ -18,7 +41,7 @@ const DishCard = ({dishName, cookTime, author, description}) => {
                     <FaBookmark className="far fa-bookmark text-blue-600"/>
                 </div>
                 <div className="flex items-center mt-2">
-                    <img alt="Jennifer King" className="w-8 h-8 rounded-full" height="30" src="https://storage.googleapis.com/a1aa/image/LfeF62dMscvPXUwP7Wxy4tP0kj4t1fAVP6LnZtZTyuS0VuvnA.jpg" width="30"/>
+                    <img alt="Jennifer King" className="w-8 h-8 rounded-full" height="30" src={authorAvatar} width="30"/>
                     <p className="ml-2 text-gray-700">
                         {author}
                     </p>
@@ -45,8 +68,8 @@ const DishCard = ({dishName, cookTime, author, description}) => {
                     </span>
                 </div>
             </div>
-        </div>
+        </motion.div>
     );
 };
 
-export default DishCard;
+export default TrendingCard;
