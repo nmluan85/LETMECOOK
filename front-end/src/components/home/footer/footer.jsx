@@ -1,3 +1,4 @@
+import ChefIcon from '../../../assets/icons/chef.png'
 const Footer = () => {
     return (
         <div className="bg-gray-900 text-white py-12">
@@ -36,12 +37,12 @@ const Footer = () => {
                 </div>
             </div>
             <div className="text-center mt-8">
-                <img src="https://placehold.co/40x40" alt="Logo" className="h-10 w-10 mx-auto mb-2"/>
+                <img src={ChefIcon} alt="Logo" className="h-10 w-10 mx-auto mb-2"/>
                 <p className="text-gray-400">LETMECOOK</p>
-                <p className="text-gray-400">2023 Chefify Company | Terms of Service | Privacy Policy</p>
+                <p className="text-gray-400">2024 Chefify Company | Terms of Service | Privacy Policy</p>
             </div>
             <div className="text-center mt-4">
-                <p className="text-gray-400">Made with <img src="https://placehold.co/40x40" alt="Visily" className="inline h-6 w-6"/> Visily</p>
+                <p className="text-gray-400">Made with <img src="https://www.visily.ai/wp-content/uploads/2022/04/Visily-Water-Mark-Framed-Logo@4x.png" alt="Visily" className="inline h-6 w-6"/> Visily</p>
             </div>
         </div>
     )

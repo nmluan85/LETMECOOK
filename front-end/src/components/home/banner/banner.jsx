@@ -109,15 +109,15 @@ const Banner = () => {
               content = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. In euismod ipsum et dui rhoncus, nec lacinia nunc."
             />
           </div>
-          <div>
+          <div className="relative pd-10">
             <Image imgSrc={bannerImgTwo} className={'h-[500px] w-full object-cover'}/>
-            {/* <NoteBanner 
+            <NoteBanner 
               title = "Recipe of the day"
               author = "John Doe"
               content = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. In euismod ipsum et dui rhoncus, nec lacinia nunc."
-            /> */}
+            />
           </div>
-          <div>
+          <div className="relative pd-10">
             <Image imgSrc={bannerImgThree} className={'h-[500px] w-full object-cover'}/>
             <NoteBanner 
               title = "Recipe of the day"
