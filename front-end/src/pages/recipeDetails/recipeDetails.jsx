@@ -89,28 +89,28 @@ const RecipeDetails = () => {
                             <ul class="list-none space-y-2">
                                 <li>- Yield: 4 generous servings</li>
                                 <li>- 2 pints ripe, well-rinsed strawberries 
-                                    <span class="bg-blue-100 text-blue-600 px-2 py-1 rounded-full text-xs">strawberries</span>
+                                    <span class="bg-blue-100 text-blue-600 px-2 py-1 rounded-full text-xs ml-2">strawberries</span>
                                 </li>
                                 <li>- 1/2 cup sugar, or more to taste 
-                                    <span class="bg-blue-100 text-blue-600 px-2 py-1 rounded-full text-xs">sugar</span>
+                                    <span class="bg-blue-100 text-blue-600 px-2 py-1 rounded-full text-xs ml-2">sugar</span>
                                 </li>
                                 <li>- 4 cups flour 
-                                    <span class="bg-blue-100 text-blue-600 px-2 py-1 rounded-full text-xs">flour</span>
+                                    <span class="bg-blue-100 text-blue-600 px-2 py-1 rounded-full text-xs ml-2">flour</span>
                                 </li>
                                 <li>- 1/4 teaspoon salt 
-                                    <span class="bg-blue-100 text-blue-600 px-2 py-1 rounded-full text-xs">salt</span>
+                                    <span class="bg-blue-100 text-blue-600 px-2 py-1 rounded-full text-xs ml-2">salt</span>
                                 </li>
                                 <li>- 5 teaspoons baking powder 
-                                    <span class="bg-blue-100 text-blue-600 px-2 py-1 rounded-full text-xs">baking powder</span>
+                                    <span class="bg-blue-100 text-blue-600 px-2 py-1 rounded-full text-xs ml-2">baking powder</span>
                                 </li>
                                 <li>- 1/4 cups butter 
-                                    <span class="bg-blue-100 text-blue-600 px-2 py-1 rounded-full text-xs">butter</span>
+                                    <span class="bg-blue-100 text-blue-600 px-2 py-1 rounded-full text-xs ml-2">butter</span>
                                 </li>
                                 <li>- 3 cups whipping cream 
-                                    <span class="bg-blue-100 text-blue-600 px-2 py-1 rounded-full text-xs">whipping cream</span>
+                                    <span class="bg-blue-100 text-blue-600 px-2 py-1 rounded-full text-xs ml-2">whipping cream</span>
                                 </li>
                                 <li>- ¼ teaspoon vanilla extract 
-                                    <span class="bg-blue-100 text-blue-600 px-2 py-1 rounded-full text-xs">vanilla</span>
+                                    <span class="bg-blue-100 text-blue-600 px-2 py-1 rounded-full text-xs ml-2">vanilla</span>
                                 </li>
                             </ul>
                             <button class="mt-4 w-full bg-blue-600 text-white py-2 rounded-lg flex items-center justify-center">
