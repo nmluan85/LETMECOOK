@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import { FaRegThumbsUp, FaStar, FaBookmark } from "react-icons/fa"
+import { FaRegThumbsUp, FaStar } from "react-icons/fa"
 import img2 from "../../assets/Strawberry-Shortcake-2.png"
 import img3 from "../../assets/Strawberry-Shortcake-3.png"
 import img4 from "../../assets/Strawberry-Shortcake-4.png"
+import SaveButton from "../../components/recipeCard/saveButton";
 
 const RecipeDetails = () => {
     const location = useLocation();
@@ -51,9 +52,7 @@ const RecipeDetails = () => {
                                     Emma Gonzalez
                                 </h2>
                             </div>
-                            <div>
-                                <FaBookmark className="text-2xl text-blue-500 cursor-pointer"/>
-                            </div>
+                            <SaveButton isClicked={false}/>
                         </div>
                         <div className="flex justify-between items-center mt-5">
                             <div className="mr-6 flex flex-col items-center">
