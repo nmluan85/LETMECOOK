@@ -1,0 +1,44 @@
+/* Search.css */
+.search-container {
+    display: flex;
+    justify-content: space-between; /* Space between filters and results */
+    padding: 20px;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+.search-main {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    width: 100%;
+}
+
+/* Filters */
+.filters {
+    flex: 0 0 250px; /* Fixed width for Filters */
+    position: sticky; /* Keeps it in place while scrolling */
+    top: 20px; /* Distance from the top of the viewport */
+    height: fit-content;
+    border-right: 1px solid #ddd;
+    padding-right: 20px;
+}
+
+/* Search Results */
+.search-results {
+    flex: 1; /* Takes the remaining space */
+    margin-left: 20px;
+    padding-left: 20px;
+    overflow-y: auto; /* Keeps scroll functionality */
+    height: 100vh; /* Set height to make it scrollable */
+}
+
+/* Hide the scrollbar */
+.search-results::-webkit-scrollbar {
+    display: none; /* Hides the scrollbar in Webkit-based browsers (Chrome, Edge, Safari) */
+}
+
+.search-results {
+    -ms-overflow-style: none; /* Hides the scrollbar in IE and Edge */
+    scrollbar-width: none; /* Hides the scrollbar in Firefox */
+}

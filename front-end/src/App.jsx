@@ -7,6 +7,7 @@ import {
   ScrollRestoration,
 } from "react-router-dom";
 import RecipeDetails from "./pages/recipeDetails/recipeDetails";
+import Search from "./pages/search/search";
 import { useState } from 'react';
 import './App.css';
 import Header from "./components/home/header/header";
@@ -34,6 +35,7 @@ const router = createBrowserRouter(
         <Route index element={<Home />}></Route>
         <Route path="/recipe/:_id" element={<RecipeDetails />}></Route>
         <Route path="/profile" element={<Profile />}></Route>
+        <Route path="/search" element={<Search />}></Route>
       </Route>
     </Route>
   )
