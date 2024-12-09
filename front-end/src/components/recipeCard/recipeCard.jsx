@@ -7,7 +7,7 @@ import Picture from '../../assets/icons/picture.png';
 import ClockIcon from '../../assets/icons/clock.png';
 import CommentIcon from '../../assets/icons/comment.png';
 import HeartIcon from '../../assets/icons/heart.png';
-const RecipeCard = ({ item }) => {
+const RecipeCard = ({recipe}) => {
     const [isClicked, setIsClicked] = useState(false);
     const handleSaveRecipe = () => {
         setIsClicked(!isClicked);
