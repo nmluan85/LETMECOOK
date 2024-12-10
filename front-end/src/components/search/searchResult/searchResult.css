@@ -1,0 +1,52 @@
+/* SearchResult.css */
+
+/* Container ensures content and pagination are stacked */
+.search-result-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 100vh; /* Ensures the layout fills the viewport */
+}
+
+/* Slide animations */
+@keyframes slide-in-from-left {
+    from {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slide-in-from-right {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+
+}
+
+/* Classes to trigger animations */
+.slide-in-from-left {
+    animation: slide-in-from-left 0.3s ease-out;
+}
+
+.slide-in-from-right {
+    animation: slide-in-from-right 0.3s ease-out;
+}
+
+/* Pagination fixed at the bottom */
+.pagination-container {
+    position: sticky;
+    bottom: 0;
+    background-color: white;
+    padding: 10px 0;
+    border-top: 1px solid #ddd;
+    z-index: 10;
+}

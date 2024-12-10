@@ -1,0 +1,88 @@
+.filters-container {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    width: 300px;
+    font-family: Arial, sans-serif;
+}
+
+.filters-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.filter-group {
+    margin-top: 20px;
+}
+
+.filter-group h3 {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.checkbox-group {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+}
+
+.checkbox-group label {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+}
+
+.checkbox-group input {
+    margin-right: 8px;
+}
+
+.slider-group {
+    margin-top: 20px;
+}
+
+.slider-group input[type="range"] {
+    width: 100%;
+    margin: 10px 0;
+}
+
+.rating-group {
+    margin-top: 20px;
+}
+
+.rating-group label {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.rating-group .stars {
+    display: flex;
+    margin-top: 5px;
+}
+
+.rating-group .stars span {
+    font-size: 18px;
+    color: #ffc107; /* Gold */
+    margin-right: 4px;
+    cursor: pointer;
+}
+
+.apply-button {
+    margin-top: 20px;
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    text-align: center;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    text-transform: uppercase;
+}
