@@ -85,10 +85,16 @@ const RecipeDetails = () => {
                             <FaRegThumbsUp className="text-2xl cursor-pointer"/>
                         </div>
                         <div className="bg-gray-100 p-4 rounded-lg flex items-center">
-                            <img alt="Profile picture of Emma Gonzalez" className="w-12 h-12 rounded-full mr-4" height="50" src={recipeInfo.authorAvatar} width="50"/>
+                            <img 
+                                alt={`Profile picture of ${recipeInfo.author?.username || 'user'}`} 
+                                className="w-12 h-12 rounded-full mr-4" 
+                                height="50" 
+                                src={recipeInfo.author?.avatar} 
+                                width="50"
+                            />
                             <div className="flex-1">
                                 <h2 className="text-lg font-semibold">
-                                    Emma Gonzalez
+                                    {recipeInfo.author?.username || 'Anonymous'}
                                 </h2>
                             </div>
                             <SaveButton isClicked={false}/>

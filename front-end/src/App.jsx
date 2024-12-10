@@ -8,7 +8,7 @@ import {
 } from "react-router-dom";
 import RecipeDetails from "./pages/recipeDetails/recipeDetails";
 import Search from "./pages/search/search";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './App.css';
 import Header from "./components/home/header/header";
 import Footer from "./components/home/footer/footer";
