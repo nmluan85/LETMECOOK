@@ -1,5 +1,17 @@
 import Ingredient from '../models/ingredientModel.js';
 
+// Controller to view an ingredient
+const viewIngredient = async (req, res) => {
+    try {
+        const { ingredientId } = req.params;
+        const ingredient = await Ingredient.findById(ingredientId);
+        res.status(200).json(ingredient);
+    } catch (error) {
+        console.error('Error viewing ingredient:', error);
+        res.status(500).json({ message: 'Server error. Could not view ingredient.' });
+    }
+};
+
 // Controller to create a new ingredient
 const createIngredient = async (req, res) => {
     try {
@@ -94,4 +106,4 @@ const updateIngredient = async (req, res) => {
     }
 };
 
-export { createIngredient, deleteIngredient, updateIngredient }; 
+export { createIngredient, deleteIngredient, updateIngredient, viewIngredient }; 

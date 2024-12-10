@@ -6,8 +6,22 @@ import Plan from '../models/planModel.js';
 // Controller to get all the posts
 const getAllPosts = async (req, res) => {
     try {
-        const posts = await Post.find().limit(20);
-        res.status(200).json(posts);
+        const posts = await Post.find()
+            .limit(20)
+            .populate('author')
+            .populate('ingredients.ingredient')
+            .lean();
+
+        const transformedPosts = posts.map(post => ({
+            ...post,
+            ingredients: post.ingredients.map(ing => ({
+                name: ing.ingredient.name,
+                nutrition: ing.ingredient.nutrition,
+                weight: ing.weight
+            }))
+        }));
+
+        res.status(200).json(transformedPosts);
     } catch (error) {
         console.error('Error getting all posts:', error);
         res.status(500).json({ message: 'Server error. Could not get all posts.' });
@@ -54,8 +68,21 @@ const viewPost = async (req, res) => {
             return res.status(400).json({ message: 'Post ID is required.' });
         }
 
-        const post = await Post.findById(postId);
-        res.status(200).json(post);
+        const post = await Post.findById(postId)
+            .populate('author')
+            .populate('ingredients.ingredient')
+            .lean();
+
+        const transformedPost = {
+            ...post,
+            ingredients: post.ingredients.map(ing => ({
+                name: ing.ingredient.name,
+                nutrition: ing.ingredient.nutrition,
+                weight: ing.weight
+            }))
+        };
+
+        res.status(200).json(transformedPost);
     } catch (error) {
         console.error('Error viewing post:', error);
         res.status(500).json({ message: 'Server error. Could not view post.' });
