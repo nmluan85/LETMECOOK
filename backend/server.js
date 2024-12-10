@@ -25,7 +25,7 @@ app.use("/api/plans", planRouter);
 app.use("/api/ingredients", ingredientRouter);
 
 app.get("/", (req, res) => {
-    res.send("Test API");
+    res.json({ message: "API is running..." });
 });
 
 app.listen(PORT, () => {

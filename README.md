@@ -96,7 +96,12 @@ DELETE http://localhost:3000/api/users/delete/{userId}
 
 ## 3. Post API Tests
 
-### 3.1 Add Post
+### 3.1 Get All Posts
+```bash
+GET http://localhost:3000/api/posts/all
+```
+
+### 3.2 Add Post
 ```bash
 POST http://localhost:3000/api/posts/add
 ```
@@ -118,7 +123,7 @@ POST http://localhost:3000/api/posts/add
 }
 ```
 
-### 3.2 Search Posts
+### 3.3 Search Posts
 ```bash
 GET http://localhost:3000/api/posts/search?query=chicken
 ```
@@ -131,12 +136,12 @@ GET http://localhost:3000/api/posts/search?tags=healthy,dinner
 GET http://localhost:3000/api/posts/search?query=chicken&tags=healthy,dinner
 ```
 
-### 3.3 View Post
+### 3.4 View Post
 ```bash
 GET http://localhost:3000/api/posts/view/{postId}
 ```
 
-### 3.4 Delete Post
+### 3.5 Delete Post
 ```bash
 DELETE http://localhost:3000/api/posts/delete/{postId}
 ```

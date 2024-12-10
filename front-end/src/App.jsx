@@ -42,6 +42,14 @@ const router = createBrowserRouter(
 );
 
 function App() {
+  const [backendData, setBackendData] = useState([{}])
+  useEffect(() => {
+    fetch('http://localhost:3000/')
+      .then(response => response.json())
+      .then(data => {
+        console.log(data)})
+  }, [])
+     
   const [count, setCount] = useState(0)
 
   return (

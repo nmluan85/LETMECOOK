@@ -3,6 +3,17 @@ import Post from '../models/postModel.js';
 import Comment from '../models/commentModel.js';
 import Plan from '../models/planModel.js';
 
+// Controller to get all the posts
+const getAllPosts = async (req, res) => {
+    try {
+        const posts = await Post.find().limit(20);
+        res.status(200).json(posts);
+    } catch (error) {
+        console.error('Error getting all posts:', error);
+        res.status(500).json({ message: 'Server error. Could not get all posts.' });
+    }
+};
+
 // Controller to search for posts
 const searchPosts = async (req, res) => {
     try {
@@ -135,6 +146,7 @@ const deletePost = async (req, res) => {
 };
 
 export { 
+    getAllPosts,
     searchPosts, 
     viewPost, 
     addPost, 
