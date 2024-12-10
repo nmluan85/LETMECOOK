@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { FaRegThumbsUp, FaStar } from "react-icons/fa"
-import img2 from "../../assets/Strawberry-Shortcake-2.png"
-import img3 from "../../assets/Strawberry-Shortcake-3.png"
-import img4 from "../../assets/Strawberry-Shortcake-4.png"
 import SaveButton from "../../components/recipeCard/saveButton";
 
 const RecipeDetails = () => {
@@ -41,7 +38,7 @@ const RecipeDetails = () => {
                     }
                 }
                 // Extract the ingredients
-                const ingredientsStartIndex = Object.keys(steps).length * 2 + 1;
+                const ingredientsStartIndex = steps.length * 2 + 1; // Use the array length directly
                 const ingredients = parts.slice(ingredientsStartIndex);
 
                 // Output the results
@@ -49,13 +46,14 @@ const RecipeDetails = () => {
                 console.log(steps);
                 console.log(ingredients);
                 setRecipeInfo({
+                    ...location.state.item,
                     ...data,
                     introduction,
                     steps,
                     ingredients
                 });
             })
-    }, []);
+    }, [location]);
     return (
         <div>
             <div 
@@ -126,38 +124,22 @@ const RecipeDetails = () => {
                             </div>
                         </div>
 
-                        <div class="border-dashed border-2 border-blue-400 p-6 rounded-lg bg-white shadow-md mt-5">
-                            <ul class="list-none space-y-2">
-                                <li>- Yield: 4 generous servings</li>
-                                <li>- 2 pints ripe, well-rinsed strawberries 
-                                    <span class="bg-blue-100 text-blue-600 px-2 py-1 rounded-full text-xs ml-2">strawberries</span>
-                                </li>
-                                <li>- 1/2 cup sugar, or more to taste 
-                                    <span class="bg-blue-100 text-blue-600 px-2 py-1 rounded-full text-xs ml-2">sugar</span>
-                                </li>
-                                <li>- 4 cups flour 
-                                    <span class="bg-blue-100 text-blue-600 px-2 py-1 rounded-full text-xs ml-2">flour</span>
-                                </li>
-                                <li>- 1/4 teaspoon salt 
-                                    <span class="bg-blue-100 text-blue-600 px-2 py-1 rounded-full text-xs ml-2">salt</span>
-                                </li>
-                                <li>- 5 teaspoons baking powder 
-                                    <span class="bg-blue-100 text-blue-600 px-2 py-1 rounded-full text-xs ml-2">baking powder</span>
-                                </li>
-                                <li>- 1/4 cups butter 
-                                    <span class="bg-blue-100 text-blue-600 px-2 py-1 rounded-full text-xs ml-2">butter</span>
-                                </li>
-                                <li>- 3 cups whipping cream 
-                                    <span class="bg-blue-100 text-blue-600 px-2 py-1 rounded-full text-xs ml-2">whipping cream</span>
-                                </li>
-                                <li>- ¼ teaspoon vanilla extract 
-                                    <span class="bg-blue-100 text-blue-600 px-2 py-1 rounded-full text-xs ml-2">vanilla</span>
-                                </li>
+                        <div className="border-dashed border-2 border-blue-400 p-6 rounded-lg bg-white shadow-md mt-5">
+                            <ul className="list-none space-y-2">
+                                {recipeInfo.ingredients.map((ingredient, index) => (
+                                    <li key={index}>
+                                        - {ingredient}{" "}
+                                        <span className="bg-blue-100 text-blue-600 px-2 py-1 rounded-full text-xs ml-2 text-center">
+                                            {ingredient.split(" ").pop()} {/* Display last word as tag */}
+                                        </span>
+                                    </li>
+                                ))}
                             </ul>
-                            <button class="mt-4 w-full bg-blue-600 text-white py-2 rounded-lg flex items-center justify-center">
-                                <i class="fas fa-plus mr-2"></i> Add to Your Grocery List
+                            <button className="mt-4 w-full bg-blue-600 text-white py-2 rounded-lg flex items-center justify-center">
+                                <i className="fas fa-plus mr-2"></i> Add to Your Grocery List
                             </button>
                         </div>
+
                     </div>    
                 </div>
 
