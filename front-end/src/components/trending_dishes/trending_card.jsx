@@ -1,8 +1,8 @@
-import { FaBookmark, FaStar } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { motion } from "motion/react";
 import SaveButton from "../recipeCard/saveButton";
 import Rating from "../layout/rating";
+import {useState} from 'react';
 
 const TrendingCard = ({_id, dishName, cookTime, author, description, img, authorAvatar}) => {
     const idString = (_id) => {
@@ -11,13 +11,26 @@ const TrendingCard = ({_id, dishName, cookTime, author, description, img, author
     const rootId = idString(_id);
 
     const navigate = useNavigate();
+    const [isSaveHovered, setIsSaveHovered] = useState(false);  // Track hover state
+    // Handle recipe details navigation
     const handleRecipeDetails = () => {
-        navigate(`/recipe/${rootId}`, {
-            state: {
-                item: {dishName, cookTime, author, description, img, authorAvatar},
-            },
-        });
+        if(!isSaveHovered) {
+            navigate(`/recipe/${rootId}`, {
+                state: {
+                    item: {dishName, cookTime, author, description, img, authorAvatar},
+                },
+            });
+        }
     };
+
+    const handleMouseEnter = () => {
+        setIsSaveHovered(true); // Set hover state to true when mouse enters
+    };
+
+    const handleMouseLeave = () => {
+        setIsSaveHovered(false); // Set hover state to false when mouse leaves
+    };
+
     return (
         <motion.div
             whileHover={{
@@ -40,7 +53,9 @@ const TrendingCard = ({_id, dishName, cookTime, author, description, img, author
                             {cookTime}
                         </p>
                     </div>
-                    <SaveButton/>
+                    <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+                        <SaveButton isClicked={false} /> {/* Pass isSaved to SaveButton */}
+                    </div>
                 </div>
                 <div className="flex items-center mt-2">
                     <img alt="Jennifer King" className="w-8 h-8 rounded-full" height="30" src={authorAvatar} width="30"/>
