@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import { motion } from 'framer-motion';
+import { useNavigate } from "react-router-dom";
 
 import SaveButton from './saveButton';
 import Rating from '../layout/rating';
@@ -9,9 +10,30 @@ import CommentIcon from '../../assets/icons/comment.png';
 import HeartIcon from '../../assets/icons/heart.png';
 const RecipeCard = ({recipe}) => {
     const [isClicked, setIsClicked] = useState(false);
+    const [isSaveHovered, setIsSaveHovered] = useState(false);  // Track hover state
+    const navigate = useNavigate();
+
     const handleSaveRecipe = () => {
         setIsClicked(!isClicked);
-    }
+    };
+
+    const handleRecipeCard = () => {
+        if (!isSaveHovered) {
+            console.log(recipe._id);
+            // navigate(`/recipe/${recipe._id}`, {
+            //     state: {
+            //         item: {dishName, cookTime, author, description, img, authorAvatar},
+            //     },
+            // });
+        }
+    };
+    const handleMouseEnter = () => {
+        setIsSaveHovered(true); // Set hover state to true when mouse enters
+    };
+
+    const handleMouseLeave = () => {
+        setIsSaveHovered(false); // Set hover state to false when mouse leaves
+    };
     return (
         <motion.div
             whileHover={{
@@ -20,6 +42,7 @@ const RecipeCard = ({recipe}) => {
             }}
             whileTap={{ scale: 0.98 }}
             className="flex bg-white w-[260px] shadow-lg rounded-lg overflow-hidden cursor-pointer transition-all duration-300 ease-in-out"
+            onClick={handleRecipeCard}
         >
             <div className="bg-white rounded-lg shadow w-[260px]">
                 <img src={recipe.photo} alt="Recipe Image" className="w-full h-40 object-cover rounded-tl-lg rounded-tr-lg mb-2"/>
@@ -34,7 +57,9 @@ const RecipeCard = ({recipe}) => {
                         <div className="bg-primary-100 rounded-full px-2 py-1 text-xs primary-color font-medium">
                             {recipe.duration} minutes
                         </div>
-                        <SaveButton isClicked={false}/>
+                        <div className='ml-auto' onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}> 
+                            <SaveButton isClicked={false}/>
+                        </div>
                         
                     </span>
                     <span className="flex items-center mb-2">
