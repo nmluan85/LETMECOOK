@@ -3,6 +3,7 @@ import img1 from "../../assets/Strawberry-Shortcake-1.png"
 
 
 const TrendingDishes = () => {
+    
     return (
         <div className="w-full mt-4 pb-20">
             <h1 className="text-4xl font-bold text-center text-blue-600">
