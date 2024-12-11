@@ -7,6 +7,9 @@ const Header = () => {
     const navigate = useNavigate();
     const [searchTerm, setSearchTerm] = useState("");
 
+    const handleLoginIconClick = () => {
+        navigate('login');
+    }
     const handleSearchIconClick = () => {
         if (searchTerm.trim()) {
             navigate(`/search?query=${encodeURIComponent(searchTerm)}`);
@@ -52,7 +55,12 @@ const Header = () => {
                         <a href="#" className="text-gray-700">Nutrition tracking</a>
                         <a href="#" className="text-gray-700">About Us</a>
                     </nav>
-                    <button className="bg-primary-default text-white font-medium py-2 px-4 rounded-full">Login</button>
+                    <button 
+                        className="bg-primary-default text-white font-medium py-2 px-4 rounded-full"
+                        onClick={handleLoginIconClick}
+                    >
+                        Login
+                    </button>
                 </div>
             </div>
         </div>

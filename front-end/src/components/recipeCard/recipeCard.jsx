@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import { motion } from 'framer-motion';
+import { useNavigate } from "react-router-dom";
 
 import SaveButton from './saveButton';
 import Rating from '../layout/rating';
@@ -56,8 +57,8 @@ const RecipeCard = ({recipe}) => {
                         <div className="bg-primary-100 rounded-full px-2 py-1 text-xs primary-color font-medium">
                             {recipe.duration} minutes
                         </div>
-                        <div className="ml-auto" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
-                            <SaveButton isClicked={false} />
+                        <div className='ml-auto' onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}> 
+                            <SaveButton isClicked={false}/>
                         </div>
                         
                     </span>
