@@ -2,10 +2,12 @@ import ChefIcon from '../../../assets/icons/chef.png';
 import SearchIcon from '../../../assets/icons/search.png';
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import LoginModal from '../../login/loginModal';
 
 const Header = () => {
     const navigate = useNavigate();
     const [searchTerm, setSearchTerm] = useState("");
+    const [isLoginModalOpen, setLoginModalOpen] = useState(false);
 
     const handleSearchIconClick = () => {
         if (searchTerm.trim()) {
@@ -52,9 +54,15 @@ const Header = () => {
                         <a href="#" className="text-gray-700">Nutrition tracking</a>
                         <a href="#" className="text-gray-700">About Us</a>
                     </nav>
-                    <button className="bg-primary-default text-white font-medium py-2 px-4 rounded-full">Login</button>
+                    <button
+                        onClick={() => {setLoginModalOpen(true)}}
+                        className="bg-primary-default text-white font-medium py-2 px-4 rounded-full"
+                    >
+                        Login
+                    </button>
                 </div>
             </div>
+            {isLoginModalOpen && <LoginModal onClose={() => setLoginModalOpen(false)} />}
         </div>
     );
 };

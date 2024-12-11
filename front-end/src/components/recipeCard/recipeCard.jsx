@@ -3,15 +3,36 @@ import { motion } from 'framer-motion';
 
 import SaveButton from './saveButton';
 import Rating from '../layout/rating';
-import Picture from '../../assets/icons/picture.png';
 import ClockIcon from '../../assets/icons/clock.png';
 import CommentIcon from '../../assets/icons/comment.png';
 import HeartIcon from '../../assets/icons/heart.png';
-const RecipeCard = ({ item }) => {
-    const [isClicked, setIsClicked] = useState(false);
-    const handleSaveRecipe = () => {
-        setIsClicked(!isClicked);
-    }
+import { useNavigate } from "react-router-dom";
+const RecipeCard = ({recipe}) => {
+    const idString = (_id) => {
+        return String(_id).toLowerCase().split(" ").join("");
+    };
+    const rootId = idString(recipe._id);
+
+    const navigate = useNavigate();
+    const [isSaveHovered, setIsSaveHovered] = useState(false);  // Track hover state
+    // Handle recipe details navigation
+    const handleRecipeDetails = () => {
+        if(!isSaveHovered) {
+            navigate(`/recipe/${rootId}`, {
+                state: {
+                    item: recipe,
+                },
+            });
+        }
+    };
+    const handleMouseEnter = () => {
+        setIsSaveHovered(true); // Set hover state to true when mouse enters
+    };
+
+    const handleMouseLeave = () => {
+        setIsSaveHovered(false); // Set hover state to false when mouse leaves
+    };
+    
     return (
         <motion.div
             whileHover={{
@@ -20,21 +41,24 @@ const RecipeCard = ({ item }) => {
             }}
             whileTap={{ scale: 0.98 }}
             className="flex bg-white w-[260px] shadow-lg rounded-lg overflow-hidden cursor-pointer transition-all duration-300 ease-in-out"
+            onClick={handleRecipeDetails}
         >
             <div className="bg-white rounded-lg shadow w-[260px]">
-                <img src={Picture} alt="Recipe Image" className="w-full h-40 object-cover rounded-tl-lg rounded-tr-lg mb-2"/>
+                <img src={recipe.photo} alt="Recipe Image" className="w-full h-40 object-cover rounded-tl-lg rounded-tr-lg mb-2"/>
                 <div className="text-left font-medium mb-2 pl-2">
                     <h3 className="truncate-multiline">
-                        This is a long text that will be truncated after two lines. The text will show the first two lines, and the rest will be hidden with an ellipsis at the end. Even if the content exceeds, it won't show more than two lines of text.
+                        {recipe.title}
                     </h3>
                 </div>
                 <div className="flex flex-col justify-between text-gray-600 mb-2 pl-2">
                     <span className="flex items-center">
                         <img src={ClockIcon} alt="Clock Icon" className="h-4 w-4 mr-2"></img> 
                         <div className="bg-primary-100 rounded-full px-2 py-1 text-xs primary-color font-medium">
-                            21 minutes
+                            {recipe.duration} minutes
                         </div>
-                        <SaveButton isClicked={false}/>
+                        <div className='ml-auto' onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}> 
+                            <SaveButton isClicked={false}/>
+                        </div>
                         
                     </span>
                     <span className="flex items-center mb-2">
@@ -42,7 +66,7 @@ const RecipeCard = ({ item }) => {
                             <div className="flex items-center pr-2">
                             <img src={CommentIcon} alt="Comment Icon" className="h-4 w-4 mr-2" />
                             <div className="bg-primary-100 rounded-full px-3 py-1 text-xs primary-color font-medium">
-                                32
+                                {recipe.comments.length}
                             </div>
                             </div>
                             <div className="flex items-center pr-2">

@@ -1,8 +1,40 @@
+import React, { useEffect, useState }  from 'react';
 import TrendingCard from "./trending_card";
 import img1 from "../../assets/Strawberry-Shortcake-1.png"
 
 
 const TrendingDishes = () => {
+    const [listPost, setListPost] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState(null);
+    useEffect(() =>{
+        fetch('http://localhost:3000/api/posts/all')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to fetch data');
+                }
+                return response.json()
+            })
+            .then(data => {
+                // Sort the data by uploadDate in descending order and take the 4 most recent items
+                const recentPosts = data
+                    .sort((a, b) => new Date(b.uploadDate) - new Date(a.uploadDate))
+                    .slice(0, 4);
+                setListPost(recentPosts);
+                setIsLoading(false);
+            })
+            .catch(error => {
+                console.error('Error fetching posts:', error);
+                setError(error.message);
+                setIsLoading(false);
+            });
+    }, []);
+    if (isLoading) {
+        return <div>Loading...</div>;
+    }
+    if (error) {
+        return <div>Error: {error}</div>;
+    }
     return (
         <div className="w-full mt-4 pb-20">
             <h1 className="text-4xl font-bold text-center text-blue-600">
@@ -13,42 +45,11 @@ const TrendingDishes = () => {
             </p>
 
             <div className="ml-40 mr-40 grid grid-cols-1 md:grid-cols-2 gap-6 mt-8 mx-4">
-                <TrendingCard
-                    _id="1001"
-                    dishName="Strawberry Shortcake"
-                    cookTime="45 minutes"
-                    author="Emma Gonzalez"
-                    description="It seems like there may be a misunderstanding. If you're asking how a user can make a Strawberry Shortcake, the process would be..."
-                    img={img1}
-                    authorAvatar="https://storage.googleapis.com/a1aa/image/LfeF62dMscvPXUwP7Wxy4tP0kj4t1fAVP6LnZtZTyuS0VuvnA.jpg"
-                />
-                <TrendingCard
-                    _id="1001"
-                    dishName="Strawberry Shortcake"
-                    cookTime="45 minutes"
-                    author="Emma Gonzalez"
-                    description="It seems like there may be a misunderstanding. If you're asking how a user can make a Strawberry Shortcake, the process would be..."
-                    img={img1}
-                    authorAvatar="https://storage.googleapis.com/a1aa/image/LfeF62dMscvPXUwP7Wxy4tP0kj4t1fAVP6LnZtZTyuS0VuvnA.jpg"
-                />
-                <TrendingCard
-                    _id="1001"
-                    dishName="Strawberry Shortcake"
-                    cookTime="45 minutes"
-                    author="Emma Gonzalez"
-                    description="It seems like there may be a misunderstanding. If you're asking how a user can make a Strawberry Shortcake, the process would be..."
-                    img={img1}
-                    authorAvatar="https://storage.googleapis.com/a1aa/image/LfeF62dMscvPXUwP7Wxy4tP0kj4t1fAVP6LnZtZTyuS0VuvnA.jpg"
-                />
-                <TrendingCard
-                    _id="1001"
-                    dishName="Strawberry Shortcake"
-                    cookTime="45 minutes"
-                    author="Emma Gonzalez"
-                    description="It seems like there may be a misunderstanding. If you're asking how a user can make a Strawberry Shortcake, the process would be..."
-                    img={img1}
-                    authorAvatar="https://storage.googleapis.com/a1aa/image/LfeF62dMscvPXUwP7Wxy4tP0kj4t1fAVP6LnZtZTyuS0VuvnA.jpg"
-                />
+                {listPost.map((item, index) => (
+                    <div key={index}>
+                        <TrendingCard recipe={item} />
+                    </div>
+                ))}
             </div>
         </div>
 

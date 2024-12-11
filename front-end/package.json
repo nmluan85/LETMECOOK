@@ -1,7 +1,7 @@
 {
   "name": "front-end",
   "private": true,
-  "proxy": "http://localhost:3001",
+  "proxy": "http://localhost:3000",
   "version": "0.0.0",
   "type": "module",
   "scripts": {
@@ -37,7 +37,7 @@
     "globals": "^15.12.0",
     "postcss": "^8.4.49",
     "tailwindcss": "^3.4.16",
-    "vite": "^6.0.1",
+    "vite": "^6.0.3",
     "vite-plugin-svgr": "^4.3.0"
   }
 }

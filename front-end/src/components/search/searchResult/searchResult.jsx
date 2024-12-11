@@ -3,7 +3,7 @@ import RecipeCard from "../../recipeCard/recipeCard";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import "./searchResult.css";
 
-const SearchResult = ({ query, filters  }) => {
+const SearchResult = ({ queri, filters  }) => {
     const [data, setData] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage] = useState(12);
@@ -11,24 +11,29 @@ const SearchResult = ({ query, filters  }) => {
     const [sortOrder, setSortOrder] = useState("A-Z");
     const [slideDirection, setSlideDirection] = useState("");
     const [filteredData, setFilteredData] = useState([]);
+    console.log(queri);
 
     useEffect(() => {
-        const fetchData = async () => {
-            const mockData = Array.from({ length: 32 }, (_, index) => ({
-                id: index + 1,
-                name: `Cucumber salad, cherry tomatoes`,
-                image: "https://via.placeholder.com/300",
-                time: 32,
-                rating: 4.5,
-                comments: 23,
-                likes: 23,
-            }));
-            setData(mockData);
-            setFilteredData(mockData);
-            setTotalPages(Math.ceil(mockData.length / itemsPerPage));
-        };
-        fetchData();
-    }, [itemsPerPage]);
+        fetch(`http://localhost:3000/api/posts/search?query=${queri}`, {
+            method: "GET", // Explicitly specify GET method (optional, as it's the default)
+        })
+            .then((response) => { 
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                console.log(response);
+                return response.json();
+            })
+            .then((data) => {
+                console.log("Success:", data);
+                setData(data);
+                setFilteredData(data);
+                setTotalPages(Math.ceil(data.length / itemsPerPage));
+            })
+            .catch((error) => {
+                console.error("Error:", error.message);
+            });
+    }, [queri,itemsPerPage]);
 
     useEffect(() => {
         const applyFilters = () => {
@@ -36,10 +41,10 @@ const SearchResult = ({ query, filters  }) => {
                 // const matchesType =
                 //     filters.type.length === 0 || filters.type.includes(item.type);
                 const matchesTime =
-                    item.time >= filters.time.min && item.time <= filters.time.max;
-                const matchesRating = item.rating >= filters.rating;
+                    item.duration >= filters.time.min && item.duration <= filters.time.max;
+                // const matchesRating = item.rating >= filters.rating;
 
-                return matchesTime && matchesRating;
+                return matchesTime;
             });
             setFilteredData(filtered);
             setCurrentPage(1); // Reset to first page after applying filters
@@ -74,9 +79,9 @@ const SearchResult = ({ query, filters  }) => {
 
     const sortedItems = [...filteredData].sort((a, b) => {
         if (sortOrder === "A-Z") {
-            return a.name.localeCompare(b.name);
+            return a.title.localeCompare(b.title);
         }
-        return b.name.localeCompare(a.name);
+        return b.title.localeCompare(a.title);
     });
 
     return (
@@ -84,7 +89,7 @@ const SearchResult = ({ query, filters  }) => {
             {/* Header */}
             <div className="flex justify-between items-center mb-6">
                 <h1 className="text-3xl font-bold text-gray-800">
-                    {query} ({filteredData.length})
+                    {queri} ({filteredData.length})
                 </h1>
                 <div>
                     <label htmlFor="sort" className="mr-2 font-medium text-gray-600">
@@ -111,7 +116,7 @@ const SearchResult = ({ query, filters  }) => {
             >
                 {sortedItems.slice(indexOfFirstItem, indexOfLastItem).map((item) => (
                     <div className="pt-4 pb-6 pl-2 pr-2" key={item.id}>
-                        <RecipeCard item={item} />
+                        <RecipeCard recipe={item} />
                     </div>
                 ))}
             </div>

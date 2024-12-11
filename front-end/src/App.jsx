@@ -8,12 +8,13 @@ import {
 } from "react-router-dom";
 import RecipeDetails from "./pages/recipeDetails/recipeDetails";
 import Search from "./pages/search/search";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './App.css';
 import Header from "./components/home/header/header";
 import Footer from "./components/home/footer/footer";
-import Home from './pages/home/home'
-import Profile from './pages/profile/profile'
+import Home from './pages/home/home';
+import Profile from './pages/profile/profile';
+import LoginModal from './components/login/loginModal';
 
 const Layout = () => {
   return (

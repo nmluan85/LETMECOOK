@@ -7,7 +7,7 @@ const SaveButton = ({isClicked}) => {
         setIsClicked(!currentState);
     }
     return (
-        <div class={`w-8 h-8 border-2 rounded-full ml-auto mr-4 flex items-center justify-center ${currentState ? 'bg-primary-default border-white' : 'border-primary-default hover:border-primary-600'} group`}>
+        <div className={`w-8 h-8 border-2 rounded-full ml-auto mr-4 flex items-center justify-center ${currentState ? 'bg-primary-default border-white' : 'border-primary-default hover:border-primary-600'} group`}>
             <FaRegBookmark 
                 onClick={handleSaveRecipe} 
                 className={`w-4 h-4 transition-colors duration-300 ${currentState ? 'text-white': 'text-primary-default hover:text-primary-600'} cursor-pointer`}/>
