@@ -3,6 +3,8 @@ import { useState, useEffect} from "react";
 import LoginBackground from "../../assets/login.png";
 import { IoMdClose } from "react-icons/io";
 import { FaGoogle } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+
 const LoginModal = ({onClose}) => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -18,25 +20,21 @@ const LoginModal = ({onClose}) => {
             body: JSON.stringify({ email, password }),
         })
             .then((response) => {
-                // Check if the response is OK
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
                 }
                 return response.json();
             })
             .then((data) => {
-                // Handle the successful response
                 console.log("Success:", data);
             })
             .catch((error) => {
-                // Handle errors
                 console.error("Error:", error.message);
             });
     }
     return (
         <div 
             className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
-            onClick={onClose}
         >
             <div 
                 className="bg-white rounded-lg shadow-lg w-full h-4/6 max-w-5xl flex"
@@ -49,7 +47,6 @@ const LoginModal = ({onClose}) => {
                 </div>
 
                 <div className="w-3/5 p-6">
-                    {/* Close Button */}
                     <div className="flex justify-between items-center mb-6">
                         <h2 className="text-3xl font-bold">Login</h2>
                         <IoMdClose
@@ -60,7 +57,7 @@ const LoginModal = ({onClose}) => {
 
                     <form onSubmit={handleSubmit}>
                         <div className="mb-4">
-                            <label className="block text-lg font-medium text-gray-700 mb-5">
+                            <label className="block text-lg font-normal text-gray-700 mb-5">
                                 Enter your email and password to log in.
                             </label>
                             <input
