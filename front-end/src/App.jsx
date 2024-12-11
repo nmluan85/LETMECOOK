@@ -37,7 +37,6 @@ const router = createBrowserRouter(
         <Route path="/recipe/:_id" element={<RecipeDetails />}></Route>
         <Route path="/profile" element={<Profile />}></Route>
         <Route path="/search" element={<Search />}></Route>
-        <Route path='/login' element={<LoginModal/>}></Route>
       </Route>
     </Route>
   )
