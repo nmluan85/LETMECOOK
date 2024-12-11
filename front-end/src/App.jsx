@@ -12,8 +12,9 @@ import { useState, useEffect } from 'react';
 import './App.css';
 import Header from "./components/home/header/header";
 import Footer from "./components/home/footer/footer";
-import Home from './pages/home/home'
-import Profile from './pages/profile/profile'
+import Home from './pages/home/home';
+import Profile from './pages/profile/profile';
+import LoginModal from './components/login/loginModal';
 
 const Layout = () => {
   return (
@@ -36,6 +37,7 @@ const router = createBrowserRouter(
         <Route path="/recipe/:_id" element={<RecipeDetails />}></Route>
         <Route path="/profile" element={<Profile />}></Route>
         <Route path="/search" element={<Search />}></Route>
+        <Route path='/login' element={<LoginModal/>}></Route>
       </Route>
     </Route>
   )
