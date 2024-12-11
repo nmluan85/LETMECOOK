@@ -8,6 +8,7 @@ const Search = () => {
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
     const query = queryParams.get("query");
+    console.log('Query:', query);
 
     const [filters, setFilters] = useState({
         type: [],
@@ -26,7 +27,7 @@ const Search = () => {
                     <Filters onApplyFilters={handleApplyFilters}/>
                 </div>
                 <div className="search-results">
-                    <SearchResult query={query} filters={filters}/>
+                    <SearchResult queri={query} filters={filters}/>
                 </div>
             </main>
         </div>
