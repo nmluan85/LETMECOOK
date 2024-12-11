@@ -4,11 +4,11 @@ import SaveButton from "../recipeCard/saveButton";
 import Rating from "../layout/rating";
 import {useState} from 'react';
 
-const TrendingCard = ({_id, dishName, cookTime, author, description, img, authorAvatar}) => {
+const TrendingCard = ({recipe}) => {
     const idString = (_id) => {
         return String(_id).toLowerCase().split(" ").join("");
-      };
-    const rootId = idString(_id);
+    };
+    const rootId = idString(recipe._id);
 
     const navigate = useNavigate();
     const [isSaveHovered, setIsSaveHovered] = useState(false);  // Track hover state
@@ -17,7 +17,7 @@ const TrendingCard = ({_id, dishName, cookTime, author, description, img, author
         if(!isSaveHovered) {
             navigate(`/recipe/${rootId}`, {
                 state: {
-                    item: {dishName, cookTime, author, description, img, authorAvatar},
+                    item: recipe,
                 },
             });
         }
@@ -41,30 +41,30 @@ const TrendingCard = ({_id, dishName, cookTime, author, description, img, author
             className="flex bg-white shadow-lg rounded-lg overflow-hidden cursor-pointer transition-all duration-300 ease-in-out"
             onClick={handleRecipeDetails}
         >
-            <img alt="Stuffed sticky rice ball on a plate" className="w-1/3 object-cover" height="150" src={img} width="150"/>
+            <img alt="Stuffed sticky rice ball on a plate" className="w-1/3 object-cover" height="150" src={recipe.photo} width="150"/>
 
             <div className="p-4 w-2/3">
                 <div className="flex justify-between items-start">
                     <div>
                         <h2 className="text-xl font-semibold">
-                            {dishName}
+                            {recipe.title}
                         </h2>
                         <p className="text-gray-500 text-sm">
-                            {cookTime}
+                            {recipe.duration} minutes
                         </p>
                     </div>
                     <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
-                        <SaveButton isClicked={false} /> {/* Pass isSaved to SaveButton */}
+                        <SaveButton isClicked={false} />
                     </div>
                 </div>
                 <div className="flex items-center mt-2">
-                    <img alt="Jennifer King" className="w-8 h-8 rounded-full" height="30" src={authorAvatar} width="30"/>
+                    <img alt="Jennifer King" className="w-8 h-8 rounded-full" height="30" src={recipe.author.avatar} width="30"/>
                     <p className="ml-2 text-gray-700">
-                        {author}
+                        {recipe.author.username}
                     </p>
                 </div>
                 <p class="text-gray-600 mt-2">
-                    {description}
+                    {recipe.content.split(' ').slice(0, 10).join(' ')}{recipe.content.split(' ').length > 10 ? '...' : ''}
                 </p>
                 <Rating/>
             </div>

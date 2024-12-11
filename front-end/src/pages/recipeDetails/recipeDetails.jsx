@@ -9,51 +9,42 @@ const RecipeDetails = () => {
     const [recipeInfo, setRecipeInfo] = useState({
         title: "",
         steps: [],
-        ingredients: [],
         img: "",
         authorAvatar: "",
+        ingredientsArr: []
     });
 
     useEffect(() => {
+        const parts = location.state.item.content.split('\n');
+        // Extract the introduction
+        const introduction = parts[0];
+        // Extract the steps
+        const steps = [];
+        let i = 1;
+        while (i < parts.length) {
+            const line = parts[i];
+            if (line.startsWith("Step")) {
+                steps.push(parts[i + 1]); // Add step content to the array
+                i += 2;
+            } else {
+                break;
+            }
+        }
+        // Extract the ingredients
+        const ingredientsStartIndex = steps.length * 2 + 1; // Use the array length directly
+        const ingredientsArr = parts.slice(ingredientsStartIndex);
+        console.log(ingredientsArr)
+
+        // Output the results
+        setRecipeInfo({
+            ...location.state.item,
+            introduction,
+            steps,
+            ingredientsArr
+        });
         setPrevLocation(location.pathname);
     }, [location]);
 
-    useEffect(() => {
-        fetch(`http://localhost:3000/api/posts/view/6753ba4a8a0609377aef6f29`)
-            .then(response => response.json())
-            .then(data => {
-                const parts = data.content.split('\n');
-                // Extract the introduction
-                const introduction = parts[0];
-                // Extract the steps
-                const steps = [];
-                let i = 1;
-                while (i < parts.length) {
-                    const line = parts[i];
-                    if (line.startsWith("Step")) {
-                        steps.push(parts[i + 1]); // Add step content to the array
-                        i += 2;
-                    } else {
-                        break;
-                    }
-                }
-                // Extract the ingredients
-                const ingredientsStartIndex = steps.length * 2 + 1; // Use the array length directly
-                const ingredients = parts.slice(ingredientsStartIndex);
-
-                // Output the results
-                console.log(introduction);
-                console.log(steps);
-                console.log(ingredients);
-                setRecipeInfo({
-                    ...location.state.item,
-                    ...data,
-                    introduction,
-                    steps,
-                    ingredients
-                });
-            })
-    }, [location]);
     return (
         <div>
             <div 
@@ -132,7 +123,7 @@ const RecipeDetails = () => {
 
                         <div className="border-dashed border-2 border-blue-400 p-6 rounded-lg bg-white shadow-md mt-5">
                             <ul className="list-none space-y-2">
-                                {recipeInfo.ingredients.map((ingredient, index) => (
+                                {recipeInfo.ingredientsArr && recipeInfo.ingredientsArr.map((ingredient, index) => (
                                     <li key={index}>
                                         - {ingredient}{" "}
                                         <span className="bg-blue-100 text-blue-600 px-2 py-1 rounded-full text-xs ml-2 text-center">

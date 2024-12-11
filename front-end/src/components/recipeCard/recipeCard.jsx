@@ -3,15 +3,36 @@ import { motion } from 'framer-motion';
 
 import SaveButton from './saveButton';
 import Rating from '../layout/rating';
-import Picture from '../../assets/icons/picture.png';
 import ClockIcon from '../../assets/icons/clock.png';
 import CommentIcon from '../../assets/icons/comment.png';
 import HeartIcon from '../../assets/icons/heart.png';
+import { useNavigate } from "react-router-dom";
 const RecipeCard = ({recipe}) => {
-    const [isClicked, setIsClicked] = useState(false);
-    const handleSaveRecipe = () => {
-        setIsClicked(!isClicked);
-    }
+    const idString = (_id) => {
+        return String(_id).toLowerCase().split(" ").join("");
+    };
+    const rootId = idString(recipe._id);
+
+    const navigate = useNavigate();
+    const [isSaveHovered, setIsSaveHovered] = useState(false);  // Track hover state
+    // Handle recipe details navigation
+    const handleRecipeDetails = () => {
+        if(!isSaveHovered) {
+            navigate(`/recipe/${rootId}`, {
+                state: {
+                    item: recipe,
+                },
+            });
+        }
+    };
+    const handleMouseEnter = () => {
+        setIsSaveHovered(true); // Set hover state to true when mouse enters
+    };
+
+    const handleMouseLeave = () => {
+        setIsSaveHovered(false); // Set hover state to false when mouse leaves
+    };
+    
     return (
         <motion.div
             whileHover={{
@@ -20,6 +41,7 @@ const RecipeCard = ({recipe}) => {
             }}
             whileTap={{ scale: 0.98 }}
             className="flex bg-white w-[260px] shadow-lg rounded-lg overflow-hidden cursor-pointer transition-all duration-300 ease-in-out"
+            onClick={handleRecipeDetails}
         >
             <div className="bg-white rounded-lg shadow w-[260px]">
                 <img src={recipe.photo} alt="Recipe Image" className="w-full h-40 object-cover rounded-tl-lg rounded-tr-lg mb-2"/>
@@ -34,7 +56,9 @@ const RecipeCard = ({recipe}) => {
                         <div className="bg-primary-100 rounded-full px-2 py-1 text-xs primary-color font-medium">
                             {recipe.duration} minutes
                         </div>
-                        <SaveButton isClicked={false}/>
+                        <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+                            <SaveButton isClicked={false} />
+                        </div>
                         
                     </span>
                     <span className="flex items-center mb-2">
