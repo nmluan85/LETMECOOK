@@ -56,7 +56,7 @@ const RecipeCard = ({recipe}) => {
                         <div className="bg-primary-100 rounded-full px-2 py-1 text-xs primary-color font-medium">
                             {recipe.duration} minutes
                         </div>
-                        <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+                        <div className="ml-auto" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
                             <SaveButton isClicked={false} />
                         </div>
                         
