@@ -1,6 +1,8 @@
 import React, {useState} from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from "react-router-dom";
+import { useAuth } from '../../contexts/AuthContext';
+import LoginModal from '../login/loginModal';
 
 import SaveButton from './saveButton';
 import Rating from '../layout/rating';
@@ -8,12 +10,18 @@ import Picture from '../../assets/icons/picture.png';
 import ClockIcon from '../../assets/icons/clock.png';
 import CommentIcon from '../../assets/icons/comment.png';
 import HeartIcon from '../../assets/icons/heart.png';
-const RecipeCard = ({recipe}) => {
+const RecipeCard = ({recipe, openLoginModal}) => {
+    const {isLoggedIn} = useAuth();
+    const [isLoginModalOpen, setLoginModalOpen] = useState(false);
+
     const [isClicked, setIsClicked] = useState(false);
     const [isSaveHovered, setIsSaveHovered] = useState(false);  // Track hover state
-    const navigate = useNavigate();
 
     const handleSaveRecipe = () => {
+        if (!isLoggedIn) {
+            console.log("Not logged in");
+            openLoginModal();
+        }
         setIsClicked(!isClicked);
     };
 
@@ -34,6 +42,10 @@ const RecipeCard = ({recipe}) => {
     const handleMouseLeave = () => {
         setIsSaveHovered(false); // Set hover state to false when mouse leaves
     };
+    const handleLoginSuccess = () => {
+        login();
+        setLoginModalOpen(false);
+    }
     return (
         <motion.div
             whileHover={{
@@ -58,7 +70,10 @@ const RecipeCard = ({recipe}) => {
                             {recipe.duration} minutes
                         </div>
                         <div className='ml-auto' onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}> 
-                            <SaveButton isClicked={false}/>
+                            <SaveButton 
+                                isClicked={false} 
+                                onClick={handleSaveRecipe}
+                            />
                         </div>
                         
                     </span>
@@ -83,6 +98,13 @@ const RecipeCard = ({recipe}) => {
                     </span>
                 </div>
             </div>
+       {isLoginModalOpen && (
+            <LoginModal 
+                onClose={() => setLoginModalOpen(false)}
+                onLoginSuccess = {handleLoginSuccess}
+
+            />
+        )} 
         </motion.div>
     )
 }
