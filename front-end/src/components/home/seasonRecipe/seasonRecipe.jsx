@@ -4,9 +4,9 @@ import RecipeCard from '../../recipeCard/recipeCard';
 import NextArrow from './NextArrow';
 import PrevArrow from './PrevArrow';
 
-const SeasonRecipe = () => {
+const SeasonRecipe = ({openLoginModal}) => {
     const [listPost, setListPost] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(true);   
     const [error, setError] = useState(null);
     useEffect(() =>{
         fetch('http://localhost:3000/api/posts/all')
@@ -78,7 +78,9 @@ const SeasonRecipe = () => {
             <Slider {...settings} className="ml-10 mr-10 mt-8 px-20">
                 {listPost.map((item, index) => (
                     <div className="pt-4 pb-6 pl-2 pr-2" key={index}>
-                        <RecipeCard recipe={item} />
+                        <RecipeCard 
+                            recipe={item} 
+                            openLoginModal={openLoginModal}/>
                     </div>
                 ))}
             </Slider>

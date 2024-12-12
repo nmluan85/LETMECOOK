@@ -3,34 +3,51 @@ import { useState, useEffect} from "react";
 import LoginBackground from "../../assets/login.png";
 import { IoMdClose } from "react-icons/io";
 import { FaGoogle } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext";
 
-const LoginModal = ({onClose}) => {
+const LoginModal = ({onClose, onLoginSuccess}) => {
+    const {login} = useAuth();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [responseMessage, setResponseMessage] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        fetch("http://localhost:3000/api/users/login", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ email, password }),
-        })
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
-                return response.json();
-            })
-            .then((data) => {
-                console.log("Success:", data);
-            })
-            .catch((error) => {
-                console.error("Error:", error.message);
+        setResponseMessage("");
+
+        if (!email || !password) {
+            setResponseMessage("Please fill in all fields");
+            return;
+        }
+        try {
+            setIsLoading(true);
+            const response = await fetch("http://localhost:3000/api/users/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ email, password }),
             });
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            const data = await response.json();
+            console.log(data);
+            if (data.message == "Login successful.") {
+                login();
+                setResponseMessage(data.message);
+                onLoginSuccess();
+                onClose();
+            }       
+            else {
+                setResponseMessage(data.message || "Login failed. Please try again.");
+            }
+        } catch (error) {
+            setResponseMessage(error.message || "An unexpected error occurred.");
+        } finally {
+            setIsLoading(false); // Stop loading
+        }
     }
     return (
         <div 
@@ -79,15 +96,24 @@ const LoginModal = ({onClose}) => {
                             />
                         </div>
 
+                        {responseMessage && (
+                            <p className="text-red-500 text-sm mb-4">{responseMessage}</p>
+                        )}
+
                         <button
                             type="submit"
-                            className="w-full bg-primary-500 text-white rounded-lg px-4 py-2 hover:bg-primary-600 transition mb-16"
+                            disabled={isLoading}
+                            className={`w-full text-white rounded-lg px-4 py-2 transition mb-16 ${
+                                isLoading
+                                    ? "bg-gray-400 cursor-not-allowed"
+                                    : "bg-primary-500 hover:bg-primary-600"
+                            }`}
                         >
-                            Continue
+                            {isLoading ? "Loading..." : "Continue"}
                         </button>
                     </form>
 
-                    <div className="mt-4 text-center">
+                    <div className="text-center mt-auto">
                         <p className="text-sm text-gray-500 mb-2">OR</p>
                         <p className="text-sm text-gray-500 mb-5 ml-10 mr-10">
                             By continuing, you agree to the update

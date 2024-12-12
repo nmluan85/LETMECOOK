@@ -3,12 +3,15 @@ import SearchIcon from '../../../assets/icons/search.png';
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import LoginModal from '../../login/loginModal';
+import { RiArchive2Line } from "react-icons/ri";
+import { useAuth } from '../../../contexts/AuthContext';
 
 const Header = () => {
     const navigate = useNavigate();
     const [searchTerm, setSearchTerm] = useState("");
     const [isLoginModalOpen, setLoginModalOpen] = useState(false);
 
+    const {isLoggedIn, login, logout} = useAuth();
     const handleSearchIconClick = () => {
         if (searchTerm.trim()) {
             navigate(`/search?query=${encodeURIComponent(searchTerm)}`);
@@ -20,24 +23,56 @@ const Header = () => {
             handleSearchIconClick();
         }
     };
+    const handleLoginClick = () => {
+        setLoginModalOpen(true);
+    }
+    const handleLogoutClick = () => {
+        logout();
+        setLoginModalOpen(false);
+    }
+    const handleLoginSuccess = () => {
+        login();
+        setLoginModalOpen(false);
+    }
+    const navOptions = [
+        { label: "What to cook", href: "#" },
+        { label: "Recipes", href: "#" },
+        { label: "Ingredients", href: "#" },
+        { label: "Nutrition tracking", href: "#" },
+        { label: "About Us", href: "#" },
+        ...(isLoggedIn
+            ? [
+                {   
+                    paddingX: "px-4",
+                    paddingY: "py-2",
+                    backgroundColor: "bg-primary-100",
+                    hoverBackgroundColor: "hover:bg-primary-150",
+                    rounded: "rounded-full",
+                    label: "Your Recipe Box",
+                    href: "#",
+                    icon: <RiArchive2Line className="inline-block text-primary-default" />,
+                },
+              ]
+            : []),
+    ];
 
     return (
         <div className="bg-white shadow w-full">
-            <div className="container mx-auto flex justify-between items-center py-4 px-6">
+            <div className="flex justify-between items-center py-4 px-6 w-full">
                 <Link to="/">
-                    <div className="flex items-center">
+                    <div className="flex items-center mr-5">
                         <img src={ChefIcon} alt="Logo" className="h-10 w-10 mr-2"/>
                         <span className="text-xl font-bold primary-color">LETMECOOK</span>
                     </div>
                 </Link>
-                <div className="flex items-center space-x-4">
-                    <div className="relative w-[450px]">
+                <div className="flex-grow max-w mx-4">
+                    <div className="relative w-full">
                         <input
                             type="text"
                             placeholder="What would you like to cook?"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            onKeyDown={handleKeyDown} // Add this event handler
+                            onKeyDown={handleKeyDown}
                             className="border bg-gray-200 rounded-full py-2 px-4 w-full pl-10"
                         />
                         <img
@@ -47,22 +82,48 @@ const Header = () => {
                             onClick={handleSearchIconClick}
                         />
                     </div>
-                    <nav className="space-x-4">
-                        <a href="#" className="text-gray-700">What to cook</a>
-                        <a href="#" className="text-gray-700">Recipes</a>
-                        <a href="#" className="text-gray-700">Ingredients</a>
-                        <a href="#" className="text-gray-700">Nutrition tracking</a>
-                        <a href="#" className="text-gray-700">About Us</a>
+                </div>
+                <div className="flex items-center space-x-4">
+                    <nav className="space-x-4 flex flex-wrap text-sm md:text-base">
+                        {navOptions.map((option, index) => (
+                            <a
+                                href={option.href}
+                                key={index}
+                                className={`flex items-center justify-center text-gray-700 truncate 
+                                    ${option.paddingX || ""} 
+                                    ${option.paddingY || ""} 
+                                    ${option.backgroundColor || ""} 
+                                    ${option.rounded || ""}
+                                    ${option.hoverBackgroundColor || ""}`}
+                            >
+                                {option.icon && option.icon}
+                                <span className="ml-1">{option.label}</span>
+                            </a>
+                        ))}
                     </nav>
-                    <button
-                        onClick={() => {setLoginModalOpen(true)}}
-                        className="bg-primary-default text-white font-medium py-2 px-4 rounded-full"
-                    >
-                        Login
-                    </button>
+                    {!isLoggedIn ? (
+                        <button
+                            onClick={() => handleLoginClick()}
+                            className="bg-primary-default text-white font-medium py-2 px-4 rounded-full"
+                        >
+                            Login
+                        </button>
+                    ) : (
+                        <button
+                            onClick={() => handleLogoutClick()}
+                            className="bg-gray-500 text-white font-medium py-2 px-4 rounded-full"
+                        >
+                            Logout
+                        </button>
+                    )}
                 </div>
             </div>
-            {isLoginModalOpen && <LoginModal onClose={() => setLoginModalOpen(false)} />}
+            {isLoginModalOpen && (
+                <LoginModal 
+                    onClose={() => setLoginModalOpen(false)}
+                    onLoginSuccess = {handleLoginSuccess} 
+                />
+            )}
         </div>
     );
 };
