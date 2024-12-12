@@ -1,6 +1,5 @@
 import React, { useEffect, useState }  from 'react';
 import TrendingCard from "./trending_card";
-import img1 from "../../assets/Strawberry-Shortcake-1.png"
 
 
 const TrendingDishes = () => {

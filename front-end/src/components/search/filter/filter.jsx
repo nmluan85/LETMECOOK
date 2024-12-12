@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Slider from 'react-slider';
 import './filter.css';
 
 const Filters = ({ onApplyFilters }) => {
@@ -19,8 +20,8 @@ const Filters = ({ onApplyFilters }) => {
         setType({ ...type, [e.target.name]: e.target.checked });
     };
 
-    const handleTimeChange = (e) => {
-        setTime({ ...time, [e.target.name]: parseInt(e.target.value, 10) });
+    const handleTimeChange = ([min, max]) => {
+        setTime({ min, max });
     };
 
     const handleRatingChange = (newRating) => {
@@ -63,22 +64,19 @@ const Filters = ({ onApplyFilters }) => {
 
             <div className="filter-group slider-group">
                 <h3>Time</h3>
-                <input
-                    type="range"
-                    min="0"
-                    max="120"
-                    name="min"
-                    value={time.min}
+                <Slider
+                    className="time-slider"
+                    thumbClassName="thumb"
+                    trackClassName={(index) => (index === 1 ? 'track track-1' : 'track')}
+                    min={0}
+                    max={120}
+                    value={[time.min, time.max]}
                     onChange={handleTimeChange}
+                    ariaLabel={['Minimum time', 'Maximum time']}
+                    ariaValuetext={(state) => `Time: ${state} minutes`}
+                    withTracks
                 />
-                <input
-                    type="range"
-                    min="0"
-                    max="120"
-                    name="max"
-                    value={time.max}
-                    onChange={handleTimeChange}
-                />
+
                 <div className="flex justify-between">
                     <span>{time.min} minutes</span>
                     <span>{time.max} minutes</span>

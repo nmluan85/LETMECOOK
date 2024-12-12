@@ -50,7 +50,7 @@ const searchPosts = async (req, res) => {
             searchCriteria.tags = { $all: tagArray }; // Use $all to match all tags
         }
 
-        const posts = await Post.find(searchCriteria);
+        const posts = await Post.find(searchCriteria).populate('author');
         res.status(200).json(posts);
     } catch (error) {
         console.error('Error searching posts:', error);

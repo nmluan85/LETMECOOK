@@ -96,7 +96,7 @@ const RecipeCard = ({recipe, openLoginModal}) => {
                             </div>
                             </div>
                             <div className="ml-auto flex items-center mr-4">
-                            <Rating />
+                                <Rating />
                             </div>
                         </div>
                     </span>

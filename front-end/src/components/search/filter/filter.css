@@ -86,3 +86,33 @@
     font-weight: bold;
     text-transform: uppercase;
 }
+
+.time-slider {
+    height: 5px; /* Line thickness */
+    background: #ddd; /* Default background color */
+    margin: 20px 0; /* Space around the slider */
+    border-radius: 3px; /* Rounded edges */
+    position: relative;
+}
+
+.thumb {
+    height: 20px; /* Thumb circle size */
+    width: 20px; /* Thumb circle size */
+    background-color: #007bff; /* Blue color for the thumb */
+    border: 2px solid #fff; /* White border for contrast */
+    border-radius: 50%; /* Make it a circle */
+    cursor: pointer; /* Show pointer cursor */
+    position: relative;
+    top: -8px; /* Adjust to align the center of the thumb with the track */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Optional: Add shadow for aesthetics */
+}
+
+.track {
+    height: 100%; /* Match the slider line height */
+    background: white; /* Default track color */
+    border-radius: 3px; /* Rounded edges */
+}
+
+.track.track-1 {
+    background: #007bff; /* Blue color for the selected range */
+}
