@@ -23,7 +23,6 @@ const postSchema = new mongoose.Schema({
     photo: {
         type: String 
     },
-    //???
     duration: {
         type: Number
     },
