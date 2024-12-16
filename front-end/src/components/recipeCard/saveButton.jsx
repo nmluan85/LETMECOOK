@@ -1,13 +1,18 @@
 import React, {useState} from 'react';
 import { FaRegBookmark } from "react-icons/fa6";
+import { useLoginModal } from '../../contexts/LoginModalContext';
 import { useAuth } from '../../contexts/AuthContext';
 
 const SaveButton = ({isClicked, onClick}) => {
     const {isLoggedIn} = useAuth();
     const [currentState, setIsClicked] = useState(isClicked);
+    const { isLoginModalOpen, openLoginModal, closeLoginModal } = useLoginModal();
     const handleSaveRecipe = () => {
-        setIsClicked(!currentState);
-        if (!onClick()){
+        if (!isLoggedIn) {
+            openLoginModal();
+        }
+        else {
+            setIsClicked(!currentState);
             onClick();
         }
     }

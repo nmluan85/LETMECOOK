@@ -68,7 +68,10 @@ const LoginModal = ({onClose, onLoginSuccess}) => {
                         <h2 className="text-3xl font-bold">Login</h2>
                         <IoMdClose
                             className="text-2xl text-gray-400 hover:text-gray-600 cursor-pointer transition"
-                            onClick={onClose}
+                            onClick={() => {
+                                console.log('close')
+                                onClose()}}
+                                
                         />
                     </div>
 
