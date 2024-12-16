@@ -10,7 +10,7 @@ import Picture from '../../assets/icons/picture.png';
 import ClockIcon from '../../assets/icons/clock.png';
 import CommentIcon from '../../assets/icons/comment.png';
 import HeartIcon from '../../assets/icons/heart.png';
-const RecipeCard = ({recipe, openLoginModal}) => {
+const RecipeCard = ({recipe}) => {
     const {isLoggedIn} = useAuth();
     const [isLoginModalOpen, setLoginModalOpen] = useState(false);
 
@@ -18,10 +18,6 @@ const RecipeCard = ({recipe, openLoginModal}) => {
     const [isSaveHovered, setIsSaveHovered] = useState(false);  // Track hover state
 
     const handleSaveRecipe = () => {
-        if (!isLoggedIn) {
-            console.log("Not logged in");
-            openLoginModal();
-        }
         setIsClicked(!isClicked);
     };
 
@@ -98,13 +94,6 @@ const RecipeCard = ({recipe, openLoginModal}) => {
                     </span>
                 </div>
             </div>
-       {isLoginModalOpen && (
-            <LoginModal 
-                onClose={() => setLoginModalOpen(false)}
-                onLoginSuccess = {handleLoginSuccess}
-
-            />
-        )} 
         </motion.div>
     )
 }
