@@ -6,10 +6,10 @@ import { useAuth } from '../../contexts/AuthContext';
 const SaveButton = ({isClicked, onClick}) => {
     const {isLoggedIn} = useAuth();
     const [currentState, setIsClicked] = useState(isClicked);
-    const { isLoginModalOpen, openLoginModal, closeLoginModal } = useLoginModal();
+    const {openLoginModal} = useLoginModal();
     const handleSaveRecipe = () => {
         if (!isLoggedIn) {
-            openLoginModal();
+            openLoginModal(true);
         }
         else {
             setIsClicked(!currentState);

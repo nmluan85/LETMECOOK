@@ -11,9 +11,6 @@ import ClockIcon from '../../assets/icons/clock.png';
 import CommentIcon from '../../assets/icons/comment.png';
 import HeartIcon from '../../assets/icons/heart.png';
 const RecipeCard = ({recipe}) => {
-    const {isLoggedIn} = useAuth();
-    const [isLoginModalOpen, setLoginModalOpen] = useState(false);
-
     const [isClicked, setIsClicked] = useState(false);
     const [isSaveHovered, setIsSaveHovered] = useState(false);  // Track hover state
 
@@ -38,10 +35,7 @@ const RecipeCard = ({recipe}) => {
     const handleMouseLeave = () => {
         setIsSaveHovered(false); // Set hover state to false when mouse leaves
     };
-    const handleLoginSuccess = () => {
-        login();
-        setLoginModalOpen(false);
-    }
+
     return (
         <motion.div
             whileHover={{

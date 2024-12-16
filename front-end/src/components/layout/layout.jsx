@@ -8,10 +8,11 @@ import LoginModal from "../login/loginModal";
 import { useLoginModal } from "../../contexts/LoginModalContext";
 import { useAuth } from '../../contexts/AuthContext';
 const Layout = () => {
-    const { isLoginModalOpen, openLoginModal, closeLoginModal } = useLoginModal();
+    const { isLoginModalOpen, isLogin, openLoginModal, closeLoginModal } = useLoginModal();
     const { login } = useAuth();
-    const handleLoginSuccess = () => {
+    const handleSuccessLogin = () => {
         login();
+        closeLoginModal();
     };
     return (
         <div>
@@ -22,8 +23,9 @@ const Layout = () => {
             <Outlet />
             <Footer />
             {isLoginModalOpen && <LoginModal 
-                onClose={closeLoginModal} 
-                onLoginSuccess={handleLoginSuccess}/>}
+                isLogin={isLogin}
+                onClose={closeLoginModal}
+                onSuccess={handleSuccessLogin}/>}
         </div>
     );
 };
