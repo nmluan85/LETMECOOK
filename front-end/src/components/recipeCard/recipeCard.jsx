@@ -40,10 +40,7 @@ const RecipeCard = ({recipe}) => {
     const handleMouseLeave = () => {
         setIsSaveHovered(false); // Set hover state to false when mouse leaves
     };
-    const handleLoginSuccess = () => {
-        login();
-        setLoginModalOpen(false);
-    }
+
     return (
         <motion.div
             whileHover={{

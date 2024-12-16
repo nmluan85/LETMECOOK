@@ -4,7 +4,7 @@ import RecipeCard from '../../recipeCard/recipeCard';
 import NextArrow from './NextArrow';
 import PrevArrow from './PrevArrow';
 
-const SeasonRecipe = ({openLoginModal}) => {
+const SeasonRecipe = () => {
     const [listPost, setListPost] = useState([]);
     const [isLoading, setIsLoading] = useState(true);   
     const [error, setError] = useState(null);
@@ -79,8 +79,7 @@ const SeasonRecipe = ({openLoginModal}) => {
                 {listPost.map((item, index) => (
                     <div className="pt-4 pb-6 pl-2 pr-2" key={index}>
                         <RecipeCard 
-                            recipe={item} 
-                            openLoginModal={openLoginModal}/>
+                            recipe={item}/>
                     </div>
                 ))}
             </Slider>

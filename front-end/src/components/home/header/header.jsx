@@ -5,13 +5,14 @@ import { useState } from "react";
 import LoginModal from '../../login/loginModal';
 import { RiArchive2Line } from "react-icons/ri";
 import { useAuth } from '../../../contexts/AuthContext';
+import { useLoginModal } from '../../../contexts/LoginModalContext';
 
 const Header = () => {
     const navigate = useNavigate();
-    const [searchTerm, setSearchTerm] = useState("");
-    const [isLoginModalOpen, setLoginModalOpen] = useState(false);
-
+    const {openLoginModal, closeLoginModal} = useLoginModal();
     const {isLoggedIn, login, logout} = useAuth();
+    const [searchTerm, setSearchTerm] = useState("");
+
     const handleSearchIconClick = () => {
         if (searchTerm.trim()) {
             navigate(`/search?query=${encodeURIComponent(searchTerm)}`);
@@ -24,15 +25,18 @@ const Header = () => {
         }
     };
     const handleLoginClick = () => {
-        setLoginModalOpen(true);
+        openLoginModal(true);
+    }
+    const handleSignUpClick = () => {
+        openLoginModal(false);
     }
     const handleLogoutClick = () => {
         logout();
-        setLoginModalOpen(false);
+        closeLoginModal();
     }
     const handleLoginSuccess = () => {
         login();
-        setLoginModalOpen(false);
+        closeLoginModal();
     }
     const navOptions = [
         { label: "What to cook", href: "#" },
@@ -102,12 +106,20 @@ const Header = () => {
                         ))}
                     </nav>
                     {!isLoggedIn ? (
-                        <button
-                            onClick={() => handleLoginClick()}
-                            className="bg-primary-default text-white font-medium py-2 px-4 rounded-full"
-                        >
-                            Login
-                        </button>
+                        <div>
+                            <button
+                                onClick={() => handleLoginClick()}
+                                className="bg-primary-default text-white font-medium py-2 px-4 rounded-md"
+                            >
+                                Log in
+                            </button>
+                            <button
+                                onClick={() => handleSignUpClick()}
+                                className="bg-primary-150 text-primary-default font-medium py-2 px-4 ml-2 rounded-md"
+                            >
+                                Sign up
+                            </button>
+                        </div>
                     ) : (
                         <button
                             onClick={() => handleLogoutClick()}
@@ -118,12 +130,6 @@ const Header = () => {
                     )}
                 </div>
             </div>
-            {isLoginModalOpen && (
-                <LoginModal 
-                    onClose={() => setLoginModalOpen(false)}
-                    onLoginSuccess = {handleLoginSuccess} 
-                />
-            )}
         </div>
     );
 };
