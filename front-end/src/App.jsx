@@ -23,9 +23,9 @@ const router = createBrowserRouter(
         <Route
             path="/profile"
             element={
-                <ProtectedRoute>
+                //<ProtectedRoute>
                     <Profile />
-                </ProtectedRoute>
+                //</ProtectedRoute>
             }
         />
         <Route path="/search" element={<Search />}></Route>

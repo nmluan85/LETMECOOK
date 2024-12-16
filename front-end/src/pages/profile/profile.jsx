@@ -3,6 +3,8 @@ import RecipeCard from '../../components/recipeCard/recipeCard';
 
 
 const Profile = () => {
+    const [activeButton, setActiveButton] = useState("My Recipes");
+
     const recipes = Array(8).fill({
         id: 1,
         name: "Recipe Name",
@@ -42,36 +44,50 @@ const Profile = () => {
                 </div>
 
                 <div className="flex items-center pt-6">
-                    <div className="w-1/9 bg-gray-200 text-blue-700 font-bold rounded-tl-xl rounded-tr-xl p-4">
-                        <p>My Recipes</p>
-                    </div>
-                    <div className="ml-4">
-                        <p>Saved Recipe</p>
-                    </div>
+                    <span
+                        className={`cursor-pointer ${
+                        activeButton === "My Recipes"
+                            ? "bg-gray-200 text-blue-700 font-bold rounded-tl-xl rounded-tr-xl p-3"
+                            : "ml-2 text-gray-700 p-3"
+                        }`}
+                        onClick={() => setActiveButton("My Recipes")}
+                    >
+                        My Recipes
+                    </span>
+                    <span
+                        className={`cursor-pointer ${
+                        activeButton === "Saved Recipe"
+                            ? "bg-gray-200 text-blue-700 font-bold rounded-tl-xl rounded-tr-xl p-3"
+                            : "ml-2 text-gray-700 p-3"
+                        }`}
+                        onClick={() => setActiveButton("Saved Recipe")}
+                    >
+                        Saved Recipe
+                    </span>
                 </div>
                 <hr className="border-t border-gray-300" />
                 <div className="grid grid-cols-4 gap-4 gap-y-8 pt-6 pb-6">
                     {recipes.map((item, index) => (
                         <div className="w-full sm:w-1/2 lg:w-1/4" key={index}>
-                        <RecipeCard item = {item} />
+                        {/*<RecipeCard item = {item} />*/}
                         </div>
                     ))}
                 </div>
-                <div class="flex justify-end items-center space-x-2 pr-6 pb-6">
-                    <button class="p-2 rounded-full hover:bg-gray-300">
+                <div className="flex justify-end items-center space-x-2 pr-6 pb-6">
+                    <button className="p-2 rounded-full hover:bg-gray-300">
                         &lt;
                     </button>
 
                     <div class="flex space-x-2">
-                        <button class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
+                        <button className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
                         1
                         </button>
-                        <button class="px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300">2</button>
-                        <button class="px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300">3</button>
-                        <button class="px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300">4</button>
+                        <button className="px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300">2</button>
+                        <button className="px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300">3</button>
+                        <button className="px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300">4</button>
                     </div>
 
-                    <button class="p-2 rounded-full hover:bg-gray-300">
+                    <button className="p-2 rounded-full hover:bg-gray-300">
                         &gt;
                     </button>
                 </div>
