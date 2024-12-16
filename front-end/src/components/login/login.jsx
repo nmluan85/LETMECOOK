@@ -2,7 +2,7 @@ import React from "react";
 import { useState, useEffect} from "react";
 import { useAuth } from "../../contexts/AuthContext";
 
-const Login = ({onSuccess}) => {
+const Login = ({onSuccess, changeState}) => {
     const {login} = useAuth();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -26,19 +26,15 @@ const Login = ({onSuccess}) => {
                 },
                 body: JSON.stringify({ email, password }),
             });
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
             const data = await response.json();
-            console.log(data);
-            if (data.message == "Login successful.") {
+            if (data.success) {
                 login();
                 setResponseMessage(data.message);
                 onSuccess();
                 onClose();
             }       
             else {
-                setResponseMessage(data.message || "Login failed. Please try again.");
+                setResponseMessage(data.message);
             }
         } catch (error) {
             setResponseMessage(error.message || "An unexpected error occurred.");
@@ -78,7 +74,7 @@ const Login = ({onSuccess}) => {
             <button
                 type="submit"
                 disabled={isLoading}
-                className={`w-full text-white rounded-lg px-4 py-2 transition mb-16 ${
+                className={`w-full text-white rounded-lg px-4 py-2 transition ${
                     isLoading
                         ? "bg-gray-400 cursor-not-allowed"
                         : "bg-primary-500 hover:bg-primary-600"
@@ -86,6 +82,13 @@ const Login = ({onSuccess}) => {
             >
                 {isLoading ? "Loading..." : "Continue"}
             </button>
+            <p className="text-sm text-gray-500 mt-4 mb-14">
+                Don't have an account? 
+                <span 
+                    className="font-bold text-primary-default hover:text-primary-800 cursor-pointer"
+                    onClick={changeState}
+                > Sign up now</span>
+            </p>
         </form>
     )
 }

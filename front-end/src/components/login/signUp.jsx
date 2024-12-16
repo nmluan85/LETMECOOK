@@ -2,7 +2,7 @@ import React from "react";
 import { useState, useEffect} from "react";
 import { useAuth } from "../../contexts/AuthContext";
 
-const SignUp = ({onSuccess}) => {
+const SignUp = ({onSuccess, changeState}) => {
     const {login} = useAuth();
     const [email, setEmail] = useState("");
     const [username, setUsername] = useState(""); 
@@ -30,16 +30,13 @@ const SignUp = ({onSuccess}) => {
                 },
                 body: JSON.stringify({ username, email, password, repeatPassword }),
             });
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
             const data = await response.json();
             console.log(data);
             if (data.success) {
                 setIsVerify(true);
             }
             else {
-                setResponseMessage(data.message || "Login failed. Please try again.");
+                setResponseMessage(data.message);
             }
         } catch (error) {
             setResponseMessage(error.message || "An unexpected error occurred.");
@@ -143,6 +140,13 @@ const SignUp = ({onSuccess}) => {
             >
                 {isLoading ? "Loading..." : "Continue"}
             </button>
+            <p className="text-sm text-gray-500 mt-4 mb-10">
+                Already have an account?
+                <span 
+                    className="font-bold text-primary-default hover:text-primary-800 cursor-pointer"
+                    onClick={changeState}
+                > Log in</span>
+            </p>
         </form>
         ) : (
             <form onSubmit={handleSubmitVerify}>

@@ -8,7 +8,8 @@ import SignUp from "./signUp";
 import { useAuth } from "../../contexts/AuthContext";
 
 const LoginModal = ({isLogin, onClose, onSuccess}) => {
-    const { login } = useAuth();
+    const [currentState, setCurrentState] = useState(isLogin);
+
     return (
         <div 
             className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
@@ -25,7 +26,7 @@ const LoginModal = ({isLogin, onClose, onSuccess}) => {
 
                 <div className="w-3/5 p-6 flex flex-col">
                     <div className="flex justify-between items-center mb-6">
-                        <h2 className="text-3xl font-bold">{isLogin ? 'Log in' : 'Sign up'}</h2>
+                        <h2 className="text-3xl font-bold text-primary-default">{currentState ? 'Log in' : 'Sign up'}</h2>
                         <IoMdClose
                             className="text-2xl text-gray-400 hover:text-gray-600 cursor-pointer transition"
                             onClick={onClose}     
@@ -33,10 +34,16 @@ const LoginModal = ({isLogin, onClose, onSuccess}) => {
                     </div>
 
                     <div className="flex-grow">
-                        {isLogin ? (
-                            <Login onSuccess = {onSuccess} />
+                        {currentState ? (
+                            <Login 
+                                onSuccess = {onSuccess} 
+                                changeState={() => setCurrentState(!currentState)}
+                            />
                         ) : (
-                            <SignUp onSuccess = {onSuccess} />
+                            <SignUp 
+                                onSuccess = {onSuccess} 
+                                changeState={() => setCurrentState(!currentState)}
+                            />
                         )}
                     </div>
 
