@@ -1,31 +1,18 @@
 import React, { useState } from "react";
 import { useAuth } from "../../../contexts/AuthContext";
-import LoginModal from "../../../components/login/loginModal";
+import { useLoginModal } from "../../../contexts/LoginModalContext";
+import { Navigate} from "react-router-dom";
 
-const ProtectedRoute = ({ children }) => {
-  const {isLoggedIn, login} = useAuth();
-  const [isLoginModalOpen, setLoginModalOpen] = useState(false);
-
-  const handleLoginSuccess = () => {
-    login();
-    setLoginModalOpen(false); 
-  };
-
-  if (!isLoggedIn) {
-    setLoginModalOpen(true);
-    return (
-      <>
-        {isLoginModalOpen && (
-          <LoginModal
-            onClose={() => setLoginModalOpen(false)}
-            onLoginSuccess={handleLoginSuccess}
-          />
-        )}
-      </>
-    );
-  }
-
-  return children;
+const ProtectedRoute = ({children, roles}) => {
+    const {isLoggedIn, role} = useAuth();
+    const {openLoginModal} = useLoginModal();
+    if (!isLoggedIn){
+        openLoginModal(true);
+    }
+    if (!roles.includes(role)){
+        // Update preimum role
+        return <Navigate to="/" />;
+    }
+    return children;
 };
-
 export default ProtectedRoute;

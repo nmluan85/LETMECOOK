@@ -34,6 +34,14 @@ const Header = () => {
         logout();
         closeLoginModal();
     }
+    const handleNutritionClick = () => {
+        if (isLoggedIn) {
+            navigate("/nutrition");
+        }
+        else {
+            openLoginModal(true);
+        }
+    }
     const handleLoginSuccess = () => {
         login();
         closeLoginModal();
@@ -42,7 +50,7 @@ const Header = () => {
         { label: "What to cook", href: "#" },
         { label: "Recipes", href: "#" },
         { label: "Ingredients", href: "#" },
-        { label: "Nutrition tracking", href: "#" },
+        { label: "Nutrition tracking", onClick: () => handleNutritionClick() },
         { label: "About Us", href: "#" },
         ...(isLoggedIn
             ? [
@@ -53,7 +61,7 @@ const Header = () => {
                     hoverBackgroundColor: "hover:bg-primary-150",
                     rounded: "rounded-full",
                     label: "Your Recipe Box",
-                    href: "#",
+                    href: "/profile",
                     icon: <RiArchive2Line className="inline-block text-primary-default" />,
                 },
               ]
@@ -93,7 +101,8 @@ const Header = () => {
                             <a
                                 href={option.href}
                                 key={index}
-                                className={`flex items-center justify-center text-gray-700 truncate 
+                                onClick={option.onClick}
+                                className={`flex items-center justify-center text-gray-700 truncate cursor-pointer transition
                                     ${option.paddingX || ""} 
                                     ${option.paddingY || ""} 
                                     ${option.backgroundColor || ""} 

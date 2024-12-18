@@ -9,9 +9,10 @@ import { useLoginModal } from "../../contexts/LoginModalContext";
 import { useAuth } from '../../contexts/AuthContext';
 const Layout = () => {
     const { isLoginModalOpen, isLogin, openLoginModal, closeLoginModal } = useLoginModal();
-    const { login } = useAuth();
+    const { login, setRole} = useAuth();
     const handleSuccessLogin = () => {
         login();
+        setRole('user');
         closeLoginModal();
     };
     return (

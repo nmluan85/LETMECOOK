@@ -28,10 +28,11 @@ const Login = ({onSuccess, changeState}) => {
             });
             const data = await response.json();
             if (data.success) {
-                login();
-                setResponseMessage(data.message);
-                onSuccess();
-                onClose();
+                window.location.reload();
+                // login();
+                // setResponseMessage(data.message);
+                // onSuccess();
+                // onClose();
             }       
             else {
                 setResponseMessage(data.message);

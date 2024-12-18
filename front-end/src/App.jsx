@@ -23,12 +23,17 @@ const router = createBrowserRouter(
         <Route
             path="/profile"
             element={
-                <ProtectedRoute>
+              <Profile />
+            }
+        />
+        <Route path="/search" element={<Search />}></Route>
+        <Route path="/nutrition"
+            element={
+                <ProtectedRoute roles={["premium"]}>
                     <Profile />
                 </ProtectedRoute>
             }
         />
-        <Route path="/search" element={<Search />}></Route>
       </Route>
     </Route>
   )
