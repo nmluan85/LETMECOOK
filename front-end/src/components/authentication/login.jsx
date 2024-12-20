@@ -1,9 +1,11 @@
 import React from "react";
 import { useState, useEffect} from "react";
 import { useAuth } from "../../contexts/AuthContext";
+import { useLoginModal } from "../../contexts/LoginModalContext";
 
 const Login = ({onSuccess, changeState}) => {
-    const {login} = useAuth();
+    const {login, setRole} = useAuth();
+    const {closeLoginModal} = useLoginModal();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [responseMessage, setResponseMessage] = useState("");
@@ -25,13 +27,15 @@ const Login = ({onSuccess, changeState}) => {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({ email, password }),
+                credentials: 'include',
             });
             const data = await response.json();
             if (data.success) {
-                window.location.reload();
-                // login();
-                // setResponseMessage(data.message);
-                // onSuccess();
+                // window.location.reload();
+                login();
+                setRole(data.role);
+                closeLoginModal();
+                // setRole(data.role);
                 // onClose();
             }       
             else {

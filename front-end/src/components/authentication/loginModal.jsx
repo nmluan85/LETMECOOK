@@ -5,9 +5,8 @@ import { IoMdClose } from "react-icons/io";
 import { FaGoogle } from "react-icons/fa";
 import Login from "./login"; 
 import SignUp from "./signUp";
-import { useAuth } from "../../contexts/AuthContext";
 
-const LoginModal = ({isLogin, onClose, onSuccess}) => {
+const LoginModal = ({isLogin, onClose}) => {
     const [currentState, setCurrentState] = useState(isLogin);
     
     return (
@@ -36,12 +35,12 @@ const LoginModal = ({isLogin, onClose, onSuccess}) => {
                     <div className="flex-grow">
                         {currentState ? (
                             <Login 
-                                onSuccess = {onSuccess} 
+                                // onSuccess = {onSuccess} 
                                 changeState={() => setCurrentState(!currentState)}
                             />
                         ) : (
                             <SignUp 
-                                onSuccess = {onSuccess} 
+                                // onSuccess = {onSuccess} 
                                 changeState={() => setCurrentState(!currentState)}
                             />
                         )}

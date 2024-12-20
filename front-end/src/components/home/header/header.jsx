@@ -2,7 +2,7 @@ import ChefIcon from '../../../assets/icons/chef.png';
 import SearchIcon from '../../../assets/icons/search.png';
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import LoginModal from '../../login/loginModal';
+import LoginModal from '../../authentication/loginModal';
 import { RiArchive2Line } from "react-icons/ri";
 import { useAuth } from '../../../contexts/AuthContext';
 import { useLoginModal } from '../../../contexts/LoginModalContext';
@@ -43,7 +43,7 @@ const Header = () => {
         }
     }
     const handleLoginSuccess = () => {
-        login();
+        // login();
         closeLoginModal();
     }
     const navOptions = [

@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from "react-router-dom";
 import { useAuth } from '../../contexts/AuthContext';
-import LoginModal from '../login/loginModal';
+import LoginModal from '../authentication/loginModal';
 
 import SaveButton from './saveButton';
 import Rating from '../layout/rating';
