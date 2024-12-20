@@ -3,8 +3,9 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [role, setRoleType] = useState("guest");
-    const login = () => {
+    const [user, setUser] = useState(null);
+    const login = (User) => {
+        setUser(User);
         setIsLoggedIn(true)
     };
     const logout = async () => {
@@ -19,6 +20,7 @@ export const AuthProvider = ({ children }) => {
             });
             const data = await response.json();
             if (data.success) {
+                setUser(null);
                 setIsLoggedIn(false)
             }       
             else {
@@ -30,8 +32,6 @@ export const AuthProvider = ({ children }) => {
             // setIsLoading(false); // Stop loading
         }
     };
-    const setRole = (role) => {setRoleType(role)};
-
     useEffect(() => {
         const verifyAuth = async () => {
             try {
@@ -44,9 +44,10 @@ export const AuthProvider = ({ children }) => {
                 });
                 const data = await response.json();
                 if (data.success) {
+                    setUser(data.user);
                     setIsLoggedIn(true);
-                    setRoleType(data.role);
                 } else {
+                    setUser(null);
                     setIsLoggedIn(false);
                 }
             } catch (error) {
@@ -58,7 +59,7 @@ export const AuthProvider = ({ children }) => {
         verifyAuth();
     }, []);
     return (
-        <AuthContext.Provider value={{ isLoggedIn, role, login, logout, setRole}}>
+        <AuthContext.Provider value={{ isLoggedIn, user, login, logout}}>
             {children}
         </AuthContext.Provider>
     );

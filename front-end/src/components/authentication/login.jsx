@@ -4,7 +4,7 @@ import { useAuth } from "../../contexts/AuthContext";
 import { useLoginModal } from "../../contexts/LoginModalContext";
 
 const Login = ({onSuccess, changeState}) => {
-    const {login, setRole} = useAuth();
+    const {login} = useAuth();
     const {closeLoginModal} = useLoginModal();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -32,11 +32,8 @@ const Login = ({onSuccess, changeState}) => {
             const data = await response.json();
             if (data.success) {
                 // window.location.reload();
-                login();
-                setRole(data.role);
+                login(data.user);
                 closeLoginModal();
-                // setRole(data.role);
-                // onClose();
             }       
             else {
                 setResponseMessage(data.message);

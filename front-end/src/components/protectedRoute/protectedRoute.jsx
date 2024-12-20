@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { useAuth } from "../../../contexts/AuthContext";
-import { useLoginModal } from "../../../contexts/LoginModalContext";
+import { useAuth } from "../../contexts/AuthContext";
+import { useLoginModal } from "../../contexts/LoginModalContext";
 import { Navigate} from "react-router-dom";
 
 const ProtectedRoute = ({children, roles}) => {

@@ -67,7 +67,7 @@ const SignUp = ({onSuccess, changeState}) => {
             const data = await response.json();
             console.log(data);
             if (data.success) {
-                // login();
+                login(data.user);
                 setResponseMessage(data.message);
                 onSuccess();
             }

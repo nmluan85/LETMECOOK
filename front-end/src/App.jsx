@@ -11,8 +11,10 @@ import { useState, useEffect } from 'react';
 import './App.css';
 import Home from './pages/home/home';
 import Profile from './pages/profile/profile';
-import ProtectedRoute from "./components/home/protectedRoute/protectedRoute";
+import ProtectedRoute from "./components/protectedRoute/protectedRoute";
 import { LoginModalProvider } from "./contexts/LoginModalContext";
+import { AuthProvider } from "./contexts/AuthContext";
+import ProfileModal from "./components/profile/profileModal";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -29,11 +31,12 @@ const router = createBrowserRouter(
         <Route path="/search" element={<Search />}></Route>
         <Route path="/nutrition"
             element={
-                <ProtectedRoute roles={["premium"]}>
+                // <ProtectedRoute roles={["premium"]}>
                     <Profile />
-                </ProtectedRoute>
+                // </ProtectedRoute>
             }
         />
+        <Route path="profile1" element={<ProfileModal/>}/>
       </Route>
     </Route>
   )
@@ -42,9 +45,11 @@ const router = createBrowserRouter(
 function App() {
   const [count, setCount] = useState(0);
   return (
-    <LoginModalProvider>
-      <RouterProvider router={router} />
-    </LoginModalProvider>
+    <AuthProvider>
+      <LoginModalProvider>
+        <RouterProvider router={router} />
+      </LoginModalProvider>
+    </AuthProvider>
   );
 }
 export default App;

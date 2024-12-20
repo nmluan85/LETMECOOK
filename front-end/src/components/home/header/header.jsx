@@ -1,24 +1,30 @@
 import ChefIcon from '../../../assets/icons/chef.png';
 import SearchIcon from '../../../assets/icons/search.png';
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
-import LoginModal from '../../authentication/loginModal';
+import { useState, useEffect } from "react";
 import { RiArchive2Line } from "react-icons/ri";
 import { useAuth } from '../../../contexts/AuthContext';
 import { useLoginModal } from '../../../contexts/LoginModalContext';
-
+import ProfileModal from '../../profile/profileModal';
 const Header = () => {
     const navigate = useNavigate();
     const {openLoginModal, closeLoginModal} = useLoginModal();
-    const {isLoggedIn, login, logout} = useAuth();
+    const [isExpanded, setIsExpanded] = useState(false);
+    const {isLoggedIn, user, login, logout} = useAuth();
     const [searchTerm, setSearchTerm] = useState("");
-
+    const [avatar, setAvatar] = useState(
+        "https://storage.googleapis.com/a1aa/image/LfeF62dMscvPXUwP7Wxy4tP0kj4t1fAVP6LnZtZTyuS0VuvnA.jpg"
+    );
+    useEffect(() => {
+        if (user) {
+            setAvatar(user.avatar);
+        }
+    }, [user]);
     const handleSearchIconClick = () => {
         if (searchTerm.trim()) {
             navigate(`/search?query=${encodeURIComponent(searchTerm)}`);
         }
     };
-
     const handleKeyDown = (e) => {
         if (e.key === "Enter") {
             handleSearchIconClick();
@@ -30,10 +36,6 @@ const Header = () => {
     const handleSignUpClick = () => {
         openLoginModal(false);
     }
-    const handleLogoutClick = () => {
-        logout();
-        closeLoginModal();
-    }
     const handleNutritionClick = () => {
         if (isLoggedIn) {
             navigate("/nutrition");
@@ -42,9 +44,8 @@ const Header = () => {
             openLoginModal(true);
         }
     }
-    const handleLoginSuccess = () => {
-        // login();
-        closeLoginModal();
+    const handleExpandProfileMenu = () => {
+        setIsExpanded(!isExpanded);
     }
     const navOptions = [
         { label: "What to cook", href: "#" },
@@ -64,10 +65,17 @@ const Header = () => {
                     href: "/profile",
                     icon: <RiArchive2Line className="inline-block text-primary-default" />,
                 },
+                {
+                    rounded: "rounded-full",
+                    src: avatar,
+                    height: "h-10",
+                    width: "w-10",
+                    mright: "mr-2",
+                    onClick: () => handleExpandProfileMenu()
+                }
               ]
             : []),
     ];
-
     return (
         <div className="bg-white shadow w-full">
             <div className="flex justify-between items-center py-4 px-6 w-full">
@@ -109,6 +117,13 @@ const Header = () => {
                                     ${option.rounded || ""}
                                     ${option.hoverBackgroundColor || ""}`}
                             >
+                                {option.src && (
+                                    <img
+                                        src={option.src}
+                                        alt={option.label || "icon"}
+                                        className={`h-10 w-10 rounded-full ${option.mright || ""}`}
+                                    />
+                                )}
                                 {option.icon && option.icon}
                                 <span className="ml-1">{option.label}</span>
                             </a>
@@ -129,16 +144,14 @@ const Header = () => {
                                 Sign up
                             </button>
                         </div>
-                    ) : (
-                        <button
-                            onClick={() => handleLogoutClick()}
-                            className="bg-gray-500 text-white font-medium py-2 px-4 rounded-full"
-                        >
-                            Logout
-                        </button>
-                    )}
+                    ) : null}
                 </div>
             </div>
+            {isExpanded && (
+                <div className="absolute top-20 right-2 bg-transparent shadow-lg rounded-md">
+                    <ProfileModal onComplete={() => {setIsExpanded(false)}}/>
+                </div>
+            )}
         </div>
     );
 };
