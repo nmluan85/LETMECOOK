@@ -107,7 +107,7 @@ const Profile = () => {
                 <div className="grid grid-cols-4 gap-4 gap-y-8 pt-6 pb-6">
                     {savedPosts.map((item, index) => (
                         <div className="w-full sm:w-1/2 lg:w-1/4" key={index}>
-                            {/* <RecipeCard recipe = {item} /> */}
+                            { <RecipeCard recipe = {item} isSaved = {true}/> }
                         </div>
                     ))}
                 </div>
