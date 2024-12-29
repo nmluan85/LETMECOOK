@@ -104,7 +104,7 @@ const SeasonRecipe = () => {
                     <div className="pt-4 pb-6 pl-2 pr-2" key={index}>
                         <RecipeCard 
                             recipe={item}
-                            isSaved={savedPosts.includes(item._id)}
+                            isSaved={savedPosts.some(savedPost => savedPost._id === item._id)}
                         />
                     </div>
                 ))}

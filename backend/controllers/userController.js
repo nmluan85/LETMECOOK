@@ -418,7 +418,9 @@ const deleteSavedPost = async (req, res) => {
 const getSavedPosts = async (req, res) => {
     try {
         const userId = req.userId; // Extracted from the token in middleware
-        const user = await User.findById(userId).select('savedPosts');
+        const user = await User.findById(userId)
+                            .select('savedPosts')
+                            .populate('savedPosts'); // Assuming savedPosts stores Post IDs;
 
         if (!user) {
             return res.status(404).json({ success: false, message: 'User not found.' });
@@ -428,6 +430,28 @@ const getSavedPosts = async (req, res) => {
     } catch (error) {
         console.error('Error fetching saved posts:', error);
         res.status(500).json({ success: false, message: 'Server error. Could not fetch saved posts.' });
+    }
+};
+
+const checkSavedPost = async (req, res) => {
+    try {
+        const userId = req.userId; // Extracted from the token in middleware
+        const postId = req.params.id; // Extracted from the route parameter
+
+        // Find the user and select only the savedPosts field
+        const user = await User.findById(userId).select('savedPosts');
+
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found.' });
+        }
+
+        // Check if the postId exists in savedPosts
+        const isSaved = user.savedPosts.some(savedPostId => savedPostId.toString() === postId);
+
+        res.status(200).json({ success: true, isSaved });
+    } catch (error) {
+        console.error('Error checking if post is saved:', error);
+        res.status(500).json({ success: false, message: 'Server error. Could not check post status.' });
     }
 };
 
@@ -443,5 +467,6 @@ export {
     checkAuth,
     savePostToUser,
     deleteSavedPost,
-    getSavedPosts
+    getSavedPosts,
+    checkSavedPost
 };
