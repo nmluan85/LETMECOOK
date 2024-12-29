@@ -17,6 +17,7 @@ const RecipeDetails = () => {
     });
 
     useEffect(() => {
+        console.log(location.state.item)
         const parts = location.state.item.content.split('\n');
         // Extract the introduction
         const introduction = parts[0];
@@ -35,7 +36,6 @@ const RecipeDetails = () => {
         // Extract the ingredients
         const ingredientsStartIndex = steps.length * 2 + 1; // Use the array length directly
         const ingredientsArr = parts.slice(ingredientsStartIndex);
-        console.log(ingredientsArr)
 
         // Output the results
         setRecipeInfo({
@@ -92,7 +92,7 @@ const RecipeDetails = () => {
                                     {recipeInfo.author?.username || 'Anonymous'}
                                 </h2>
                             </div>
-                            <SaveButton isClicked={false}/>
+                            <SaveButton recipeId={recipeInfo._id} isClicked={false} onClick={() => {}}/>
                         </div>
                         <div className="flex justify-between items-center mt-5">
                             <div className="mr-6 flex flex-col items-center">

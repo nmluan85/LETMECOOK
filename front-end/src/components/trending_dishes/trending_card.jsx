@@ -4,7 +4,7 @@ import SaveButton from "../recipeCard/saveButton";
 import Rating from "../layout/rating";
 import {useState} from 'react';
 
-const TrendingCard = ({recipe}) => {
+const TrendingCard = ({recipe, isSaved}) => {
     const idString = (_id) => {
         return String(_id).toLowerCase().split(" ").join("");
     };
@@ -54,7 +54,7 @@ const TrendingCard = ({recipe}) => {
                         </p>
                     </div>
                     <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
-                        <SaveButton isClicked={false} />
+                        <SaveButton recipeId={rootId} isClicked={isSaved} onClick={() => {}}/>
                     </div>
                 </div>
                 <div className="flex items-center mt-2">

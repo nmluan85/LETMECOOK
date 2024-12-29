@@ -46,7 +46,7 @@ const Profile = () => {
                         <p>My Recipes</p>
                     </div>
                     <div className="ml-4">
-                        <p>Saved Recipe</p>
+                        <p>Saved Recipes</p>
                     </div>
                 </div>
                 <hr className="border-t border-gray-300" />
