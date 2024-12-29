@@ -13,10 +13,42 @@ const RecipeDetails = () => {
         steps: [],
         img: "",
         authorAvatar: "",
-        ingredientsArr: []
+        ingredientsArr: [],
+        isSaved: false
     });
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
+        const fetchSavedStatus = async (postId) => {
+            try {
+                const response = await fetch(`http://localhost:3000/api/users/save-post/${postId}`, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    credentials: 'include', // Include cookies for authentication
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Error: ${response.status} - ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                if (data.success) {
+                    setRecipeInfo((prev) => ({
+                        ...prev,
+                        isSaved: data.isSaved
+                    }));
+                    setIsLoading(false);
+                }
+            } catch (error) {
+                console.error('Error checking if post is saved:', error);
+                setError(error.message);
+                setIsLoading(false);
+            }
+        };
+
         console.log(location.state.item)
         const parts = location.state.item.content.split('\n');
         // Extract the introduction
@@ -44,8 +76,18 @@ const RecipeDetails = () => {
             steps,
             ingredientsArr
         });
+
+        fetchSavedStatus(location.state.item._id);
+
         setPrevLocation(location.pathname);
     }, [location]);
+
+    if (isLoading) {
+        return <div>Loading...</div>;
+    }
+    if (error) {
+        return <div>Error: {error}</div>;
+    }
 
     return (
         <div>
@@ -92,7 +134,7 @@ const RecipeDetails = () => {
                                     {recipeInfo.author?.username || 'Anonymous'}
                                 </h2>
                             </div>
-                            <SaveButton recipeId={recipeInfo._id} isClicked={false} onClick={() => {}}/>
+                            <SaveButton recipeId={recipeInfo._id} isClicked={recipeInfo.isSaved} onClick={() => {}}/>
                         </div>
                         <div className="flex justify-between items-center mt-5">
                             <div className="mr-6 flex flex-col items-center">

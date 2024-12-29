@@ -72,7 +72,9 @@ const TrendingDishes = () => {
             <div className="ml-40 mr-40 grid grid-cols-1 md:grid-cols-2 gap-6 mt-8 mx-4">
                 {listPost.map((item, index) => (
                     <div key={index}>
-                        <TrendingCard recipe={item} isSaved={savedPosts.includes(item._id)} />
+                        <TrendingCard 
+                            recipe={item} 
+                            isSaved={savedPosts.some(savedPost => savedPost._id === item._id)} />
                     </div>
                 ))}
             </div>
