@@ -31,7 +31,11 @@ const userSchema = new mongoose.Schema({
     verificationToken: { type: String },
     verificationTokenExpiry: { type: Date },
     resetPasswordToken: { type: String },
-    resetPasswordTokenExpiry: { type: Date }
+    resetPasswordTokenExpiry: { type: Date },
+    savedPosts: [{ 
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: 'Post' // Reference to the Post model
+    }]
 }, { timestamps: true});
 
 const User = mongoose.models.User || mongoose.model('User', userSchema);    

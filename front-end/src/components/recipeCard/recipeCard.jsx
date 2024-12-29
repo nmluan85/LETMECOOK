@@ -9,7 +9,7 @@ import Rating from '../layout/rating';
 import ClockIcon from '../../assets/icons/clock.png';
 import CommentIcon from '../../assets/icons/comment.png';
 import HeartIcon from '../../assets/icons/heart.png';
-const RecipeCard = ({recipe}) => {
+const RecipeCard = ({recipe, isSaved}) => {
     const idString = (_id) => {
         return String(_id).toLowerCase().split(" ").join("");
     };
@@ -65,8 +65,9 @@ const RecipeCard = ({recipe}) => {
                             {recipe.duration} minutes
                         </div>
                         <div className='ml-auto' onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}> 
-                            <SaveButton 
-                                isClicked={false} 
+                            <SaveButton
+                                recipeId={rootId}
+                                isClicked={isSaved} 
                                 onClick={handleSaveRecipe}
                             />
                         </div>
