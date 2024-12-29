@@ -1,44 +1,57 @@
 import ChefIcon from '../../../assets/icons/chef.png';
 import SearchIcon from '../../../assets/icons/search.png';
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
-import LoginModal from '../../login/loginModal';
+import { useState, useEffect } from "react";
 import { RiArchive2Line } from "react-icons/ri";
 import { useAuth } from '../../../contexts/AuthContext';
-
+import { useLoginModal } from '../../../contexts/LoginModalContext';
+import ProfileModal from '../../profile/profileModal';
 const Header = () => {
     const navigate = useNavigate();
+    const {openLoginModal, closeLoginModal} = useLoginModal();
+    const [isExpanded, setIsExpanded] = useState(false);
+    const {isLoggedIn, user, login, logout} = useAuth();
     const [searchTerm, setSearchTerm] = useState("");
-    const [isLoginModalOpen, setLoginModalOpen] = useState(false);
-
-    const {isLoggedIn, login, logout} = useAuth();
+    const [avatar, setAvatar] = useState(
+        "https://storage.googleapis.com/a1aa/image/LfeF62dMscvPXUwP7Wxy4tP0kj4t1fAVP6LnZtZTyuS0VuvnA.jpg"
+    );
+    useEffect(() => {
+        if (user) {
+            setAvatar(user.avatar);
+        }
+    }, [user]);
     const handleSearchIconClick = () => {
         if (searchTerm.trim()) {
             navigate(`/search?query=${encodeURIComponent(searchTerm)}`);
         }
     };
-
     const handleKeyDown = (e) => {
         if (e.key === "Enter") {
             handleSearchIconClick();
         }
     };
     const handleLoginClick = () => {
-        setLoginModalOpen(true);
+        openLoginModal(true);
     }
-    const handleLogoutClick = () => {
-        logout();
-        setLoginModalOpen(false);
+    const handleSignUpClick = () => {
+        openLoginModal(false);
     }
-    const handleLoginSuccess = () => {
-        login();
-        setLoginModalOpen(false);
+    const handleNutritionClick = () => {
+        if (isLoggedIn) {
+            navigate("/nutrition");
+        }
+        else {
+            openLoginModal(true);
+        }
+    }
+    const handleExpandProfileMenu = () => {
+        setIsExpanded(!isExpanded);
     }
     const navOptions = [
         { label: "What to cook", href: "#" },
         { label: "Recipes", href: "#" },
         { label: "Ingredients", href: "#" },
-        { label: "Nutrition tracking", href: "#" },
+        { label: "Nutrition tracking", onClick: () => handleNutritionClick() },
         { label: "About Us", href: "#" },
         ...(isLoggedIn
             ? [
@@ -49,13 +62,20 @@ const Header = () => {
                     hoverBackgroundColor: "hover:bg-primary-150",
                     rounded: "rounded-full",
                     label: "Your Recipe Box",
-                    href: "#",
+                    href: "/profile",
                     icon: <RiArchive2Line className="inline-block text-primary-default" />,
                 },
+                {
+                    rounded: "rounded-full",
+                    src: avatar,
+                    height: "h-10",
+                    width: "w-10",
+                    mright: "mr-2",
+                    onClick: () => handleExpandProfileMenu()
+                }
               ]
             : []),
     ];
-
     return (
         <div className="bg-white shadow w-full">
             <div className="flex justify-between items-center py-4 px-6 w-full">
@@ -89,40 +109,48 @@ const Header = () => {
                             <a
                                 href={option.href}
                                 key={index}
-                                className={`flex items-center justify-center text-gray-700 truncate 
+                                onClick={option.onClick}
+                                className={`flex items-center justify-center text-gray-700 truncate cursor-pointer transition
                                     ${option.paddingX || ""} 
                                     ${option.paddingY || ""} 
                                     ${option.backgroundColor || ""} 
                                     ${option.rounded || ""}
                                     ${option.hoverBackgroundColor || ""}`}
                             >
+                                {option.src && (
+                                    <img
+                                        src={option.src}
+                                        alt={option.label || "icon"}
+                                        className={`h-10 w-10 rounded-full ${option.mright || ""}`}
+                                    />
+                                )}
                                 {option.icon && option.icon}
                                 <span className="ml-1">{option.label}</span>
                             </a>
                         ))}
                     </nav>
                     {!isLoggedIn ? (
-                        <button
-                            onClick={() => handleLoginClick()}
-                            className="bg-primary-default text-white font-medium py-2 px-4 rounded-full"
-                        >
-                            Login
-                        </button>
-                    ) : (
-                        <button
-                            onClick={() => handleLogoutClick()}
-                            className="bg-gray-500 text-white font-medium py-2 px-4 rounded-full"
-                        >
-                            Logout
-                        </button>
-                    )}
+                        <div>
+                            <button
+                                onClick={() => handleLoginClick()}
+                                className="bg-primary-default text-white font-medium py-2 px-4 rounded-md"
+                            >
+                                Log in
+                            </button>
+                            <button
+                                onClick={() => handleSignUpClick()}
+                                className="bg-primary-150 text-primary-default font-medium py-2 px-4 ml-2 rounded-md"
+                            >
+                                Sign up
+                            </button>
+                        </div>
+                    ) : null}
                 </div>
             </div>
-            {isLoginModalOpen && (
-                <LoginModal 
-                    onClose={() => setLoginModalOpen(false)}
-                    onLoginSuccess = {handleLoginSuccess} 
-                />
+            {isExpanded && (
+                <div className="absolute top-20 right-2 bg-transparent shadow-lg rounded-md">
+                    <ProfileModal onComplete={() => {setIsExpanded(false)}}/>
+                </div>
             )}
         </div>
     );

@@ -4,15 +4,12 @@ import {
 } from "react-router-dom";
 import Header from "../home/header/header";
 import Footer from "../home/footer/footer";
-import LoginModal from "../login/loginModal";
+import LoginModal from "../authentication/loginModal";
 import { useLoginModal } from "../../contexts/LoginModalContext";
 import { useAuth } from '../../contexts/AuthContext';
 const Layout = () => {
-    const { isLoginModalOpen, openLoginModal, closeLoginModal } = useLoginModal();
-    const { login } = useAuth();
-    const handleLoginSuccess = () => {
-        login();
-    };
+    const { isLoginModalOpen, isLogin, openLoginModal, closeLoginModal } = useLoginModal();
+
     return (
         <div>
             <header className="sticky top-0 z-50 bg-white shadow-md">
@@ -22,8 +19,8 @@ const Layout = () => {
             <Outlet />
             <Footer />
             {isLoginModalOpen && <LoginModal 
-                onClose={closeLoginModal} 
-                onLoginSuccess={handleLoginSuccess}/>}
+                isLogin={isLogin}
+                onClose={closeLoginModal}/>}
         </div>
     );
 };

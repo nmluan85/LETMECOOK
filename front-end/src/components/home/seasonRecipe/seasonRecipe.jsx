@@ -4,28 +4,52 @@ import RecipeCard from '../../recipeCard/recipeCard';
 import NextArrow from './NextArrow';
 import PrevArrow from './PrevArrow';
 
-const SeasonRecipe = ({openLoginModal}) => {
+const SeasonRecipe = () => {
     const [listPost, setListPost] = useState([]);
+    const [savedPosts, setSavedPosts] = useState([]);
     const [isLoading, setIsLoading] = useState(true);   
     const [error, setError] = useState(null);
-    useEffect(() =>{
+    useEffect(() => {
         fetch('http://localhost:3000/api/posts/all')
             .then(response => {
                 if (!response.ok) {
-                    throw new Error('Failed to fetch data');
+                    throw new Error('Failed to fetch all posts');
                 }
                 return response.json()
             })
             .then(data => {
-                console.log(data);
                 setListPost(data);
-                setIsLoading(false);
             })
             .catch(error => {
-                console.error('Error fetching posts:', error);
+                console.error('Error fetching all posts:', error);
                 setError(error.message);
                 setIsLoading(false);
             });
+    }, []);
+    useEffect(() => {
+        // Fetch saved posts
+        fetch('http://localhost:3000/api/users/save-post', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            credentials: 'include', // Include cookies for authentication
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to fetch saved posts');
+            }
+            return response.json()
+        })
+        .then(savedData => {
+            setSavedPosts(savedData.savedPosts);
+            setIsLoading(false);
+        })
+        .catch(error => {
+            console.error('Error fetching saved posts:', error);
+            setError(error.message);
+            setIsLoading(false);
+        });
     }, []);
     const settings = {
         infinite: false,
@@ -79,8 +103,9 @@ const SeasonRecipe = ({openLoginModal}) => {
                 {listPost.map((item, index) => (
                     <div className="pt-4 pb-6 pl-2 pr-2" key={index}>
                         <RecipeCard 
-                            recipe={item} 
-                            openLoginModal={openLoginModal}/>
+                            recipe={item}
+                            isSaved={savedPosts.includes(item._id)}
+                        />
                     </div>
                 ))}
             </Slider>
