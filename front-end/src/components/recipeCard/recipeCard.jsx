@@ -1,8 +1,6 @@
 import React, {useState} from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from "react-router-dom";
-import { useAuth } from '../../contexts/AuthContext';
-import LoginModal from '../authentication/loginModal';
 
 import SaveButton from './saveButton';
 import Rating from '../layout/rating';
@@ -15,7 +13,7 @@ const RecipeCard = ({recipe, isSaved}) => {
     };
     const rootId = idString(recipe._id);
 
-    const [isClicked, setIsClicked] = useState(false);
+    const [isClicked, setIsClicked] = useState(isSaved);
     const [isSaveHovered, setIsSaveHovered] = useState(false);  // Track hover state
 
     const handleSaveRecipe = () => {
@@ -29,6 +27,7 @@ const RecipeCard = ({recipe, isSaved}) => {
             navigate(`/recipe/${rootId}`, {
                 state: {
                     item: recipe,
+                    isSaved: isClicked,
                 },
             });
         }
