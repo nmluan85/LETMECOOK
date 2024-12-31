@@ -32,6 +32,7 @@ const Profile = () => {
                 setError(error.message);
                 setIsLoading(false);
             });
+            console.log(savedPosts);
     }, []);
     if (isLoading) {
         return <div>Loading...</div>;
@@ -39,7 +40,6 @@ const Profile = () => {
     if (error) {
         return <div>Error: {error}</div>;
     }
-    console.log(savedPosts)
     return (
         <div>
             <div className="bg-white text-black w-full max-w-4xl p-4 rounded-lg flex items-center justify-between ml-20">
