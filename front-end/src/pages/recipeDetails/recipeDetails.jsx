@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import { FaRegThumbsUp, FaStar } from "react-icons/fa"
+import { FaStar } from "react-icons/fa"
 import SaveButton from "../../components/recipeCard/saveButton";
+import ReactionButton from "../../components/recipeDetails/ReactionPicker";
+import CommentSection from "../../components/recipeDetails/commentSection";
 
 const RecipeDetails = () => {
     const location = useLocation();
@@ -11,10 +13,43 @@ const RecipeDetails = () => {
         steps: [],
         img: "",
         authorAvatar: "",
-        ingredientsArr: []
+        ingredientsArr: [],
+        isSaved: false
     });
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
+        const fetchSavedStatus = async (postId) => {
+            try {
+                const response = await fetch(`http://localhost:3000/api/users/save-post/${postId}`, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    credentials: 'include', // Include cookies for authentication
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Error: ${response.status} - ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                if (data.success) {
+                    setRecipeInfo((prev) => ({
+                        ...prev,
+                        isSaved: data.isSaved
+                    }));
+                    setIsLoading(false);
+                }
+            } catch (error) {
+                console.error('Error checking if post is saved:', error);
+                setError(error.message);
+                setIsLoading(false);
+            }
+        };
+
+        console.log(location.state.item)
         const parts = location.state.item.content.split('\n');
         // Extract the introduction
         const introduction = parts[0];
@@ -33,7 +68,6 @@ const RecipeDetails = () => {
         // Extract the ingredients
         const ingredientsStartIndex = steps.length * 2 + 1; // Use the array length directly
         const ingredientsArr = parts.slice(ingredientsStartIndex);
-        console.log(ingredientsArr)
 
         // Output the results
         setRecipeInfo({
@@ -42,11 +76,22 @@ const RecipeDetails = () => {
             steps,
             ingredientsArr
         });
+
+        fetchSavedStatus(location.state.item._id);
+
         setPrevLocation(location.pathname);
     }, [location]);
 
+    if (isLoading) {
+        return <div>Loading...</div>;
+    }
+    if (error) {
+        return <div>Error: {error}</div>;
+    }
+
     return (
         <div>
+            {/* Breadcrumbs */}
             <div 
             className="bg-white text-black w-full max-w-4xl p-4 rounded-lg flex items-center justify-between ml-8">
                 <div className="flex items-center space-x-2">
@@ -62,6 +107,7 @@ const RecipeDetails = () => {
                 </div>
             </div>
 
+            {/* Recipe content */}
             <div className="flex">
                 {/* Left side */}
                 <div className="w-2/5 bg-white p-8">
@@ -70,10 +116,10 @@ const RecipeDetails = () => {
                             How to make a {recipeInfo.title}
                         </h1>
                         <p className="text-gray-700 mb-4">
-                            
+                            {recipeInfo.introduction}
                         </p>
                         <div className="flex items-center mb-6">
-                            <FaRegThumbsUp className="text-2xl cursor-pointer"/>
+                            <ReactionButton/>
                         </div>
                         <div className="bg-gray-100 p-4 rounded-lg flex items-center">
                             <img 
@@ -88,7 +134,7 @@ const RecipeDetails = () => {
                                     {recipeInfo.author?.username || 'Anonymous'}
                                 </h2>
                             </div>
-                            <SaveButton isClicked={false}/>
+                            <SaveButton recipeId={recipeInfo._id} isClicked={recipeInfo.isSaved} onClick={() => {}}/>
                         </div>
                         <div className="flex justify-between items-center mt-5">
                             <div className="mr-6 flex flex-col items-center">
@@ -96,7 +142,7 @@ const RecipeDetails = () => {
                                     Time:
                                 </p>
                                 <p className="text-lg font-semibold">
-                                    45 minutes
+                                    {recipeInfo.duration} minutes
                                 </p>
                             </div>
                             <div className="mr-6 flex flex-col items-center">
@@ -104,7 +150,7 @@ const RecipeDetails = () => {
                                     Comment
                                 </p>
                                 <p className="text-lg font-semibold">
-                                    12 comments
+                                    {recipeInfo.comments ? Object.keys(recipeInfo.comments).length : 0} comments
                                 </p>
                             </div>
                             <div className="mr-6 flex flex-col items-center">
@@ -158,6 +204,11 @@ const RecipeDetails = () => {
                         }
                     </div>
                 </div>
+            </div>
+
+            {/* Comment Section */}
+            <div className="w-full p-4">
+                <CommentSection />
             </div>
 
         </div>

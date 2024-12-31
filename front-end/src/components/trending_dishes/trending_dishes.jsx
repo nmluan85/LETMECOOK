@@ -4,13 +4,14 @@ import TrendingCard from "./trending_card";
 
 const TrendingDishes = () => {
     const [listPost, setListPost] = useState([]);
+    const [savedPosts, setSavedPosts] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     useEffect(() =>{
         fetch('http://localhost:3000/api/posts/all')
             .then(response => {
                 if (!response.ok) {
-                    throw new Error('Failed to fetch data');
+                    throw new Error('Failed to fetch all posts');
                 }
                 return response.json()
             })
@@ -23,10 +24,35 @@ const TrendingDishes = () => {
                 setIsLoading(false);
             })
             .catch(error => {
-                console.error('Error fetching posts:', error);
+                console.error('Error fetching all posts:', error);
                 setError(error.message);
                 setIsLoading(false);
             });
+    }, []);
+    useEffect(() => {
+        // Fetch saved posts
+        fetch('http://localhost:3000/api/users/save-post', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            credentials: 'include', // Include cookies for authentication
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to fetch saved posts');
+            }
+            return response.json()
+        })
+        .then(savedData => {
+            setSavedPosts(savedData.savedPosts);
+            setIsLoading(false);
+        })
+        .catch(error => {
+            console.error('Error fetching saved posts:', error);
+            setError(error.message);
+            setIsLoading(false);
+        });
     }, []);
     if (isLoading) {
         return <div>Loading...</div>;
@@ -46,7 +72,9 @@ const TrendingDishes = () => {
             <div className="ml-40 mr-40 grid grid-cols-1 md:grid-cols-2 gap-6 mt-8 mx-4">
                 {listPost.map((item, index) => (
                     <div key={index}>
-                        <TrendingCard recipe={item} />
+                        <TrendingCard 
+                            recipe={item} 
+                            isSaved={savedPosts.some(savedPost => savedPost._id === item._id)} />
                     </div>
                 ))}
             </div>

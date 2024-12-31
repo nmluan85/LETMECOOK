@@ -1,14 +1,36 @@
 import React, {useState} from 'react';
 import { FaRegBookmark } from "react-icons/fa6";
+import { useLoginModal } from '../../contexts/LoginModalContext';
 import { useAuth } from '../../contexts/AuthContext';
 
-const SaveButton = ({isClicked, onClick}) => {
+const SaveButton = ({recipeId ,isClicked, onClick}) => {
     const {isLoggedIn} = useAuth();
     const [currentState, setIsClicked] = useState(isClicked);
-    const handleSaveRecipe = () => {
-        setIsClicked(!currentState);
-        if (!onClick()){
-            onClick();
+    const {openLoginModal} = useLoginModal();
+    const handleSaveRecipe = async () => {
+        if (!isLoggedIn) {
+            openLoginModal(true);
+            return;
+        }
+        try {
+            const method = currentState ? 'DELETE' : 'POST';
+            const response = await fetch(`http://localhost:3000/api/users/save-post`, {
+                method: method,
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ postId: recipeId }), // Send the recipe/post ID
+                credentials: "include",
+            });
+
+            if (response.ok) { // Check if status code is in the 200-299 range
+                setIsClicked(!currentState); // Toggle the state
+                onClick(); // Trigger optional callback
+            } else {
+                console.error('Failed to save or remove post:', response.status);
+            }
+        } catch (error) {
+            console.error('Error saving recipe:', error.message);
         }
     }
     return (
