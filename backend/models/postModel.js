@@ -12,10 +12,29 @@ const postSchema = new mongoose.Schema({
     },
     title: { 
         type: String, 
-        required: true },
+        required: true
+    },
+    category: {
+        type: String,
+    },
+    area: {
+        type: String,
+    },
     content: { 
         type: String, 
         required: true 
+    },
+    contentIngredients: [
+        {
+            ingredient: {type: String},
+            measure: {type: String},
+        }
+    ],
+    video: {
+        type: String,
+    },
+    source: {
+        type: String,
     },
     tags: {
         type: [String]

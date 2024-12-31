@@ -9,7 +9,7 @@ const RecipeDetailsInfoSection = ({recipeInfo}) => {
                 How to make a {recipeInfo.item.title}
             </h1>
             <p className="text-gray-700 mb-4">
-                {recipeInfo.introduction}
+                This is a delicious dish.
             </p>
             <div className="flex items-center mb-6">
                 <ReactionButton/>
