@@ -21,36 +21,23 @@ const RecipeDetails = () => {
     useEffect(() => {
         console.log("Location state: ", location.state);
         const { item, isSaved } = location.state;
-        const parts = item.content.split('\n');
-        // Extract the introduction
-        const introduction = parts[0];
-        // Extract the steps
-        const steps = [];
-        let i = 1;
-        while (i < parts.length) {
-            const line = parts[i];
-            if (line.startsWith("Step")) {
-                steps.push(parts[i + 1]); // Add step content to the array
-                i += 2;
-            } else {
-                break;
-            }
-        }
-        // Extract the ingredients
-        const ingredientsStartIndex = steps.length * 2 + 1; // Use the array length directly
-        const ingredientsArr = parts.slice(ingredientsStartIndex);
-
+    
+        // Split the content into steps with delimiter \r\n
+        const steps = item.content.split('\r\n');
+    
+        // Extract the ingredients array from contentIngredients
+        const ingredientsArr = item.contentIngredients.map(({ ingredient, measure }) => `${measure} ${ingredient}`);
+    
         // Output the results
         setRecipeInfo({
             item,
-            introduction,
             steps,
             ingredientsArr,
             isSaved
         });
-
+    
         setIsLoading(false);
-
+    
         setPrevLocation(location.pathname);
     }, [location]);
 
