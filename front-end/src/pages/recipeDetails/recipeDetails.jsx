@@ -19,7 +19,6 @@ const RecipeDetails = () => {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        console.log("Location state: ", location.state);
         const { item, isSaved } = location.state;
     
         // Split the content into steps with delimiter \r\n
@@ -58,6 +57,20 @@ const RecipeDetails = () => {
                         <RecipeDetailsInfoSection recipeInfo={recipeInfo} />
                         {/* Ingredients section */}
                         <IngredientsSection recipeInfo={recipeInfo} />
+                        {/* YouTube video section */}
+                        {recipeInfo.item.video && (
+                            <div className="mt-4">
+                                <h3 className="text-lg font-bold">Watch Video:</h3>
+                                <iframe
+                                    width="100%"
+                                    height="315"
+                                    src={`${recipeInfo.item.video.replace("watch?v=", "embed/")}?autoplay=0`}
+                                    title="YouTube video player"
+                                    allow="allow-same-origin allow-forms allow-popups allow-scripts allow-presentation"
+                                    allowFullScreen
+                                ></iframe>
+                            </div>
+                        )}
                     </div>
                 </div>
 
