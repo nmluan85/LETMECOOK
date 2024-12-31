@@ -7,6 +7,7 @@ import userRouter from "./routes/userRoutes.js";
 import postRouter from "./routes/postRoutes.js";
 import planRouter from "./routes/planRoutes.js";
 import ingredientRouter from "./routes/ingredientRoutes.js";
+import commentRouter from "./routes/commentRoutes.js";
 
 dotenv.config();
 
@@ -24,11 +25,13 @@ app.use(
 );
 app.use(express.json());
 app.use(cookieParser());
+
 // Routes
 app.use("/api/users", userRouter);
 app.use("/api/posts", postRouter);
 app.use("/api/plans", planRouter);
 app.use("/api/ingredients", ingredientRouter);
+app.use("/api/comments", commentRouter);
 
 app.get("/", (req, res) => {
     res.json({ message: "API is running..." });
@@ -37,4 +40,3 @@ app.get("/", (req, res) => {
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
-
