@@ -15,6 +15,7 @@ import ProtectedRoute from "./components/protectedRoute/protectedRoute";
 import { LoginModalProvider } from "./contexts/LoginModalContext";
 import { AuthProvider } from "./contexts/AuthContext";
 import ProfileModal from "./components/profile/profileModal";
+import EditProfile from "./pages/editProfile/editProfile";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -26,6 +27,12 @@ const router = createBrowserRouter(
             path="/profile"
             element={
               <Profile />
+            }
+        />
+        <Route
+            path="/edit-profile"
+            element={
+              <EditProfile />
             }
         />
         <Route path="/search" element={<Search />}></Route>
