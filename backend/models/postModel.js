@@ -26,29 +26,10 @@ const postSchema = new mongoose.Schema({
     duration: {
         type: Number
     },
-    comments: [
-        {
-            user: {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: "User",
-            },
-            content: {
-                type: String,
-                required: true,
-                trim: true,
-            },
-            rating: { 
-                type: Number,
-                required: true,
-                min: 0,
-                max: 5
-            },
-            createdAt: {
-                type: Date,
-                default: Date.now
-            }
-        }
-    ],
+    comments: {
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: 'Comment'
+    },
     ingredients: [{
         ingredient: { type: mongoose.Schema.Types.ObjectId, ref: 'Ingredient' },
         weight: { type: Number },
