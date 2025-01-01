@@ -1,8 +1,10 @@
 import ReactionButton from "./ReactionPicker";
 import SaveButton from "../recipeCard/saveButton";
 import { FaStar } from "react-icons/fa";
+import { useState } from "react";
 
 const RecipeDetailsInfoSection = ({recipeInfo}) => {
+    const [rating, setRating] = useState(recipeInfo.item.rating); // State for rating (default 4)
     return (
         <div>
             <h1 className="text-3xl font-bold mb-4">
@@ -53,12 +55,15 @@ const RecipeDetailsInfoSection = ({recipeInfo}) => {
                     <p className="text-gray-500 text-sm">
                         Rating:
                     </p>
-                    <div className="flex items-center">
-                        <FaStar className="text-yellow-500 cursor-pointer"/>
-                        <FaStar className="text-yellow-500 cursor-pointer"/>
-                        <FaStar className="text-yellow-500 cursor-pointer"/>
-                        <FaStar className="text-yellow-500 cursor-pointer"/>
-                        <FaStar className="text-gray-400 cursor-pointer"/>
+                    <div className="flex">
+                        {[1, 2, 3, 4, 5].map((star) => (
+                            <FaStar
+                            key={star}
+                            className={`${
+                                star <= rating ? "text-yellow-400" : "text-gray-300"
+                            } cursor-pointer`}
+                            />
+                        ))}
                     </div>
                 </div>
             </div>

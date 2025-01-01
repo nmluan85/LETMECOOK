@@ -17,6 +17,7 @@ import { AuthProvider } from "./contexts/AuthContext";
 import ProfileModal from "./components/profile/profileModal";
 import EditProfile from "./pages/editProfile/editProfile";
 import AddNewRecipe from "./pages/addNewRecipe/addNewRecipe";
+import AllRecipes from "./pages/allRecipes/allRecipes";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -38,6 +39,12 @@ const router = createBrowserRouter(
             path="/edit-profile"
             element={
               <EditProfile />
+            }
+        />
+        <Route 
+            path="/recipes"
+            element={
+              <AllRecipes />
             }
         />
         <Route path="/search" element={<Search />}></Route>
