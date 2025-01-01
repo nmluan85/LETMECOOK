@@ -6,27 +6,50 @@ import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 
 const NewRecipeIngredientsSection = () => {
   const [ingredients, setIngredients] = useState([
-    { id: '1', text: 'e.g. 2 cups flour, sifted' },
-    { id: '2', text: 'e.g. 1 cup sugar' },
-    { id: '3', text: 'e.g. 2 tablespoons butter, softened' },
+    { id: '1', input: '' },
+    { id: '2', input: '' },
+    { id: '3', input: '' },
   ]);
   const [isReordering, setIsReordering] = useState(false);
+  // Function to parse input into measure and ingredient
+  const parseInput = (input) => {
+    const words = input.trim().split(/\s+/); // Split by whitespace
+    if (words.length < 3) {
+      // If fewer than 3 words, treat all as measure or ingredient
+      return { measure: '', ingredient: input };
+    }
+    return {
+      measure: words.slice(0, 2).join(' '), // First two words as measure
+      ingredient: words.slice(2).join(' '), // Rest as ingredient
+    };
+  };
+  
+  const updateParent = (updatedIngredients) => {
+    const parsedIngredients = updatedIngredients.map((item) => ({
+      ...parseInput(item.input),
+    }));
+    onChange({ ingredients: parsedIngredients });
+  };
 
   const handleAddIngredient = () => {
-    const newIngredient = { id: Date.now().toString(), text: 'Your new ingredient' };
-    setIngredients([...ingredients, newIngredient]);
+    const newIngredient = { id: Date.now().toString(), input: '' };
+    const updatedIngredients = [...ingredients, newIngredient];
+    setIngredients(updatedIngredients);
+    updateParent(updatedIngredients);
   };
 
   const handleDeleteIngredient = (id) => {
-    setIngredients(ingredients.filter((ingredient) => ingredient.id !== id));
+    const updatedIngredients = ingredients.filter((item) => item.id !== id);
+    setIngredients(updatedIngredients);
+    updateParent(updatedIngredients);
   };
 
-  const handleInputChange = (id, newText) => {
-    setIngredients(
-      ingredients.map((ingredient) =>
-        ingredient.id === id ? { ...ingredient, text: newText } : ingredient
-      )
+  const handleInputChange = (id, value) => {
+    const updatedIngredients = ingredients.map((item) =>
+      item.id === id ? { ...item, input: value } : item
     );
+    setIngredients(updatedIngredients);
+    updateParent(updatedIngredients);
   };
 
   const handleDragEnd = (result) => {
@@ -37,11 +60,12 @@ const NewRecipeIngredientsSection = () => {
     reorderedIngredients.splice(result.destination.index, 0, movedItem);
 
     setIngredients(reorderedIngredients);
+    updateParent(reorderedIngredients);
   };
 
   return (
     <div>
-      <h2 className="text-xl font-bold mb-4">Ingredients</h2>
+      <h2 className="text-xl font-bold mb-4">Ingredients*</h2>
       <p className="mb-4">
         Enter one ingredient per line. Include the quantity (i.e. cups, tablespoons) and any
         special preparation (i.e. sifted, softened, chopped).
@@ -79,7 +103,7 @@ const NewRecipeIngredientsSection = () => {
                         {...provided.dragHandleProps}
                         className="flex items-center space-x-2 bg-gray-100 p-2 rounded"
                       >
-                        <span className="flex-1">{ingredient.text}</span>
+                        <span className="flex-1">{ingredient.input || '3 tbsp butter, melted'}</span>
                       </div>
                     )}
                   </Draggable>
@@ -95,7 +119,7 @@ const NewRecipeIngredientsSection = () => {
             <div key={ingredient.id} className="flex items-center space-x-2">
               <input
                 type="text"
-                placeholder={ingredient.text}
+                placeholder={'3 tbsp butter, melted'}
                 onChange={(e) => handleInputChange(ingredient.id, e.target.value)}
                 className="flex-1 p-2 border border-gray-300 rounded"
               />

@@ -22,7 +22,7 @@ const RecipeDetails = () => {
         const { item, isSaved } = location.state;
     
         // Split the content into steps with delimiter \r\n
-        const steps = item.content.split('\r\n');
+        const steps = item.content.split('\r\n').filter(step => step.trim() !== '');
     
         // Extract the ingredients array from contentIngredients
         const ingredientsArr = item.contentIngredients.map(({ ingredient, measure }) => `${measure} ${ingredient}`);
@@ -60,7 +60,7 @@ const RecipeDetails = () => {
                         {/* YouTube video section */}
                         {recipeInfo.item.video && (
                             <div className="mt-4">
-                                <h3 className="text-lg font-bold">Watch Video:</h3>
+                                <h3 className="text-lg font-bold mb-3">Watch Video:</h3>
                                 <iframe
                                     width="100%"
                                     height="315"

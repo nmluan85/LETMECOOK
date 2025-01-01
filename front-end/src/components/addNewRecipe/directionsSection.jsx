@@ -4,29 +4,39 @@ import { LuArrowDownUp } from 'react-icons/lu';
 import { CiCircleRemove } from 'react-icons/ci';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 
-const NewRecipeDirectionsSection = () => {
+const NewRecipeDirectionsSection = ({onChange}) => {
   const [directions, setDirections] = useState([
-    { id: '1', text: 'e.g. Preheat oven to 350 degree F...' },
-    { id: '2', text: 'e.g. Combine all dry ingredients in a large bowl...' },
-    { id: '3', text: 'e.g. Pour into greased trays and bake for 15-20 minutes...' },
+    { id: '1', text: '' },
+    { id: '2', text: '' },
+    { id: '3', text: '' },
   ]);
   const [isReordering, setIsReordering] = useState(false);
 
+  // Notify the parent component whenever directions are updated
+  const updateParent = (updatedDirections) => {
+    const content = updatedDirections.map((item) => item.text).join('\r\n');
+    onChange({ content });
+  };
+
   const handleAddDirection = () => {
-    const newDirection = { id: Date.now().toString(), text: 'Your new direction' };
-    setDirections([...directions, newDirection]);
+    const newDirection = { id: Date.now().toString(), text: '' };
+    const updatedDirections = [...directions, newDirection];
+    setDirections(updatedDirections);
+    updateParent(updatedDirections);
   };
 
   const handleDeleteDirection = (id) => {
-    setDirections(directions.filter((direction) => direction.id !== id));
+    const updatedDirections = directions.filter((direction) => direction.id !== id);
+    setDirections(updatedDirections);
+    updateParent(updatedDirections);
   };
 
   const handleInputChange = (id, newText) => {
-    setDirections(
-      directions.map((direction) =>
-        direction.id === id ? { ...direction, text: newText } : direction
-      )
+    const updatedDirections = directions.map((direction) =>
+      direction.id === id ? { ...direction, text: newText } : direction
     );
+    setDirections(updatedDirections);
+    updateParent(updatedDirections);
   };
 
   const handleDragEnd = (result) => {
@@ -37,11 +47,12 @@ const NewRecipeDirectionsSection = () => {
     reorderedDirections.splice(result.destination.index, 0, movedItem);
 
     setDirections(reorderedDirections);
+    updateParent(reorderedDirections);
   };
 
   return (
     <div>
-      <h2 className="text-xl font-bold mb-4">Directions</h2>
+      <h2 className="text-xl font-bold mb-4">Directions*</h2>
       <p className="mb-4">
         Explain how to make your recipe, including oven temperatures, baking or cooking times, and pan sizes, etc. Use optional headers to organize the different parts of the recipe (i.e. Prep, Bake, Decorate).
       </p>
@@ -76,7 +87,7 @@ const NewRecipeDirectionsSection = () => {
                         {...provided.dragHandleProps}
                         className="flex items-center space-x-2 bg-gray-100 p-2 rounded"
                       >
-                        <span className="flex-1">{direction.text}</span>
+                        <span className="flex-1">{direction.text || 'Preheat oven to 350 degree F...'}</span>
                       </div>
                     )}
                   </Draggable>
@@ -95,7 +106,7 @@ const NewRecipeDirectionsSection = () => {
               <div className="flex items-center">
                 <input
                   type="text"
-                  placeholder={direction.text}
+                  placeholder={'Preheat oven to 350 degree F...'}
                   onChange={(e) => handleInputChange(direction.id, e.target.value)}
                   className="flex-1 p-2 mr-2 border border-gray-300 rounded"
                 />

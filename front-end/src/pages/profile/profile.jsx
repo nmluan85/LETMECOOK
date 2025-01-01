@@ -19,6 +19,7 @@ const Profile = () => {
 
     // Load current user data into form fields
     useEffect(() => {
+        console.log(user);
         if (user) {
             setDisplayName(user.username || "");
             setPreview(user.avatar || ""); // Assume avatar URL is in user object

@@ -14,6 +14,10 @@ const postSchema = new mongoose.Schema({
         type: String, 
         required: true
     },
+    description: {
+        type: String,
+        default: "This is a delicious dish"
+    },
     category: {
         type: String,
     },
