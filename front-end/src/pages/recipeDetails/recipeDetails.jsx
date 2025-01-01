@@ -22,7 +22,10 @@ const RecipeDetails = () => {
         const { item, isSaved } = location.state;
     
         // Split the content into steps with delimiter \r\n
-        const steps = item.content.split('\r\n').filter(step => step.trim() !== '');
+        const steps = item.content
+                        .split('\r\n') // Split content by newline
+                        .filter(step => step.trim() !== '') // Remove empty lines
+                        .filter(step => !/^STEP \d+$/i.test(step.trim())); // Exclude lines matching "STEP i" (case-insensitive)
     
         // Extract the ingredients array from contentIngredients
         const ingredientsArr = item.contentIngredients.map(({ ingredient, measure }) => `${measure} ${ingredient}`);
