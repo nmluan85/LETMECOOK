@@ -7,11 +7,11 @@ const RecipeStepsSection = ({recipeInfo}) => {
             <div>
                 {
                     recipeInfo.steps && recipeInfo.steps.map((item, index) => (
-                        <div class="mt-4">
-                            <h2 class="text-xl font-semibold">
+                        <div className="mt-4" key={index}>
+                            <h2 className="text-xl font-semibold">
                                 Step {index + 1}
                             </h2>
-                            <p class="mt-2 text-gray-700 my-4">
+                            <p className="mt-2 text-gray-700 my-4">
                                 {item}
                             </p>
                         </div>
