@@ -11,6 +11,7 @@ const TrendingCard = ({recipe, isSaved}) => {
     const rootId = idString(recipe._id);
 
     const navigate = useNavigate();
+    const [isClicked, setIsClicked] = useState(isSaved);
     const [isSaveHovered, setIsSaveHovered] = useState(false);  // Track hover state
     // Handle recipe details navigation
     const handleRecipeDetails = () => {
@@ -18,9 +19,14 @@ const TrendingCard = ({recipe, isSaved}) => {
             navigate(`/recipe/${rootId}`, {
                 state: {
                     item: recipe,
+                    isSaved: isClicked,
                 },
             });
         }
+    };
+
+    const handleSaveRecipe = () => {
+        setIsClicked(!isClicked);
     };
 
     const handleMouseEnter = () => {
@@ -54,7 +60,10 @@ const TrendingCard = ({recipe, isSaved}) => {
                         </p>
                     </div>
                     <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
-                        <SaveButton recipeId={rootId} isClicked={isSaved} onClick={() => {}}/>
+                        <SaveButton 
+                            recipeId={rootId} 
+                            isClicked={isSaved} 
+                            onClick={handleSaveRecipe}/>
                     </div>
                 </div>
                 <div className="flex items-center mt-2">

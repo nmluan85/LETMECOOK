@@ -17,6 +17,5 @@ userRouter.delete("/delete/:id", deleteUser);
 userRouter.post('/save-post', verifyToken, savePostToUser);
 userRouter.delete('/save-post', verifyToken, deleteSavedPost);
 userRouter.get('/save-post', verifyToken, getSavedPosts);
-userRouter.get('/save-post/:id', verifyToken, checkSavedPost);
 
 export default userRouter;

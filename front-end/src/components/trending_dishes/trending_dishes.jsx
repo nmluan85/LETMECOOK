@@ -17,9 +17,7 @@ const TrendingDishes = () => {
             })
             .then(data => {
                 // Sort the data by uploadDate in descending order and take the 4 most recent items
-                const recentPosts = data
-                    .sort((a, b) => new Date(b.uploadDate) - new Date(a.uploadDate))
-                    .slice(0, 4);
+                const recentPosts = data.slice(0, 4);
                 setListPost(recentPosts);
                 setIsLoading(false);
             })

@@ -172,6 +172,46 @@ const deletePost = async (req, res) => {
     }
 };
 
+const addPostFromFreeMeal = async (req, res) => {
+    try {
+        const { meals, author } = req.body;
+
+        if (!meals || !Array.isArray(meals)) {
+            return res.status(400).json({ message: 'Invalid data format. "meals" should be an array.' });
+        }
+
+        if (!author) {
+            return res.status(400).json({ message: 'Author ID is required.' });
+        }
+
+        // Map through the meals array and create documents
+        const postDocuments = meals.map((meal) => ({
+            author: author,
+            title: meal.strMeal,
+            category: meal.strCategory,
+            area: meal.strArea,
+            content: meal.strInstructions,
+            photo: meal.strMealThumb,
+            duration: Math.floor(Math.random() * (60 - 30 + 1)) + 30, // Random duration between 30 and 60
+            tags: meal.strTags ? meal.strTags.split(',') : [],
+            video: meal.strYoutube,
+            contentIngredients: Array.from({ length: 20 }, (_, i) => {
+                const ingredient = meal[`strIngredient${i + 1}`];
+                const measure = meal[`strMeasure${i + 1}`];
+                return ingredient && ingredient.trim() ? { ingredient, measure } : null;
+            }).filter(Boolean),
+            source: meal.strSource,
+        }));
+
+        // Insert posts into MongoDB
+        await Post.insertMany(postDocuments);
+
+        // Send a success response
+        res.status(201).json({ message: 'Meals successfully added to the database as posts.' });
+    } catch (error) {
+        console.error('Error saving meals as posts:', error);
+        res.status(500).json({ message: 'An error occurred while saving meals to the database.' });
+
 // Controller to view all posts of a user
 const viewUserAllPosts = async (req, res) => {
     try {
@@ -198,5 +238,6 @@ export {
     viewPost, 
     addPost, 
     deletePost,
+    addPostFromFreeMeal,
     viewUserAllPosts
 };

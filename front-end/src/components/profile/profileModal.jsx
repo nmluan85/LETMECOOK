@@ -3,6 +3,8 @@ import { MdOutlineTipsAndUpdates } from "react-icons/md";
 import { TbLogout2 } from "react-icons/tb";
 import { useAuth } from "../../contexts/AuthContext";
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+
 const ProfileModal = ({onComplete}) => {
     const {user, logout} = useAuth();
     const [avatar, setAvatar] = useState("https://storage.googleapis.com/a1aa/image/LfeF62dMscvPXUwP7Wxy4tP0kj4t1fAVP6LnZtZTyuS0VuvnA.jpg");
@@ -28,16 +30,18 @@ const ProfileModal = ({onComplete}) => {
                     </div>
                 </div> 
                 <div className="border-t-2 w-full items-start border-gray-200 p-4">
-                    <div className="flex items-center">
-                        <FaRegCircleUser className="w-5 h-5 mr-4"/>
-                        <span 
-                            className="text-gray-700 text-sm cursor-pointer"
-                            onClick={() => onComplete()}
-                        >
-                            Edit profile
-                        </span>
-                    </div>
-                    {role == "User" ? (
+                    <Link to="/edit-profile">
+                        <div className="flex items-center cursor-pointer">
+                            <FaRegCircleUser className="w-5 h-5 mr-4"/>
+                            <span 
+                                className="text-gray-700 text-sm"
+                                onClick={() => onComplete()}
+                            >
+                                Edit profile
+                            </span>
+                        </div>
+                    </Link>
+                    {role != "premium" ? (
                         <div className="flex items-center mt-2">
                             <MdOutlineTipsAndUpdates className="w-5 h-5 mr-4"/>
                             <span 
