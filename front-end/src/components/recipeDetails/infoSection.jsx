@@ -1,4 +1,3 @@
-import ReactionButton from "./ReactionPicker";
 import SaveButton from "../recipeCard/saveButton";
 import { FaStar } from "react-icons/fa";
 import { useState } from "react";
@@ -13,9 +12,6 @@ const RecipeDetailsInfoSection = ({recipeInfo}) => {
             <p className="text-gray-700 mb-4">
                 This is a delicious dish.
             </p>
-            <div className="flex items-center mb-6">
-                <ReactionButton/>
-            </div>
             <div className="bg-gray-100 p-4 rounded-lg flex items-center">
                 <img 
                     alt={`Profile picture of ${recipeInfo.item.author?.username || 'user'}`} 

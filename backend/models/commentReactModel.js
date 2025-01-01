@@ -13,7 +13,7 @@ const commentReactSchema = new mongoose.Schema({
     },
     type: { 
         type: String, 
-        enum: ['like', 'heart', 'angry', 'sad', 'laugh'],
+        enum: ['like', 'heart', 'wow', 'sad', 'laugh'],
         required: true 
     }
 }, { timestamps: true });
