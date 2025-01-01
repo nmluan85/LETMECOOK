@@ -22,6 +22,11 @@ const createUser = async (req, res) => {
             });
         }
 
+        let { role } = req.body;
+        if (!role) {
+            role = 'User';
+        }
+
         if (password !== repeatPassword) {
             return res.status(401).json({ 
                 success: false,
@@ -43,6 +48,7 @@ const createUser = async (req, res) => {
             username, 
             email, 
             password: hashedPassword, 
+            role,
             verificationToken: verificationCode,
             verificationTokenExpiry: new Date(Date.now() + 60 * 60 * 1000) // 1 hour
         });
@@ -291,6 +297,23 @@ const changePassword = async (req, res) => {
     }
 };
 
+// Controller to get all users
+const getAllUsers = async (req, res) => {
+    try {
+        const users = await User.find();
+        res.status(200).json({
+            success: true,
+            users: users
+        });
+    } catch (error) {
+        console.error('Error fetching users:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Server error. Could not fetch users.'
+        });
+    }
+};
+
 // Controller to delete a user
 const deleteUser = async (req, res) => {
     try {
@@ -463,6 +486,7 @@ export {
     forgotPassword,
     resetPassword,
     changePassword,
+    getAllUsers,
     deleteUser,
     checkAuth,
     savePostToUser,

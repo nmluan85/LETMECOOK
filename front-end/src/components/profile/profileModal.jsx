@@ -37,7 +37,7 @@ const ProfileModal = ({onComplete}) => {
                             Edit profile
                         </span>
                     </div>
-                    {role != "premium" ? (
+                    {role == "User" ? (
                         <div className="flex items-center mt-2">
                             <MdOutlineTipsAndUpdates className="w-5 h-5 mr-4"/>
                             <span 
@@ -47,6 +47,20 @@ const ProfileModal = ({onComplete}) => {
                                 }}
                             >
                                 Go Premium
+                            </span>
+                        </div>
+                    ) : null}
+
+                    {role == "Admin" ? (
+                        <div className="flex items-center mt-2">
+                            <MdOutlineTipsAndUpdates className="w-5 h-5 mr-4"/>
+                            <span 
+                                className="text-gray-700 text-sm cursor-pointer"
+                                onClick={() => {
+                                    onComplete() 
+                                }}
+                            >
+                                In heat
                             </span>
                         </div>
                     ) : null}

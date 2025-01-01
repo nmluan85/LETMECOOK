@@ -172,10 +172,31 @@ const deletePost = async (req, res) => {
     }
 };
 
+// Controller to view all posts of a user
+const viewUserAllPosts = async (req, res) => {
+    try {
+        const { userId } = req.params;
+
+        if (!userId) {
+            return res.status(400).json({ message: 'User ID is required.' });
+        }
+
+        const posts = await Post.find({ author: userId })
+            .populate('author')
+            .populate('ingredients.ingredient')
+            .lean();
+        res.status(200).json(posts);
+    } catch (error) {
+        console.error('Error viewing user posts:', error);
+        res.status(500).json({ message: 'Server error. Could not view user posts.' });
+    }
+};
+
 export { 
     getAllPosts,
     searchPosts, 
     viewPost, 
     addPost, 
-    deletePost 
+    deletePost,
+    viewUserAllPosts
 };
