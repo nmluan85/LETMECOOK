@@ -1,11 +1,29 @@
 import React, { useEffect, useState } from "react";
 import RecipeCard from "../../components/recipeCard/recipeCard";
+import { useAuth } from "../../contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const Profile = () => {
+    const {isLoggedIn, user, login, logout} = useAuth();
     const [activeButton, setActiveButton] = useState("My Recipes");
     const [savedPosts, setSavedPosts] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [displayName, setDisplayName] = useState("");
+    const [preview, setPreview] = useState("");
+    const navigate = useNavigate();
+
+    const handleAddNewRecipe = () => {
+        navigate("/profile/add-recipe");
+    }
+
+    // Load current user data into form fields
+    useEffect(() => {
+        if (user) {
+            setDisplayName(user.username || "");
+            setPreview(user.avatar || ""); // Assume avatar URL is in user object
+        }
+    }, [user]);
 
     useEffect(() => {
         // Fetch saved posts
@@ -56,21 +74,25 @@ const Profile = () => {
 
             <div className="bg-white p-8 mx-16">
                 <div>
-                    <div className="max-w-2xl">
-                        <h1 className="text-3xl font-bold mb-4">
-                            Emma Gonzalez's Recipe Box
-                        </h1>
+                    <div className="w-full flex justify-between items-center">
+                        <h1 className="text-3xl font-bold mb-4">{displayName}'s Recipe Box</h1>
+                        <button
+                            className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+                            onClick={() => {handleAddNewRecipe()}}
+                        >
+                            Add a Recipe
+                        </button>
                     </div>
                     <div className="p-4 rounded-lg flex items-center">
                         <img
-                            alt="Profile picture of Emma Gonzalez"
+                            alt={`Profile picture of ${displayName}`}
                             className="rounded-full mr-4"
                             height="50"
-                            src="https://storage.googleapis.com/a1aa/image/LfeF62dMscvPXUwP7Wxy4tP0kj4t1fAVP6LnZtZTyuS0VuvnA.jpg"
+                            src={preview}
                             width="150"
                         />
                         <p className="text-lg">
-                            Emma Gonzalez is a deputy editor at Chefify,
+                            {displayName} is a deputy editor at Chefify,
                             bringing her expertise as a former cooking editor at
                             The Los Angeles Times. She is also an accomplished
                             author, contributing to numerous cookbooks and food
