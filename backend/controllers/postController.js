@@ -89,20 +89,41 @@ const viewPost = async (req, res) => {
     }
 };
 
-// Controller to add a post
+// Add new post
 const addPost = async (req, res) => {
     try {
-        const { title, content, author, tags, ingredients } = req.body;
+        const {
+            title,
+            description,
+            category,
+            area,
+            content, // Directions
+            contentIngredients, // Ingredients with measures
+            video,
+            duration,
+            tags,
+            photo,
+            author
+        } = req.body;
 
+        // Validate required fields
         if (!title || !content || !author) {
-            return res.status(400).json({ message: 'Title, content, and author are required.' });
+            return res.status(400).json({
+                message: 'Title, content (directions), and author are required.'
+            });
         }
 
-        // Create post object with optional tags
+        // Create post object
         const postData = {
             title,
+            description: description || "", // Optional
+            category: category || "Miscellaneous", // Optional, with a default
+            area: area || "Unknown", // Optional, with a default
             content,
-            author
+            duration: duration || 0, // Optional, default to 0
+            video: video || "", // Optional
+            photo: photo || "", // Optional
+            author,
         };
 
         // Add tags if they exist
@@ -110,13 +131,17 @@ const addPost = async (req, res) => {
             postData.tags = tags.map(tag => tag.trim().toLowerCase());
         }
 
-        if (ingredients && Array.isArray(ingredients)) {
-            postData.ingredients = ingredients;
+        // Add contentIngredients if they exist
+        if (contentIngredients && Array.isArray(contentIngredients)) {
+            postData.ingredients = contentIngredients;
         }
 
+        // Save the post
         const newPost = new Post(postData);
         await newPost.save();
-        res.status(200).json({ message: 'Post added successfully.' });
+
+        // Respond with success
+        res.status(200).json({ message: 'Post added successfully.', post: newPost });
     } catch (error) {
         console.error('Error adding post:', error);
         res.status(500).json({ message: 'Server error. Could not add post.' });
