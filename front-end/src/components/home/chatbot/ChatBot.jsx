@@ -1,10 +1,18 @@
 import React, { useState, useEffect, useRef } from "react";
 import { MessageBox } from "react-chat-elements";
 import "react-chat-elements/dist/main.css";
+import projectInfo from "../../../projectInfo";
 
 const Chatbot = () => {
     const [isOpen, setIsOpen] = useState(false);
-    const [messages, setMessages] = useState([]);
+    const [messages, setMessages] = useState([{
+        hideInChat: true,
+        position: "left",
+        role: "model",
+        type: "text",
+        text: projectInfo,
+        date: new Date(),
+    }]);
     const [inputValue, setInputValue] = useState("");
     const messagesEndRef = useRef(null); // Reference for auto-scrolling
     const generateBotRepsonse = async (messages) => {
@@ -46,13 +54,13 @@ const Chatbot = () => {
 
     // Add the initial bot message when the chatbot opens
     useEffect(() => {
-        if (isOpen && messages.length === 0) {
-        setMessages([
+        if (isOpen && messages.length === 1) {
+        setMessages((prevMessages) => [...prevMessages,
             {
             role: "model",
             position: "left",
             type: "text",
-            text: "Hello",
+            text: "Hi Chef! How can I help?",
             date: new Date()
             },
         ]);
@@ -89,7 +97,7 @@ const Chatbot = () => {
                 {
                     role: userMessage.role, 
                     position: userMessage.position, 
-                    type: "text", text: `Using the details provided above, answer to this prompt in a friendly way: ${userMessage.text}`, 
+                    type: "text", text: `Using only details provided above, act as a friendly assistant and answer to this query from the user: ${userMessage.text}`, 
                     date: userMessage.date
                 }
                 ]
@@ -123,18 +131,25 @@ const Chatbot = () => {
             </div>
 
             {/* Messages */}
+            {/* Messages */}
             <div className="flex-1 overflow-y-auto p-4 bg-gray-50">
-                {messages.map((message, index) => (
-                <MessageBox
-                    key={index}
-                    position={message.position}
-                    type={message.type}
-                    text={message.text}
-                    date={message.date}
-                    title={message.position === "left" ? "Chef Bot" : "You"}
-                    avatar={message.position === "left" ? "https://cdn-icons-png.flaticon.com/512/7414/7414124.png" : undefined}
-                />
-                ))}
+                {messages
+                    .filter((message) => !message.hideInChat) // Exclude messages with hideInChat as true
+                    .map((message, index) => (
+                        <MessageBox
+                            key={index}
+                            position={message.position}
+                            type={message.type}
+                            text={message.text}
+                            date={message.date}
+                            title={message.position === "left" ? "Chef Bot" : "You"}
+                            avatar={
+                                message.position === "left"
+                                    ? "https://cdn-icons-png.flaticon.com/512/7414/7414124.png"
+                                    : undefined
+                            }
+                        />
+                    ))}
                 {/* Auto-scroll reference */}
                 <div ref={messagesEndRef}></div>
             </div>
