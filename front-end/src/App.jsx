@@ -15,6 +15,7 @@ import ProtectedRoute from "./components/protectedRoute/protectedRoute";
 import { LoginModalProvider } from "./contexts/LoginModalContext";
 import { AuthProvider } from "./contexts/AuthContext";
 import ProfileModal from "./components/profile/profileModal";
+import NutritionTracking from "./pages/nutritionTracking/nutritionTracking";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -32,7 +33,7 @@ const router = createBrowserRouter(
         <Route path="/nutrition"
             element={
                 // <ProtectedRoute roles={["premium"]}>
-                    <Profile />
+                    <NutritionTracking />
                 // </ProtectedRoute>
             }
         />

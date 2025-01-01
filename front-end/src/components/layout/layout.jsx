@@ -7,6 +7,7 @@ import Footer from "../home/footer/footer";
 import LoginModal from "../authentication/loginModal";
 import { useLoginModal } from "../../contexts/LoginModalContext";
 import { useAuth } from '../../contexts/AuthContext';
+import Calender from "../calender/calender";
 const Layout = () => {
     const { isLoginModalOpen, isLogin, openLoginModal, closeLoginModal } = useLoginModal();
 
