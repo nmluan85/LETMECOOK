@@ -149,7 +149,12 @@ const Header = () => {
             </div>
             {isExpanded && (
                 <div className="absolute top-20 right-2 bg-transparent shadow-lg rounded-md">
-                    <ProfileModal onComplete={() => {setIsExpanded(false)}}/>
+                <ProfileModal
+                    onComplete={() => {
+                        setIsExpanded(false);
+                        navigate("/edit-profile");
+                    }}
+                />
                 </div>
             )}
         </div>

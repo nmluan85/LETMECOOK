@@ -1,5 +1,5 @@
 import express from 'express';
-import { createUser, loginUser, logoutUser, changePassword, deleteUser, verifyEmail, forgotPassword, resetPassword, checkAuth, savePostToUser, deleteSavedPost, getSavedPosts } from "../controllers/userController.js";
+import { createUser, loginUser, logoutUser, changePassword, deleteUser, verifyEmail, forgotPassword, resetPassword, getAllUsers, checkAuth, savePostToUser, deleteSavedPost, getSavedPosts, checkSavedPost } from "../controllers/userController.js";
 import { verifyToken } from "../middleware/verifyToken.js";
 
 const userRouter = express.Router();
@@ -12,6 +12,7 @@ userRouter.post("/logout", logoutUser);
 userRouter.post("/forgot-password", forgotPassword);
 userRouter.post("/reset-password/:token", resetPassword);
 userRouter.put("/change-password", changePassword);
+userRouter.get("/all-users", getAllUsers);
 userRouter.delete("/delete/:id", deleteUser);
 userRouter.post('/save-post', verifyToken, savePostToUser);
 userRouter.delete('/save-post', verifyToken, deleteSavedPost);

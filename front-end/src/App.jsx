@@ -7,10 +7,10 @@ import {
 import Layout from "./components/layout/layout";
 import RecipeDetails from "./pages/recipeDetails/recipeDetails";
 import Search from "./pages/search/search";
-import { useState, useEffect } from 'react';
-import './App.css';
-import Home from './pages/home/home';
-import Profile from './pages/profile/profile';
+import { useState, useEffect } from "react";
+import "./App.css";
+import Home from "./pages/home/home";
+import Profile from "./pages/profile/profile";
 import ProtectedRoute from "./components/protectedRoute/protectedRoute";
 import { LoginModalProvider } from "./contexts/LoginModalContext";
 import { AuthProvider } from "./contexts/AuthContext";
@@ -36,14 +36,15 @@ const router = createBrowserRouter(
             }
         />
         <Route path="/search" element={<Search />}></Route>
-        <Route path="/nutrition"
-            element={
-                // <ProtectedRoute roles={["premium"]}>
-                    <Profile />
-                // </ProtectedRoute>
-            }
+        <Route
+          path="/nutrition"
+          element={
+            // <ProtectedRoute roles={["premium"]}>
+            <Profile />
+            // </ProtectedRoute>
+          }
         />
-        <Route path="profile1" element={<ProfileModal/>}/>
+        <Route path="profile1" element={<ProfileModal />} />
       </Route>
     </Route>
   )
