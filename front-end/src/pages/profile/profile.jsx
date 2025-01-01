@@ -4,18 +4,36 @@ import { useAuth } from "../../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 
 const Profile = () => {
-    const {isLoggedIn, user, login, logout} = useAuth();
+    const { isLoggedIn, user, login, logout } = useAuth();
     const [activeButton, setActiveButton] = useState("My Recipes");
     const [savedPosts, setSavedPosts] = useState([]);
+    const [myPosts, setMyPosts] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [displayName, setDisplayName] = useState("");
     const [preview, setPreview] = useState("");
     const navigate = useNavigate();
 
+    const [currentPage, setCurrentPage] = useState(1);
+    const postsPerPage = 8;
+    const postsToShow = activeButton === "My Recipes" ? myPosts : savedPosts;
+
+    // Calculate the index of the first and last posts for the current page
+    const lastPostIndex = currentPage * postsPerPage;
+    const firstPostIndex = lastPostIndex - postsPerPage;
+    const currentPosts = postsToShow.slice(firstPostIndex, lastPostIndex);
+
+    // Calculate the total number of pages
+    const totalPages = Math.ceil(postsToShow.length / postsPerPage);
+
+    // Handle page change
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
+    };
+
     const handleAddNewRecipe = () => {
         navigate("/profile/add-recipe");
-    }
+    };
 
     // Load current user data into form fields
     useEffect(() => {
@@ -42,7 +60,7 @@ const Profile = () => {
                 return response.json();
             })
             .then((savedData) => {
-                console.log('Saved Data:', savedData);
+                console.log("Saved Data:", savedData);
                 setSavedPosts(savedData.savedPosts);
                 setIsLoading(false);
             })
@@ -51,7 +69,7 @@ const Profile = () => {
                 setError(error.message);
                 setIsLoading(false);
             });
-            console.log(savedPosts);
+        console.log(savedPosts);
     }, []);
     if (isLoading) {
         return <div>Loading...</div>;
@@ -76,10 +94,14 @@ const Profile = () => {
             <div className="bg-white p-8 mx-16">
                 <div>
                     <div className="w-full flex justify-between items-center">
-                        <h1 className="text-3xl font-bold mb-4">{displayName}'s Recipe Box</h1>
+                        <h1 className="text-3xl font-bold mb-4">
+                            {displayName}'s Recipe Box
+                        </h1>
                         <button
                             className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
-                            onClick={() => {handleAddNewRecipe()}}
+                            onClick={() => {
+                                handleAddNewRecipe();
+                            }}
                         >
                             Add a Recipe
                         </button>
@@ -127,37 +149,48 @@ const Profile = () => {
                     </span>
                 </div>
                 <hr className="border-t border-gray-300" />
-                <div className="grid grid-cols-4 gap-4 gap-y-8 pt-6 pb-6">
-                    {savedPosts.map((item, index) => (
-                        <div className="w-full sm:w-1/2 lg:w-1/4" key={index}>
-                            { <RecipeCard recipe = {item} isSaved = {true}/> }
-                        </div>
-                    ))}
-                </div>
-                <div className="flex justify-end items-center space-x-2 pr-6 pb-6">
-                    <button className="p-2 rounded-full hover:bg-gray-300">
-                        &lt;
-                    </button>
-
-                    <div className="flex space-x-2">
-                        <button className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
-                            1
-                        </button>
-                        <button className="px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300">
-                            2
-                        </button>
-                        <button className="px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300">
-                            3
-                        </button>
-                        <button className="px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300">
-                            4
-                        </button>
+                {/* Check if the list is empty */}
+                {postsToShow.length === 0 ? (
+                    <div className="text-center text-gray-500 mt-6">
+                        {activeButton === "My Recipes"
+                            ? "You have not uploaded any posts"
+                            : "You have not saved any post"}
                     </div>
+                ) : (
+                    <>
+                        <div className="grid grid-cols-4 gap-4 gap-y-8 pt-6 pb-6">
+                            {currentPosts.map((item, index) => (
+                                <div
+                                    className="w-full sm:w-1/2 lg:w-1/4"
+                                    key={index}
+                                >
+                                    {
+                                        <RecipeCard
+                                            recipe={item}
+                                            isSaved={true}
+                                        />
+                                    }
+                                </div>
+                            ))}
+                        </div>
 
-                    <button className="p-2 rounded-full hover:bg-gray-300">
-                        &gt;
-                    </button>
-                </div>
+                        <div className="flex justify-end items-center space-x-2 pr-6 pb-6">
+                            {Array.from({ length: totalPages }, (_, index) => (
+                                <button
+                                    key={index}
+                                    onClick={() => handlePageChange(index + 1)}
+                                    className={`px-3 py-1 mx-1 border rounded ${
+                                        currentPage === index + 1
+                                            ? "bg-blue-500 text-white"
+                                            : "bg-white text-blue-500 border-blue-500"
+                                    }`}
+                                >
+                                    {index + 1}
+                                </button>
+                            ))}
+                        </div>
+                    </>
+                )}
             </div>
         </div>
     );
