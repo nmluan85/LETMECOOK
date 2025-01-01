@@ -239,11 +239,80 @@ const addPostFromFreeMeal = async (req, res) => {
     }
 };
 
+const getPostsByCategory = async (req, res) => {
+    const { name } = req.params; // Extract category from route parameters
+
+    // Capitalize the first letter of the category
+    const category = name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
+
+    try {
+        // Fetch posts with the formatted category from the database
+        const posts = await Post.find({ category: category }).populate('author');
+
+        if (!posts.length) {
+            return res.status(201).json({ message: 'No posts found for this category.' });
+        }
+
+        // Respond with the retrieved posts
+        res.status(200).json(posts);
+    } catch (error) {
+        // Handle errors (e.g., database issues)
+        console.error('Error fetching posts by category:', error);
+        res.status(500).json({ message: 'Server error. Please try again later.' });
+    }
+};
+
+const setAuthorForAllPosts = async (req, res) => {
+    const authorId = '676d862128ff79e6061a0cd5'; // The ID to set as the author
+
+    try {
+        // Update all posts with the given author ID
+        const result = await Post.updateMany({}, { author: authorId });
+
+        // Respond with a success message and the count of updated documents
+        res.status(200).json({
+            message: 'Author updated for all posts successfully.',
+            updatedCount: result.nModified,
+        });
+    } catch (error) {
+        console.error('Error updating author for posts:', error);
+        res.status(500).json({
+            message: 'Failed to update author for posts.',
+            error: error.message,
+        });
+    }
+};
+
+const resetRatingAllPosts = async (req, res) => {
+    try {
+        // Update all posts to add the 'rating' field with a default value of 5
+        const result = await Post.updateMany(
+            { rating: { $exists: false } }, // Only update documents where 'rating' does not exist
+            { $set: { rating: 4 } }
+        );
+
+        // Respond with a success message and the count of updated documents
+        res.status(200).json({
+            message: 'Rating field added to all posts successfully.',
+            updatedCount: result.nModified,
+        });
+    } catch (error) {
+        console.error('Error adding rating to posts:', error);
+        res.status(500).json({
+            message: 'Failed to add rating field to posts.',
+            error: error.message,
+        });
+    }
+};
+
 export { 
     getAllPosts,
     searchPosts, 
     viewPost, 
     addPost, 
     deletePost,
-    addPostFromFreeMeal
+    addPostFromFreeMeal,
+    getPostsByCategory,
+    setAuthorForAllPosts,
+    resetRatingAllPosts
 };
