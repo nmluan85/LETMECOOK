@@ -5,11 +5,19 @@ import { useNavigate } from 'react-router-dom';
 
 const CategoryPreview = ({ category, savedPosts }) => {
     const [recipes, setRecipes] = useState([]);
+    const [previewRecipes, setPreviewRecipes] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
 
+    const navigate = useNavigate();
+
     const handleCategoryAll = () => {
-        
+        navigate(`/category/${category}`, {
+                state: {
+                    recipes: recipes,
+                }
+            }
+        );
     };
 
     useEffect(() => {
@@ -25,7 +33,8 @@ const CategoryPreview = ({ category, savedPosts }) => {
                     setError('No posts found for this category.');
                 } else {
                     // Limit to 4 recipes
-                    setRecipes(data.slice(0, 4));
+                    setRecipes(data);
+                    setPreviewRecipes(data.slice(0, 4));
                 }
             })
             .catch(error => {
@@ -49,7 +58,7 @@ const CategoryPreview = ({ category, savedPosts }) => {
             <div className="max-w-6xl mx-auto p-4">
                 <h1 className="text-center text-3xl font-bold mb-8">{category.toUpperCase()}</h1>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 justify-center">
-                    {recipes.map((recipe, index) => (
+                    {previewRecipes.map((recipe, index) => (
                         <div className="pt-4 pb-6 pl-2 pr-2" key={index}>
                             <RecipeCard 
                                 recipe={recipe}
@@ -60,7 +69,7 @@ const CategoryPreview = ({ category, savedPosts }) => {
                 </div>
                 {recipes.length > 4 && (
                     <div className="text-center mt-8">
-                        <button onClick={handleCategoryAll} className="text-blue-500 underline">
+                        <button onClick={handleCategoryAll} className="text-blue-500 underline text-lg">
                             See more {category} recipes →
                         </button>
                     </div>

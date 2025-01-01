@@ -106,29 +106,27 @@ const Header = () => {
                 <div className="flex items-center space-x-4">
                     <nav className="space-x-4 flex flex-wrap text-sm md:text-base">
                         {navOptions.map((option, index) => (
-                            <Link to={option.href}>
-                                <a
-                                    href={option.href}
-                                    key={index}
-                                    onClick={option.onClick}
-                                    className={`flex items-center justify-center text-gray-700 truncate cursor-pointer transition
-                                        ${option.paddingX || ""} 
-                                        ${option.paddingY || ""} 
-                                        ${option.backgroundColor || ""} 
-                                        ${option.rounded || ""}
-                                        ${option.hoverBackgroundColor || ""}`}
-                                >
-                                    {option.src && (
-                                        <img
-                                            src={option.src}
-                                            alt={option.label || "icon"}
-                                            className={`h-10 w-10 rounded-full ${option.mright || ""}`}
-                                        />
-                                    )}
-                                    {option.icon && option.icon}
-                                    <span className="ml-1">{option.label}</span>
-                                </a>
-                            </Link>
+                            <a
+                                href={option.href}
+                                key={index}
+                                onClick={option.onClick}
+                                className={`flex items-center justify-center text-gray-700 truncate cursor-pointer transition
+                                    ${option.paddingX || ""} 
+                                    ${option.paddingY || ""} 
+                                    ${option.backgroundColor || ""} 
+                                    ${option.rounded || ""}
+                                    ${option.hoverBackgroundColor || ""}`}
+                            >
+                                {option.src && (
+                                    <img
+                                        src={option.src}
+                                        alt={option.label || "icon"}
+                                        className={`h-10 w-10 rounded-full ${option.mright || ""}`}
+                                    />
+                                )}
+                                {option.icon && option.icon}
+                                <span className="ml-1">{option.label}</span>
+                            </a>
                         ))}
                     </nav>
                     {!isLoggedIn ? (
