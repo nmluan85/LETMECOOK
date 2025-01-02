@@ -22,6 +22,11 @@ const createUser = async (req, res) => {
             });
         }
 
+        let { role } = req.body;
+        if (!role) {
+            role = 'User';
+        }
+
         if (password !== repeatPassword) {
             return res.status(401).json({ 
                 success: false,
@@ -43,6 +48,7 @@ const createUser = async (req, res) => {
             username, 
             email, 
             password: hashedPassword, 
+            role,
             verificationToken: verificationCode,
             verificationTokenExpiry: new Date(Date.now() + 60 * 60 * 1000) // 1 hour
         });
@@ -64,7 +70,7 @@ const createUser = async (req, res) => {
             message: 'Server error. Could not create user.' 
         });
     }
-};  
+};
 
 // Controller to verify email
 const verifyEmail = async (req, res) => {
@@ -291,6 +297,23 @@ const changePassword = async (req, res) => {
     }
 };
 
+// Controller to get all users
+const getAllUsers = async (req, res) => {
+    try {
+        const users = await User.find();
+        res.status(200).json({
+            success: true,
+            users: users
+        });
+    } catch (error) {
+        console.error('Error fetching users:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Server error. Could not fetch users.'
+        });
+    }
+};
+
 // Controller to delete a user
 const deleteUser = async (req, res) => {
     try {
@@ -433,6 +456,28 @@ const getSavedPosts = async (req, res) => {
     }
 };
 
+// Controller to change role of a user
+const changeRole = async (req, res) => {
+    try {
+        const { id, role } = req.body;
+
+        if (!id || !role) {
+            return res.status(400).json({ message: 'User ID and role are required.' });
+        }
+
+        const user = await User.findByIdAndUpdate(id, { role }, { new: true });
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found.' });
+        }
+
+        res.status(200).json({ message: 'Role updated successfully.', user });
+    } catch (error) {
+        console.error('Error changing role:', error);
+        res.status(500).json({ message: 'Server error. Could not change role.' });
+    }
+}
+
 export { 
     createUser, 
     verifyEmail,
@@ -441,9 +486,11 @@ export {
     forgotPassword,
     resetPassword,
     changePassword,
+    getAllUsers,
     deleteUser,
     checkAuth,
     savePostToUser,
     deleteSavedPost,
-    getSavedPosts
+    getSavedPosts,
+    changeRole
 };
