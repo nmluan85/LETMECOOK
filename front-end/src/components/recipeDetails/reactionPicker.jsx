@@ -1,30 +1,32 @@
 import React, { useState } from 'react';
 import { ReactionBarSelector } from '@charkour/react-reactions';
 
-const ReactionButton = () => {
+const ReactionButton = ({onReaction}) => {
   const [selectedReaction, setSelectedReaction] = useState(null); // State for the selected reaction
   const [showPicker, setShowPicker] = useState(false); // State to control the visibility of ReactionPicker
 
   const reactions = [
     { label: 'Like', node: <div>👍</div>, key: 'like' },
-    { label: 'Love', node: <div>❤️</div>, key: 'love' },
-    { label: 'Haha', node: <div>😄</div>, key: 'haha' },
+    { label: 'Love', node: <div>❤️</div>, key: 'heart' },
+    { label: 'Haha', node: <div>😄</div>, key: 'laugh' },
     { label: 'Wow', node: <div>😮</div>, key: 'wow' },
     { label: 'Sad', node: <div>😢</div>, key: 'sad' },
-    { label: 'Angry', node: <div>😡</div>, key: 'angry' },
   ];
 
   const handleSelect = (key) => {
     const reaction = reactions.find((reaction) => reaction.key === key);
-    setSelectedReaction(reaction); // Set the selected reaction
-    setShowPicker(false); // Hide the picker after selection
+    setSelectedReaction(reaction);
+    setShowPicker(false);
+    if (onReaction) {
+      onReaction(reaction); // Notify parent about the selected reaction
+    }
   };
 
   return (
     <div className="relative">
       {/* Reaction Button */}
       <button
-        className="flex items-center px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300"
+        className="flex items-center px-4 py-2 bg-white border border-blue-500 text-blue-500 rounded-md hover:bg-blue-100 focus:ring-2 focus:ring-blue-500"
         onMouseEnter={() => setShowPicker(true)}
         onMouseLeave={() => setShowPicker(false)}
       >

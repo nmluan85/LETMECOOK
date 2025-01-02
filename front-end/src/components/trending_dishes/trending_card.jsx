@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { motion } from "motion/react";
 import SaveButton from "../recipeCard/saveButton";
-import Rating from "../layout/rating";
+import { FaStar } from "react-icons/fa6";
 import {useState} from 'react';
 
 const TrendingCard = ({recipe, isSaved}) => {
@@ -11,6 +11,7 @@ const TrendingCard = ({recipe, isSaved}) => {
     const rootId = idString(recipe._id);
 
     const navigate = useNavigate();
+    const [isClicked, setIsClicked] = useState(isSaved);
     const [isSaveHovered, setIsSaveHovered] = useState(false);  // Track hover state
     // Handle recipe details navigation
     const handleRecipeDetails = () => {
@@ -18,9 +19,14 @@ const TrendingCard = ({recipe, isSaved}) => {
             navigate(`/recipe/${rootId}`, {
                 state: {
                     item: recipe,
+                    isSaved: isClicked,
                 },
             });
         }
+    };
+
+    const handleSaveRecipe = () => {
+        setIsClicked(!isClicked);
     };
 
     const handleMouseEnter = () => {
@@ -54,19 +60,31 @@ const TrendingCard = ({recipe, isSaved}) => {
                         </p>
                     </div>
                     <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
-                        <SaveButton recipeId={rootId} isClicked={isSaved} onClick={() => {}}/>
+                        <SaveButton 
+                            recipeId={rootId} 
+                            isClicked={isSaved} 
+                            onClick={handleSaveRecipe}/>
                     </div>
                 </div>
                 <div className="flex items-center mt-2">
-                    <img alt="Jennifer King" className="w-8 h-8 rounded-full" height="30" src={recipe.author.avatar} width="30"/>
+                    <img alt="Jennifer King" className="w-8 h-8 rounded-full" height="30" src={recipe.author?.avatar || "https://storage.googleapis.com/a1aa/image/LfeF62dMscvPXUwP7Wxy4tP0kj4t1fAVP6LnZtZTyuS0VuvnA.jpg?fbclid=IwY2xjawHFTmBleHRuA2FlbQIxMAABHa5SDm64IKSbbEmqhAG-PemXSUcbNxvVx7AD_9Qshz4XP73gSFfKmOfXXA_aem_Rz9cJD1d5qoi6ZqV5P28LA"} width="30"/>
                     <p className="ml-2 text-gray-700">
-                        {recipe.author.username}
+                        {recipe.author?.username || "LETMECOOK"}
                     </p>
                 </div>
                 <p class="text-gray-600 mt-2">
                     {recipe.content.split(' ').slice(0, 10).join(' ')}{recipe.content.split(' ').length > 10 ? '...' : ''}
                 </p>
-                <Rating/>
+                <div className="ml-auto flex items-center mr-4">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                        <FaStar
+                        key={star}
+                        className={`${
+                            star <= recipe.rating ? "text-yellow-400" : "text-gray-300"
+                        } cursor-pointer`}
+                        />
+                    ))}
+                </div>
             </div>
         </motion.div>
     );

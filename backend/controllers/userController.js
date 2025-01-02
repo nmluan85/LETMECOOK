@@ -22,6 +22,11 @@ const createUser = async (req, res) => {
             });
         }
 
+        let { role } = req.body;
+        if (!role) {
+            role = 'User';
+        }
+
         if (password !== repeatPassword) {
             return res.status(401).json({ 
                 success: false,
@@ -43,6 +48,7 @@ const createUser = async (req, res) => {
             username, 
             email, 
             password: hashedPassword, 
+            role,
             verificationToken: verificationCode,
             verificationTokenExpiry: new Date(Date.now() + 60 * 60 * 1000) // 1 hour
         });
@@ -64,7 +70,7 @@ const createUser = async (req, res) => {
             message: 'Server error. Could not create user.' 
         });
     }
-};  
+};
 
 // Controller to verify email
 const verifyEmail = async (req, res) => {
@@ -291,6 +297,23 @@ const changePassword = async (req, res) => {
     }
 };
 
+// Controller to get all users
+const getAllUsers = async (req, res) => {
+    try {
+        const users = await User.find();
+        res.status(200).json({
+            success: true,
+            users: users
+        });
+    } catch (error) {
+        console.error('Error fetching users:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Server error. Could not fetch users.'
+        });
+    }
+};
+
 // Controller to delete a user
 const deleteUser = async (req, res) => {
     try {
@@ -433,25 +456,80 @@ const getSavedPosts = async (req, res) => {
     }
 };
 
-const checkSavedPost = async (req, res) => {
+// Controller to change role of a user
+const changeRole = async (req, res) => {
     try {
-        const userId = req.userId; // Extracted from the token in middleware
-        const postId = req.params.id; // Extracted from the route parameter
+        const { id, role } = req.body;
 
-        // Find the user and select only the savedPosts field
-        const user = await User.findById(userId).select('savedPosts');
-
-        if (!user) {
-            return res.status(404).json({ success: false, message: 'User not found.' });
+        if (!id || !role) {
+            return res.status(400).json({ message: 'User ID and role are required.' });
         }
 
-        // Check if the postId exists in savedPosts
-        const isSaved = user.savedPosts.some(savedPostId => savedPostId.toString() === postId);
+        const user = await User.findByIdAndUpdate(id, { role }, { new: true });
 
-        res.status(200).json({ success: true, isSaved });
+        if (!user) {
+            return res.status(404).json({ message: 'User not found.' });
+        }
+
+        res.status(200).json({ message: 'Role updated successfully.', user });
     } catch (error) {
-        console.error('Error checking if post is saved:', error);
-        res.status(500).json({ success: false, message: 'Server error. Could not check post status.' });
+        console.error('Error changing role:', error);
+        res.status(500).json({ message: 'Server error. Could not change role.' });
+    }
+}
+
+const getPersonalPosts = async (req, res) => {
+    try {
+        // Extract the user's ID from the authenticated request
+        const userId = req.userId;
+
+        // Fetch all posts where the author matches the current user's ID
+        const personalPosts = await Post.find({ author: userId }).populate('author').populate('comments');
+
+        // Return the posts in the response
+        res.status(200).json({
+            success: true,
+            personalPosts: personalPosts,
+        });
+    } catch (error) {
+        console.error('Error fetching personal posts:', error);
+        res.status(500).json({
+            success: false,
+            message: 'An error occurred while fetching personal posts',
+        });
+    }
+};
+
+// Update user details
+const editProfile = async (req, res) => {
+    try {
+        const userId = req.userId; // Assuming user ID is passed as a route parameter
+        const { username, description, avatar } = req.body; // Extract updated fields from request body
+
+        // Validate input
+        if (!username && !description && !avatar) {
+            return res.status(400).json({ message: 'No fields to update provided.' });
+        }
+
+        // Find and update the user
+        const updatedUser = await User.findByIdAndUpdate(
+            userId,
+            {
+                ...(username && { username }),
+                ...(description && { description }),
+                ...(avatar && { avatar }),
+            },
+            { new: true, runValidators: true } // Return the updated user and ensure validation
+        );
+
+        if (!updatedUser) {
+            return res.status(404).json({ message: 'User not found.' });
+        }
+
+        res.status(200).json({ message: 'User updated successfully.', user: updatedUser });
+    } catch (error) {
+        console.error('Error updating user:', error);
+        res.status(500).json({ message: 'An error occurred while updating the user.', error: error.message });
     }
 };
 
@@ -463,10 +541,13 @@ export {
     forgotPassword,
     resetPassword,
     changePassword,
+    getAllUsers,
     deleteUser,
     checkAuth,
     savePostToUser,
     deleteSavedPost,
     getSavedPosts,
-    checkSavedPost
+    changeRole,
+    getPersonalPosts,
+    editProfile
 };

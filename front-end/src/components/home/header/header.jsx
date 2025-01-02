@@ -52,7 +52,7 @@ const Header = () => {
     }
     const navOptions = [
         { label: "What to cook", href: "#" },
-        { label: "Recipes", href: "#" },
+        { label: "Recipes", href: "/recipes" },
         { label: "Ingredients", onClick: () => handleIngredientsClick() },
         { label: "Nutrition tracking", onClick: () => handleNutritionClick() },
         { label: "About Us", href: "#" },
@@ -152,7 +152,12 @@ const Header = () => {
             </div>
             {isExpanded && (
                 <div className="absolute top-20 right-2 bg-transparent shadow-lg rounded-md">
-                    <ProfileModal onComplete={() => {setIsExpanded(false)}}/>
+                <ProfileModal
+                    onComplete={() => {
+                        setIsExpanded(false);
+                        // navigate("/edit-profile");
+                    }}
+                />
                 </div>
             )}
         </div>

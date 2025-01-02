@@ -12,10 +12,33 @@ const postSchema = new mongoose.Schema({
     },
     title: { 
         type: String, 
-        required: true },
+        required: true
+    },
+    description: {
+        type: String,
+        default: "This is a delicious dish"
+    },
+    category: {
+        type: String,
+    },
+    area: {
+        type: String,
+    },
     content: { 
         type: String, 
         required: true 
+    },
+    contentIngredients: [
+        {
+            ingredient: {type: String},
+            measure: {type: String},
+        }
+    ],
+    video: {
+        type: String,
+    },
+    source: {
+        type: String,
     },
     tags: {
         type: [String]
@@ -26,6 +49,10 @@ const postSchema = new mongoose.Schema({
     duration: {
         type: Number
     },
+    rating: {
+        type: Number,
+        default: 4
+    },
     comments: {
         type: [mongoose.Schema.Types.ObjectId],
         ref: 'Comment'
@@ -34,6 +61,9 @@ const postSchema = new mongoose.Schema({
         ingredient: { type: mongoose.Schema.Types.ObjectId, ref: 'Ingredient' },
         weight: { type: Number },
     }],
+    reports: [{
+        type: String
+    }]
 }, { timestamps: true });
  
 const Post = mongoose.models.Post || mongoose.model('Post', postSchema);

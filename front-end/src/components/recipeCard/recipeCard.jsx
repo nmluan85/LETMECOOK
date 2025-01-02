@@ -1,11 +1,9 @@
 import React, {useState} from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from "react-router-dom";
-import { useAuth } from '../../contexts/AuthContext';
-import LoginModal from '../authentication/loginModal';
 
 import SaveButton from './saveButton';
-import Rating from '../layout/rating';
+import { FaStar } from 'react-icons/fa6';
 import ClockIcon from '../../assets/icons/clock.png';
 import CommentIcon from '../../assets/icons/comment.png';
 import HeartIcon from '../../assets/icons/heart.png';
@@ -15,7 +13,7 @@ const RecipeCard = ({recipe, isSaved}) => {
     };
     const rootId = idString(recipe._id);
 
-    const [isClicked, setIsClicked] = useState(false);
+    const [isClicked, setIsClicked] = useState(isSaved);
     const [isSaveHovered, setIsSaveHovered] = useState(false);  // Track hover state
 
     const handleSaveRecipe = () => {
@@ -29,6 +27,7 @@ const RecipeCard = ({recipe, isSaved}) => {
             navigate(`/recipe/${rootId}`, {
                 state: {
                     item: recipe,
+                    isSaved: isClicked,
                 },
             });
         }
@@ -88,7 +87,14 @@ const RecipeCard = ({recipe, isSaved}) => {
                             </div>
                             </div>
                             <div className="ml-auto flex items-center mr-4">
-                                <Rating />
+                                {[1, 2, 3, 4, 5].map((star) => (
+                                    <FaStar
+                                    key={star}
+                                    className={`${
+                                        star <= recipe.rating ? "text-yellow-400" : "text-gray-300"
+                                    } cursor-pointer`}
+                                    />
+                                ))}
                             </div>
                         </div>
                     </span>

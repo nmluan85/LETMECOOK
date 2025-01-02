@@ -16,6 +16,14 @@ import ProtectedRoute from "./components/protectedRoute/protectedRoute";
 import { LoginModalProvider } from "./contexts/LoginModalContext";
 import { AuthProvider } from "./contexts/AuthContext";
 import ProfileModal from "./components/profile/profileModal";
+import EditProfile from "./pages/editProfile/editProfile";
+import AdminHub from "./pages/admin/adminHub/adminHub";
+import CheckPost from "./pages/admin/checkPost/checkPost";
+import AddNewRecipe from "./pages/addNewRecipe/addNewRecipe";
+import AllRecipes from "./pages/allRecipes/allRecipes";
+import CategoryFullRecipes from "./components/allRecipes/categoryFullRecipes";
+import NutritionTracking from "./pages/nutritionTracking/nutritionTracking";
+import Upgrade from "./pages/premiumUpgrade/upgrade";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -23,10 +31,32 @@ const router = createBrowserRouter(
       <Route path="/" element={<Layout />}>
         <Route index element={<Home />}></Route>
         <Route path="/recipe/:_id" element={<RecipeDetails />}></Route>
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/edit-profile" element={<EditProfile />} />
+        <Route path="/admin-hub" element={<AdminHub />} />
+        <Route path="/check-post/:userId" element={<CheckPost />} />
+        <Route path="/search" element={<Search />}></Route>
+        <Route path="profile1" element={<ProfileModal />} />
         <Route
-            path="/profile"
+          path="/profile/add-recipe"
+          element={<AddNewRecipe />}
+        />
+        <Route
+            path="/edit-profile"
             element={
-              <Profile />
+              <EditProfile />
+            }
+        />
+        <Route
+            path="/upgrade"
+            element={
+              <Upgrade />
+            }
+        />
+        <Route 
+            path="/recipes"
+            element={
+              <AllRecipes />
             }
         />
 
@@ -47,11 +77,11 @@ const router = createBrowserRouter(
         <Route path="/nutrition"
             element={
                 // <ProtectedRoute roles={["premium"]}>
-                    <Profile />
+                    <NutritionTracking />
                 // </ProtectedRoute>
             }
         />
-        <Route path="profile1" element={<ProfileModal/>}/>
+        <Route path="/category/:category" element={<CategoryFullRecipes />} />
       </Route>
     </Route>
   )

@@ -3,23 +3,26 @@ import Plan from '../models/planModel.js';
 // Controller to create a new plan
 const createPlan = async (req, res) => {
     try {
-        const { date, name, user, posts, ingredients } = req.body;
+        const { startDate, endDate, name, user, posts, type, ingredients } = req.body;
 
-        if (!date || !name || !user) {
-            return res.status(400).json({ message: 'Date, name, and user are required.' });
+        if (!startDate || !endDate || !name || !user) {
+            return res.status(400).json({ message: 'Start date, End date, name, and user are required.' });
         }
 
-        // Create plan object with required and optional fields
         const planData = {
-            date,
+            startDate,
+            endDate,
             name,
-            user
+            user, 
+            type,
         };
 
-        // Add optional fields if they exist
         if (posts) planData.posts = posts;
         if (ingredients && Array.isArray(ingredients)) {
-            planData.ingredients = ingredients;
+            planData.ingredients = ingredients.map(item => ({
+                ingredient: item.ingredient,
+                weight: item.quantity
+            }));
         }
 
         const newPlan = new Plan(planData);
@@ -41,7 +44,7 @@ const deletePlan = async (req, res) => {
         }
 
         const deletedPlan = await Plan.findByIdAndDelete(planId);
-        
+
         if (!deletedPlan) {
             return res.status(404).json({ message: 'Plan not found.' });
         }
@@ -56,7 +59,7 @@ const deletePlan = async (req, res) => {
 // Controller to get all plans for a user
 const getAllPlans = async (req, res) => {
     try {
-        const { userId } = req.params; // Get user ID from query params
+        const { userId } = req.params;
 
         if (!userId) {
             return res.status(400).json({ message: 'User ID is required.' });
@@ -65,7 +68,7 @@ const getAllPlans = async (req, res) => {
         const plans = await Plan.find({ user: userId })
             .populate('posts')
             .populate('ingredients.ingredient')
-            .sort({ date: 1 }); // Sort by date ascending
+            .sort({ startDate: 1 });
 
         res.status(200).json(plans);
     } catch (error) {
@@ -85,7 +88,8 @@ const getPlanByDate = async (req, res) => {
         }
 
         const plan = await Plan.find({ 
-            date: date,
+            startDate: { $lte: date },
+            endDate: { $gte: date },
             user: userId 
         })
         .populate('posts')
@@ -93,7 +97,7 @@ const getPlanByDate = async (req, res) => {
 
         if (!plan || plan.length === 0) {
             return res.status(404).json({ message: 'No plans found for this date.' });
-        }
+        } 
 
         res.status(200).json(plan);
     } catch (error) {
@@ -102,25 +106,92 @@ const getPlanByDate = async (req, res) => {
     }
 };
 
+// Controller to calculate the total nutrition for a plan
+const calculatePlan = async (req, res) => {
+    try {
+        const { userId, planId } = req.body;
+
+        if (!userId || !planId) {
+            return res.status(400).json({ message: 'User ID and Plan ID are required.' });
+        }
+
+        const plan = await Plan.findById(planId).populate('ingredients.ingredient');
+
+        if (!plan) {
+            return res.status(404).json({ message: 'Plan not found.' });
+        }
+
+        // Initialize total nutrition values
+        const totalNutrition = {
+            carbs: 0,
+            fat: 0,
+            protein: 0,
+            calories: 0,
+            fiber: 0,
+            sodium: 0
+        };
+
+        // Calculate total nutrition values
+        plan.ingredients.forEach(item => {
+            const weight = item.weight;
+            const nutrition = item.ingredient.nutrition;
+            
+            totalNutrition.carbs += nutrition.carbs * weight;
+            totalNutrition.fat += nutrition.fat * weight;
+            totalNutrition.protein += nutrition.protein * weight;
+            totalNutrition.calories += nutrition.calories * weight;
+            totalNutrition.fiber += nutrition.fiber * weight;
+            totalNutrition.sodium += nutrition.sodium * weight;
+        });
+
+        // Calculate percentage for each ingredient
+        const nutritionPercentages = plan.ingredients.map(item => {
+            const weight = item.weight;
+            const nutrition = item.ingredient.nutrition;
+            
+            return {
+                ingredientName: item.ingredient.name,
+                percentages: {
+                    carbs: ((nutrition.carbs * weight) / totalNutrition.carbs) * 100,
+                    fat: ((nutrition.fat * weight) / totalNutrition.fat) * 100,
+                    protein: ((nutrition.protein * weight) / totalNutrition.protein) * 100,
+                    calories: ((nutrition.calories * weight) / totalNutrition.calories) * 100,
+                    fiber: ((nutrition.fiber * weight) / totalNutrition.fiber) * 100,
+                    sodium: ((nutrition.sodium * weight) / totalNutrition.sodium) * 100
+                }
+            };
+        });
+
+        res.status(200).json({
+            totalNutrition,
+            nutritionPercentages
+        });
+
+    } catch (error) {
+        console.error('Error calculating plan nutrition:', error);
+        res.status(500).json({ message: 'Server error. Could not calculate plan nutrition.' });
+    }
+};
+
 // Controller to update a plan
 const updatePlan = async (req, res) => {
     try {
         const { planId } = req.params;
-        const { date, name, posts, ingredients } = req.body;
-
+        const { startDate, endDate, name, posts, type, ingredients} = req.body;
         if (!planId) {
             return res.status(400).json({ message: 'Plan ID is required.' });
         }
 
-        // Create update object with only provided fields
         const updateData = {};
-        if (date) updateData.date = date;
+        if (startDate) updateData.startDate = startDate;
+        if (endDate) updateData.endDate = endDate;
         if (name) updateData.name = name;
         if (posts) updateData.posts = posts;
         if (ingredients) updateData.ingredients = ingredients;
+        if (type) updateData.type = type;
 
         const updatedPlan = await Plan.findByIdAndUpdate(
-            planId, 
+            planId,
             updateData,
             { new: true, runValidators: true }
         )
@@ -131,9 +202,9 @@ const updatePlan = async (req, res) => {
             return res.status(404).json({ message: 'Plan not found.' });
         }
 
-        res.status(200).json({ 
+        res.status(200).json({
             message: 'Plan updated successfully.',
-            plan: updatedPlan 
+            plan: updatedPlan
         });
     } catch (error) {
         console.error('Error updating plan:', error);
@@ -141,4 +212,4 @@ const updatePlan = async (req, res) => {
     }
 };
 
-export { createPlan, deletePlan, getAllPlans, getPlanByDate, updatePlan };
+export { createPlan, deletePlan, getAllPlans, getPlanByDate, updatePlan, calculatePlan };
