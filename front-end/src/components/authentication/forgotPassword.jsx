@@ -29,7 +29,6 @@ const ForgotPassword = ({ onBack }) => {
             
             if (data.success) {
                 setResponseMessage("Password reset instructions sent to your email");
-                setTimeout(() => navigate('/login'), 3000);
             } else {
                 setResponseMessage(data.message);
             }
