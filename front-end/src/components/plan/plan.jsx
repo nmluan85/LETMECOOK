@@ -93,7 +93,7 @@ const Plan = ({type, event, handleSaveChange, handleCancel}) => {
                                     end: "",
                                     extendedProps: null
                                 });
-                                handleSaveChange(events);
+                                handleCancel(events);
                             }}
                         >
                             Delete plan

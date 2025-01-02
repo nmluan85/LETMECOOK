@@ -1,59 +1,20 @@
-// import { useState, useEffect } from 'react';
-// import { format, parseISO } from 'date-fns';
-
-// import { DayPicker, getDefaultClassNames } from 'react-day-picker';
-// import 'react-day-picker/dist/style.css';
-
-// const Calender = ({handleDatePick}) => {
-//   const [selected, setSelected] = useState();
-//   const defaultClassNames = getDefaultClassNames();
-//   const plannedDates = [
-//     '2025-01-03',
-//     '2025-01-05',
-//     '2025-01-07',
-//   ].map((date) => parseISO(date)); // Parse to Date objects
-
-//   useEffect(() => {
-//     handleDatePick(selected);
-//   }, [selected])
-//   return (
-//     <DayPicker
-//       mode="single"
-//       classNames={{
-//         today: `border-amber-500`, // Add a border to today's date
-//         selected: `bg-primary-500 border-primary-500 text-white rounded-full`, // Highlight the selected day
-//         root: `${defaultClassNames.root} p-5`, // Add a shadow to the root element
-//         chevron: `${defaultClassNames.chevron} fill-amber-500`, // Change the color of the chevron
-//         marked: `bg-primary-200 text-black rounded-full`
-//       }}
-//       selected={selected}
-//       onSelect={setSelected}
-//       modifiers={{
-//         marked: plannedDates, // Dates with plans
-//       }}
-//       modifiersClassNames={{
-//         marked: 'marked', // Apply custom class for marked dates
-//       }}
-//     />
-//   );
-// }
-// export default Calender;
 import { useState, useEffect } from 'react';
 import { format, parseISO } from 'date-fns';
 import { DayPicker, getDefaultClassNames } from 'react-day-picker';
 import 'react-day-picker/dist/style.css';
 
-const Calender = ({ handleDatePick }) => {
+const Calender = ({ handleDatePick, events }) => {
   const [selected, setSelected] = useState();
+  const [plans, setPlans] = useState(events);
+  const [plannedDates, setPlannedDates] = useState([]);
   const defaultClassNames = getDefaultClassNames();
-
-  // Dates with plans
-  const plannedDates = [
-    '2025-01-03',
-    '2025-01-05',
-    '2025-01-07',
-  ].map((date) => parseISO(date));
-
+  useEffect(() => {
+    setPlans(events);
+    console.log("Calenn", plans);
+  }, [events]);
+  useEffect(() => {
+    setPlannedDates(plans.map((plan) => plan.start));
+  }, [plans])
   useEffect(() => {
     handleDatePick(selected);
   }, [selected, handleDatePick]);
