@@ -18,7 +18,10 @@ const createPlan = async (req, res) => {
 
         if (posts) planData.posts = posts;
         if (ingredients && Array.isArray(ingredients)) {
-            planData.ingredients = ingredients;
+            planData.ingredients = ingredients.map(item => ({
+                ingredient: item.ingredient,
+                weight: item.quantity
+            }));
         }
 
         const newPlan = new Plan(planData);
@@ -102,6 +105,73 @@ const getPlanByDate = async (req, res) => {
     }
 };
 
+// Controller to calculate the total nutrition for a plan
+const calculatePlan = async (req, res) => {
+    try {
+        const { userId, planId } = req.body;
+
+        if (!userId || !planId) {
+            return res.status(400).json({ message: 'User ID and Plan ID are required.' });
+        }
+
+        const plan = await Plan.findById(planId).populate('ingredients.ingredient');
+
+        if (!plan) {
+            return res.status(404).json({ message: 'Plan not found.' });
+        }
+
+        // Initialize total nutrition values
+        const totalNutrition = {
+            carbs: 0,
+            fat: 0,
+            protein: 0,
+            calories: 0,
+            fiber: 0,
+            sodium: 0
+        };
+
+        // Calculate total nutrition values
+        plan.ingredients.forEach(item => {
+            const weight = item.weight;
+            const nutrition = item.ingredient.nutrition;
+            
+            totalNutrition.carbs += nutrition.carbs * weight;
+            totalNutrition.fat += nutrition.fat * weight;
+            totalNutrition.protein += nutrition.protein * weight;
+            totalNutrition.calories += nutrition.calories * weight;
+            totalNutrition.fiber += nutrition.fiber * weight;
+            totalNutrition.sodium += nutrition.sodium * weight;
+        });
+
+        // Calculate percentage for each ingredient
+        const nutritionPercentages = plan.ingredients.map(item => {
+            const weight = item.weight;
+            const nutrition = item.ingredient.nutrition;
+            
+            return {
+                ingredientName: item.ingredient.name,
+                percentages: {
+                    carbs: ((nutrition.carbs * weight) / totalNutrition.carbs) * 100,
+                    fat: ((nutrition.fat * weight) / totalNutrition.fat) * 100,
+                    protein: ((nutrition.protein * weight) / totalNutrition.protein) * 100,
+                    calories: ((nutrition.calories * weight) / totalNutrition.calories) * 100,
+                    fiber: ((nutrition.fiber * weight) / totalNutrition.fiber) * 100,
+                    sodium: ((nutrition.sodium * weight) / totalNutrition.sodium) * 100
+                }
+            };
+        });
+
+        res.status(200).json({
+            totalNutrition,
+            nutritionPercentages
+        });
+
+    } catch (error) {
+        console.error('Error calculating plan nutrition:', error);
+        res.status(500).json({ message: 'Server error. Could not calculate plan nutrition.' });
+    }
+};
+
 // Controller to update a plan
 const updatePlan = async (req, res) => {
     try {
@@ -141,4 +211,4 @@ const updatePlan = async (req, res) => {
     }
 };
 
-export { createPlan, deletePlan, getAllPlans, getPlanByDate, updatePlan };
+export { createPlan, deletePlan, getAllPlans, getPlanByDate, updatePlan, calculatePlan };
