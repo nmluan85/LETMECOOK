@@ -49,7 +49,7 @@ const Header = () => {
     }
     const navOptions = [
         { label: "What to cook", href: "#" },
-        { label: "Recipes", href: "#" },
+        { label: "Recipes", href: "/recipes" },
         { label: "Ingredients", href: "#" },
         { label: "Nutrition tracking", onClick: () => handleNutritionClick() },
         { label: "About Us", href: "#" },

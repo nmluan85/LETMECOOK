@@ -106,4 +106,43 @@ const updateIngredient = async (req, res) => {
     }
 };
 
-export { createIngredient, deleteIngredient, updateIngredient, viewIngredient }; 
+const addIngredientsFreeMeal = async (req, res) => {
+    const { meals } = req.body;
+
+    if (!meals || !Array.isArray(meals)) {
+        return res.status(400).json({ message: '"meals" should be an array.' });
+    }
+
+    try {
+        // Map the meals array to prepare data for insertion
+        const ingredients = meals.map(meal => ({
+            name: meal.strIngredient,
+            type: meal.strType || null, // Default to 'Unknown' if strType is null
+            nutrition: {
+                carbs: Math.floor(Math.random() * 100) + 1,
+                fat: Math.floor(Math.random() * 100) + 1,
+                protein: Math.floor(Math.random() * 100) + 1,
+                calories: Math.floor(Math.random() * 100) + 1,
+                fiber: Math.floor(Math.random() * 100) + 1,
+                sodium: Math.floor(Math.random() * 100) + 1,
+            },
+        }));
+
+        // Insert all ingredients into the database
+        const insertedIngredients = await Ingredient.insertMany(ingredients);
+
+        res.status(201).json({
+            message: 'Ingredients added successfully.',
+            addedCount: insertedIngredients.length,
+            ingredients: insertedIngredients,
+        });
+    } catch (error) {
+        console.error('Error adding ingredients:', error);
+        res.status(500).json({
+            message: 'Failed to add ingredients.',
+            error: error.message,
+        });
+    }
+};
+
+export { createIngredient, deleteIngredient, updateIngredient, viewIngredient, addIngredientsFreeMeal }; 

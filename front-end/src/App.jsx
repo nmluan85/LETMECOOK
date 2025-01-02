@@ -17,6 +17,9 @@ import { AuthProvider } from "./contexts/AuthContext";
 import ProfileModal from "./components/profile/profileModal";
 import EditProfile from "./pages/editProfile/editProfile";
 import AddNewRecipe from "./pages/addNewRecipe/addNewRecipe";
+import AllRecipes from "./pages/allRecipes/allRecipes";
+import CategoryFullRecipes from "./components/allRecipes/categoryFullRecipes";
+import NutritionTracking from "./pages/nutritionTracking/nutritionTracking";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -40,15 +43,22 @@ const router = createBrowserRouter(
               <EditProfile />
             }
         />
+        <Route 
+            path="/recipes"
+            element={
+              <AllRecipes />
+            }
+        />
         <Route path="/search" element={<Search />}></Route>
         <Route path="/nutrition"
             element={
                 // <ProtectedRoute roles={["premium"]}>
-                    <Profile />
+                    <NutritionTracking />
                 // </ProtectedRoute>
             }
         />
         <Route path="profile1" element={<ProfileModal/>}/>
+        <Route path="/category/:category" element={<CategoryFullRecipes />} />
       </Route>
     </Route>
   )
