@@ -19,6 +19,7 @@ import EditProfile from "./pages/editProfile/editProfile";
 import AddNewRecipe from "./pages/addNewRecipe/addNewRecipe";
 import AllRecipes from "./pages/allRecipes/allRecipes";
 import CategoryFullRecipes from "./components/allRecipes/categoryFullRecipes";
+import NutritionTracking from "./pages/nutritionTracking/nutritionTracking";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -52,7 +53,7 @@ const router = createBrowserRouter(
         <Route path="/nutrition"
             element={
                 // <ProtectedRoute roles={["premium"]}>
-                    <Profile />
+                    <NutritionTracking />
                 // </ProtectedRoute>
             }
         />
