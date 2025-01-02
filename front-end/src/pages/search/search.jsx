@@ -1,14 +1,13 @@
 import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import Filters from '../../components/search/filter/filter';
 import SearchResult from '../../components/search/searchResult/searchResult';
 import './Search.css'; // Import the CSS file
+import FilterSection from '../../components/search/filter/filter2';
 
 const Search = () => {
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
     const query = queryParams.get("query");
-    console.log('Query:', query);
 
     const [filters, setFilters] = useState({
         type: [],
@@ -24,7 +23,7 @@ const Search = () => {
         <div className="search-container">
             <main className="search-main">
                 <div className="filters">
-                    <Filters onApplyFilters={handleApplyFilters}/>
+                    <FilterSection onApplyFilters={handleApplyFilters}/>
                 </div>
                 <div className="search-results">
                     <SearchResult queri={query} filters={filters}/>
