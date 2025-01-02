@@ -1,7 +1,12 @@
 import mongoose from 'mongoose';
 
 const planSchema = new mongoose.Schema({
-    date: {
+    startDate: {
+        type: String, 
+        required: true,
+        default: Date.now 
+    },
+    endDate: {
         type: String, 
         required: true,
     },

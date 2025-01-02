@@ -61,6 +61,9 @@ const postSchema = new mongoose.Schema({
         ingredient: { type: mongoose.Schema.Types.ObjectId, ref: 'Ingredient' },
         weight: { type: Number },
     }],
+    reports: [{
+        type: String
+    }]
 }, { timestamps: true });
  
 const Post = mongoose.models.Post || mongoose.model('Post', postSchema);

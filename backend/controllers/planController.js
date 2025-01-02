@@ -3,20 +3,19 @@ import Plan from '../models/planModel.js';
 // Controller to create a new plan
 const createPlan = async (req, res) => {
     try {
-        const { date, name, user, posts, ingredients } = req.body;
+        const { startDate, endDate, name, user, posts, ingredients } = req.body;
 
-        if (!date || !name || !user) {
-            return res.status(400).json({ message: 'Date, name, and user are required.' });
+        if (!startDate || !endDate || !name || !user) {
+            return res.status(400).json({ message: 'Start date, End date, name, and user are required.' });
         }
 
-        // Create plan object with required and optional fields
         const planData = {
-            date,
+            startDate,
+            endDate,
             name,
             user
         };
 
-        // Add optional fields if they exist
         if (posts) planData.posts = posts;
         if (ingredients && Array.isArray(ingredients)) {
             planData.ingredients = ingredients;
@@ -56,7 +55,7 @@ const deletePlan = async (req, res) => {
 // Controller to get all plans for a user
 const getAllPlans = async (req, res) => {
     try {
-        const { userId } = req.params; // Get user ID from query params
+        const { userId } = req.params;
 
         if (!userId) {
             return res.status(400).json({ message: 'User ID is required.' });
@@ -65,7 +64,7 @@ const getAllPlans = async (req, res) => {
         const plans = await Plan.find({ user: userId })
             .populate('posts')
             .populate('ingredients.ingredient')
-            .sort({ date: 1 }); // Sort by date ascending
+            .sort({ startDate: 1 });
 
         res.status(200).json(plans);
     } catch (error) {
@@ -85,7 +84,8 @@ const getPlanByDate = async (req, res) => {
         }
 
         const plan = await Plan.find({ 
-            date: date,
+            startDate: { $lte: date },
+            endDate: { $gte: date },
             user: userId 
         })
         .populate('posts')
@@ -106,15 +106,15 @@ const getPlanByDate = async (req, res) => {
 const updatePlan = async (req, res) => {
     try {
         const { planId } = req.params;
-        const { date, name, posts, ingredients } = req.body;
+        const { startDate, endDate, name, posts, ingredients } = req.body;
 
         if (!planId) {
             return res.status(400).json({ message: 'Plan ID is required.' });
         }
 
-        // Create update object with only provided fields
         const updateData = {};
-        if (date) updateData.date = date;
+        if (startDate) updateData.startDate = startDate;
+        if (endDate) updateData.endDate = endDate;
         if (name) updateData.name = name;
         if (posts) updateData.posts = posts;
         if (ingredients) updateData.ingredients = ingredients;
