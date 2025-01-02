@@ -6,7 +6,7 @@ const commentReactSchema = new mongoose.Schema({
         ref: 'Comment',
         required: true
     },
-    username: {
+    user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
         required: true

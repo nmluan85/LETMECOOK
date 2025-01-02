@@ -1,17 +1,22 @@
 import React, { useState } from 'react';
 import ReactionButton from './reactionPicker';
 import { FaStar } from 'react-icons/fa';
+import { ReactionCounter } from "@charkour/react-reactions";
 
 const CommentCard = ({ user, comment, rating, createdAt }) => {
-  const [reactionCount, setReactionCount] = useState(0);
-  const [hasReacted, setHasReacted] = useState(false); // Track whether the user has already reacted
+
+  // Mock reactions state
+  const [reactions, setReactions] = useState([
+  ]);
 
   const handleReaction = (reaction) => {
-    // If the user hasn't reacted yet, increment the reaction count
-    if (!hasReacted) {
-      setReactionCount((prevCount) => prevCount + 1);
-      setHasReacted(true);
-    }
+    const { label, node } = reaction;
+
+    // Add the new reaction to the state
+    setReactions((prevReactions) => [
+      ...prevReactions,
+      { label, node, by: "You" }, // Add current user reaction as "You"
+    ]);
   };
 
   return (
@@ -41,7 +46,14 @@ const CommentCard = ({ user, comment, rating, createdAt }) => {
         <p className="text-gray-700 mt-1">{comment}</p>
         <div className="flex items-center space-x-4 mt-2">
           <ReactionButton onReaction={handleReaction} />
-          <div className="text-gray-700">({reactionCount})</div> {/* Display total reactions */}
+          {/* Reaction Counter */}
+          <ReactionCounter
+            reactions={reactions} // Pass the reactions array
+            iconSize={24}
+            showTotalOnly={false}
+            showOthersAlways={false}
+            bg="#fff"
+          />
         </div>
       </div>
     </div>
