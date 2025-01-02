@@ -23,7 +23,7 @@ const NutritionTracking = () => {
         const getAllPlans = async () => {
             try {
                 setIsLoading(true);
-                const response = await fetch("http://localhost:3000/api/plans/all/6774f5a8d3191c559faeaf74", {
+                const response = await fetch("http://localhost:3000/api/plans/all/" + user._id, {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",
@@ -38,22 +38,123 @@ const NutritionTracking = () => {
                         title: plan.name,
                         extendedProps: {
                             recipe: plan?.posts?.title || "",
-                            ingredients: plan?.ingredients || [],
+                            ingredients: plan?.ingredients?.map((item) => ({
+                                ingredient: item.ingredient.name,
+                                weight: item.weight})) || [],
                             type: plan.type || "other",
                         },
                     }))
                 );
-                data.map((plan) => {
-                    plan.start = new Date(plan.start);
-                    plan.end = new Date(plan.end);
-                    
-                });
             } catch (error) {
                 console.log(error.message || "An unexpected error occurred.");
             }
         };
         getAllPlans();
     }, [user]);
+    const handleAddEvent = async (newEvent) => {
+        console.log("In nutrioton", user ? user._id : "No user");
+        try {
+            setIsLoading(true);
+            const response = await fetch("http://localhost:3000/api/plans/create", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    startDate: newEvent.start,
+                    endDate: newEvent.end,
+                    name: newEvent.title,
+                    user: user,
+                    posts: newEvent.extendedProps.recipe,
+                    type: newEvent.extendedProps.type,
+                    ingredients: newEvent.extendedProps.ingredients.map((item) => ({
+                        ingredient: item.ingredient,
+                        weight: item.weight
+                    })),
+                }),
+            });
+            const data = await response.json();
+            if (data.massage == 'Plan created successfully.'){
+                alert("Plan created successfully.");
+                setPlans((prevEvents) => [
+                    ...prevEvents,
+                    { ...newEvent, id: data.plan.id}, // Assign a new id
+                ]);
+            }
+        } catch (error) {
+            console.log(error.message || "An unexpected error occurred.");
+        }
+    };
+    const handleUpdateEvent = async (updateEvent) => {
+        console.log("In nutrioton", user ? user._id : "No user");
+        try {
+            setIsLoading(true);
+            const response = await fetch("http://localhost:3000/api/plans/update/" + updateEvent.id, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    id: updateEvent.id,
+                    startDate: updateEvent.start,
+                    endDate: updateEvent.end,
+                    name: updateEvent.title,
+                    posts: updateEvent.extendedProps.recipe,
+                    type: updateEvent.extendedProps.type,
+                    ingredients: updateEvent.extendedProps.ingredients.map((item) => ({
+                        ingredient: item.ingredient,
+                        weight: item.weight
+                    })),
+                }),
+            });
+            const data = await response.json();
+            if (data.massage == 'Plan updated successfully.'){
+                alert("Plan updated successfully.");
+                setPlans((prevEvents) =>
+                    prevEvents.map((event) => {
+                        if (event.id === updateEvent.id) {
+                          event.title = updateEvent.title;
+                          event.start = updateEvent.start;
+                          event.end = updateEvent.end;
+                          event.extendedProps = { ...updateEvent.extendedProps };
+                        }
+                    })
+                );
+            }
+        } catch (error) {
+            console.log(error.message || "An unexpected error occurred.");
+        }
+    };
+    const handleDeleteEvent = async (deleteEvent) => {
+        console.log("In nutrioton", user ? user._id : "No user");
+        try {
+            setIsLoading(true);
+            const response = await fetch("http://localhost:3000/api/plans/delete/" + deleteEvent.id, {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+            const data = await response.json();
+            if (data.massage == 'Plan deleted successfully.'){
+                alert("Plan deleted successfully.");
+                setPlans((prevEvents) =>
+                    prevEvents.filter((event) => event.id !== deleteEvent.id)
+                );
+            }
+        } catch (error) {
+            console.log(error.message || "An unexpected error occurred.");
+        }
+    };
+    const handleTrackingDate = (date) => {
+        const matchingPlans = plans.filter((plan) => date >= plan.start && date <= plan.end);
+        if (matchingPlans.length > 0) {
+            return matchingPlans;
+        } else {
+            alert("No plan found for this date.");
+            return null;
+        }
+    };
     return (
         <div>
             <div className="w-full h-full pt-8 pl-10">
@@ -76,11 +177,19 @@ const NutritionTracking = () => {
             </div>
             <div className="flex h-screen pl-4 pr-4 pb-4">
                 <div className="w-3/4 p-8">
-                    {activeTab === 'planing' && <Scheduler datePick={datePick}/>}
+                    {activeTab === 'planing' && 
+                        <Scheduler 
+                            datePick={datePick} 
+                            event={plans}
+                            handleAddEvent={(newEvent) => handleAddEvent(newEvent)}
+                            handleUpdateEvent={(updateEvent) => handleUpdateEvent(updateEvent)}
+                            handleDeleteEvent={(deleteEvent) => handleDeleteEvent(deleteEvent)}
+                    />}
                     {activeTab === 'tracking' && <Tracking/>}
                 </div>   
                 <div className="w-1/4 border-2 border-gray-100">
                     <Calender
+                        events={plans}
                         handleDatePick={(date) => {setDatePick(date)}}
                     />
                     {activeTab === 'tracking' && 
@@ -93,7 +202,6 @@ const NutritionTracking = () => {
                                 "You have exceeded the daily limit of calories. Please consider reducing the amount of food you consume."
                             </div>
                         </div>
-
                     }
                 </div> 
             </div>
