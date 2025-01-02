@@ -25,6 +25,9 @@ const Header = () => {
             navigate(`/search?query=${encodeURIComponent(searchTerm)}`);
         }
     };
+    const handleIngredientsClick = () => {
+        navigate("/ingredients");
+    };
     const handleKeyDown = (e) => {
         if (e.key === "Enter") {
             handleSearchIconClick();
@@ -50,7 +53,7 @@ const Header = () => {
     const navOptions = [
         { label: "What to cook", href: "#" },
         { label: "Recipes", href: "#" },
-        { label: "Ingredients", href: "#" },
+        { label: "Ingredients", onClick: () => handleIngredientsClick() },
         { label: "Nutrition tracking", onClick: () => handleNutritionClick() },
         { label: "About Us", href: "#" },
         ...(isLoggedIn

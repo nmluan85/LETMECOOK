@@ -1,5 +1,22 @@
 import Ingredient from '../models/ingredientModel.js';
 
+// Controller to get all ingredient names
+const getAllIngredientNames = async (req, res) => {
+    try {
+        // Fetch all ingredients and select only the 'name' field
+        const ingredients = await Ingredient.find({}, "name");
+
+        // Extract names from the result
+        const ingredientNames = ingredients.map(ingredient => ingredient.name);
+
+        // Send the names as an array to the front-end
+        res.status(200).json(ingredientNames);
+    } catch (error) {
+        console.error('Error fetching ingredient names:', error);
+        res.status(500).json({ message: 'Server error. Could not fetch ingredient names.' });
+    }
+};
+
 // Controller to view an ingredient
 const viewIngredient = async (req, res) => {
     try {
@@ -106,4 +123,4 @@ const updateIngredient = async (req, res) => {
     }
 };
 
-export { createIngredient, deleteIngredient, updateIngredient, viewIngredient }; 
+export { createIngredient, deleteIngredient, updateIngredient, viewIngredient, getAllIngredientNames }; 

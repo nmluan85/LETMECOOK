@@ -7,6 +7,7 @@ import {
 import Layout from "./components/layout/layout";
 import RecipeDetails from "./pages/recipeDetails/recipeDetails";
 import Search from "./pages/search/search";
+import Ingredients from "./pages/ingredients/ingredients";
 import { useState, useEffect } from 'react';
 import './App.css';
 import Home from './pages/home/home';
@@ -28,7 +29,21 @@ const router = createBrowserRouter(
               <Profile />
             }
         />
-        <Route path="/search" element={<Search />}></Route>
+
+        <Route 
+            path="/search" 
+            element={
+              <Search />
+            }
+          ></Route>
+        
+        <Route
+            path="/ingredients"
+            element={
+                <Ingredients />
+            }
+        />
+
         <Route path="/nutrition"
             element={
                 // <ProtectedRoute roles={["premium"]}>
