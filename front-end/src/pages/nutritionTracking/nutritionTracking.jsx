@@ -8,22 +8,21 @@ import { VscGraph } from "react-icons/vsc";
 import { TbAlertTriangle } from "react-icons/tb";
 import { useAuth } from "../../contexts/AuthContext";
 
-
 const NutritionTracking = () => {
     const [activeTab, setActiveTab] = useState('planing');
     const [plans, setPlans] = useState([]);
     const {user} = useAuth();
     const [isLoading, setIsLoading] = useState(false);
     const [datePick, setDatePick] = useState(null);
+    const [dataTracking, setDataTracking] = useState([]);
+
+    // Function to get all plans
     useEffect(() => {
-        console.log("Plans", plans);
-    }, [plans])
-    useEffect(() => {
-        console.log("In nutrioton", user ? user._id : "No user");
         const getAllPlans = async () => {
             try {
+                const test = "6774f5a8d3191c559faeaf74"
                 setIsLoading(true);
-                const response = await fetch("http://localhost:3000/api/plans/all/" + user._id, {
+                const response = await fetch("http://localhost:3000/api/plans/all/" + test, {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",
@@ -51,8 +50,45 @@ const NutritionTracking = () => {
         };
         getAllPlans();
     }, [user]);
+    // Function to calculate the calories
+    useEffect(() => {
+        const pickDate = new Date(datePick);
+        const normalizeDate = (date) => {
+            return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+        };
+        const matchingPlans = plans.filter((plan) => {
+            const normalizedPickDate = normalizeDate(pickDate);
+            const normalizedPlanStart = normalizeDate(new Date(plan.start));
+            return normalizedPickDate.getTime() === normalizedPlanStart.getTime();
+        });
+        const list = matchingPlans.map((plan) => plan.id);
+        const caclueCalories = async () => {
+            try {
+                setIsLoading(true);
+                const response = await fetch("http://localhost:3000/api/plans/calculate", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        userId: user._id,
+                        planIds: matchingPlans.map((plan) => plan.id),
+                    })
+                });
+                const data = await response.json();
+                if (data.message === 'Plan nutrition calculated successfully.'){
+                    setDataTracking(data.nutritionPercentages);
+                } else {
+                    setDataTracking([]);
+                }
+            } catch (error) {
+                console.log(error.message || "An unexpected error occurred.");
+            }
+        };
+        caclueCalories();
+    }, [datePick, plans]);
+    // Function to handle adding a new event
     const handleAddEvent = async (newEvent) => {
-        console.log("In nutrioton", user ? user._id : "No user");
         try {
             setIsLoading(true);
             const response = await fetch("http://localhost:3000/api/plans/create", {
@@ -74,7 +110,7 @@ const NutritionTracking = () => {
                 }),
             });
             const data = await response.json();
-            if (data.massage == 'Plan created successfully.'){
+            if (data.message === 'Plan created successfully.'){
                 alert("Plan created successfully.");
                 setPlans((prevEvents) => [
                     ...prevEvents,
@@ -85,8 +121,8 @@ const NutritionTracking = () => {
             console.log(error.message || "An unexpected error occurred.");
         }
     };
+    // Function to handle updating an event
     const handleUpdateEvent = async (updateEvent) => {
-        console.log("In nutrioton", user ? user._id : "No user");
         try {
             setIsLoading(true);
             const response = await fetch("http://localhost:3000/api/plans/update/" + updateEvent.id, {
@@ -125,8 +161,8 @@ const NutritionTracking = () => {
             console.log(error.message || "An unexpected error occurred.");
         }
     };
+    // Function to handle deleting an event
     const handleDeleteEvent = async (deleteEvent) => {
-        console.log("In nutrioton", user ? user._id : "No user");
         try {
             setIsLoading(true);
             const response = await fetch("http://localhost:3000/api/plans/delete/" + deleteEvent.id, {
@@ -144,15 +180,6 @@ const NutritionTracking = () => {
             }
         } catch (error) {
             console.log(error.message || "An unexpected error occurred.");
-        }
-    };
-    const handleTrackingDate = (date) => {
-        const matchingPlans = plans.filter((plan) => date >= plan.start && date <= plan.end);
-        if (matchingPlans.length > 0) {
-            return matchingPlans;
-        } else {
-            alert("No plan found for this date.");
-            return null;
         }
     };
     return (
@@ -185,7 +212,10 @@ const NutritionTracking = () => {
                             handleUpdateEvent={(updateEvent) => handleUpdateEvent(updateEvent)}
                             handleDeleteEvent={(deleteEvent) => handleDeleteEvent(deleteEvent)}
                     />}
-                    {activeTab === 'tracking' && <Tracking/>}
+                    {activeTab === 'tracking' && 
+                        <Tracking
+                            inputData={dataTracking}
+                    />}
                 </div>   
                 <div className="w-1/4 border-2 border-gray-100">
                     <Calender

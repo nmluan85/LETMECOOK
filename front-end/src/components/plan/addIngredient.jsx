@@ -6,18 +6,51 @@ const AddIngredient = ({ingre, listIngredients}) => {
     ingre.map((item) => ({ ingredient: item.ingredient, weight: item.weight}))
   ); // Store selected ingredients with weights
   const [searchTerm, setSearchTerm] = useState(""); // Store search input value
+  const [allIngredients, setAllIngredients] = useState([]);
   
-  const allIngredients = [
-    "strawberry", "beef", "cheese", "flour", "pork",
-    "tomatto", "onion", "garlic", "chicken", "egg",
-    "carrot", "salt", "oil", "corn", "bean", "rice",
-    "potato", "milk", "butter", "sugar", "bread",
-    "lettuce", "cucumber", "apple", "banana", "orange",
-    "grape", "watermelon", "pineapple", "mango", "pear",
-    "kiwi", "blueberry", "peach", "plum", "apricot",
-    "cherry", "lemon", "lime", "avocado", "papaya",
-    "coconut", "fig", "melon", "pomegranate", "cranberry",
-  ];
+  useEffect(() => { 
+    const fetchIngredients = async () => {
+        try {
+          setIsLoading(true);
+          const response = await fetch("http://localhost:3000/api/plans/all/" + test, {
+              method: "GET",
+              headers: {
+                  "Content-Type": "application/json",
+              },
+          });
+          const data = await response.json();
+          setPlans(
+              data.map((plan) => ({
+                  id: plan._id,
+                  start: new Date(plan.startDate),
+                  end: new Date(plan.endDate),
+                  title: plan.name,
+                  extendedProps: {
+                      recipe: plan?.posts?.title || "",
+                      ingredients: plan?.ingredients?.map((item) => ({
+                          ingredient: item.ingredient.name,
+                          weight: item.weight})) || [],
+                      type: plan.type || "other",
+                  },
+              }))
+          );
+      } catch (error) {
+          console.log(error.message || "An unexpected error occurred.");
+      }
+    };
+    fetchIngredients();
+  })
+  // const allIngredients = [
+  //   "strawberry", "beef", "cheese", "flour", "pork",
+  //   "tomatto", "onion", "garlic", "chicken", "egg",
+  //   "carrot", "salt", "oil", "corn", "bean", "rice",
+  //   "potato", "milk", "butter", "sugar", "bread",
+  //   "lettuce", "cucumber", "apple", "banana", "orange",
+  //   "grape", "watermelon", "pineapple", "mango", "pear",
+  //   "kiwi", "blueberry", "peach", "plum", "apricot",
+  //   "cherry", "lemon", "lime", "avocado", "papaya",
+  //   "coconut", "fig", "melon", "pomegranate", "cranberry",
+  // ];
   useEffect(() => {
     // Update the parent component with the current ingredient list
     console.log("In AddIngredient", ingredients);

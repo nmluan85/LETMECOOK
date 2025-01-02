@@ -15,8 +15,7 @@ const Scheduler = ({datePick, event, handleUpdateEvent, handleDeleteEvent, handl
     useEffect(() =>{
         setEvents(event);
     }, [event]);
-    useEffect(() => {
-        console.log("In scheduler"); 
+    useEffect(() => { 
         if (datePick && calendarRef.current) {
             const calendarApi = calendarRef.current.getApi();
             calendarApi.gotoDate(datePick); // Update the calendar's displayed date

@@ -20,8 +20,7 @@ const planSchema = new mongoose.Schema({
         required: true,
     },
     posts: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Post'
+        type: String,
     },
     type: {
         type: String,
