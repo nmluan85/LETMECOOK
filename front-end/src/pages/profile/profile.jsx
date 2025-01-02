@@ -5,15 +5,34 @@ import { useNavigate } from "react-router-dom";
 
 const Profile = () => {
     const { isLoggedIn, user, login, logout } = useAuth();
+    const { isLoggedIn, user, login, logout } = useAuth();
     const [activeButton, setActiveButton] = useState("My Recipes");
     const [savedPosts, setSavedPosts] = useState([]);
     const [myPosts, setMyPosts] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [userRole, setRole] = useState("");
+    const [userRole, setRole] = useState("");
     const [displayName, setDisplayName] = useState("");
     const [preview, setPreview] = useState("");
     const navigate = useNavigate();
+
+    const [currentPage, setCurrentPage] = useState(1);
+    const postsPerPage = 8;
+    const postsToShow = activeButton === "My Recipes" ? myPosts : savedPosts;
+
+    // Calculate the index of the first and last posts for the current page
+    const lastPostIndex = currentPage * postsPerPage;
+    const firstPostIndex = lastPostIndex - postsPerPage;
+    const currentPosts = postsToShow.slice(firstPostIndex, lastPostIndex);
+
+    // Calculate the total number of pages
+    const totalPages = Math.ceil(postsToShow.length / postsPerPage);
+
+    // Handle page change
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
+    };
 
     const [currentPage, setCurrentPage] = useState(1);
     const postsPerPage = 8;
@@ -40,6 +59,7 @@ const Profile = () => {
     useEffect(() => {
         console.log(user);
         if (user) {
+            setRole(user.role || "");
             setRole(user.role || "");
             setDisplayName(user.username || "");
             setPreview(user.avatar || ""); // Assume avatar URL is in user object
@@ -123,6 +143,20 @@ const Profile = () => {
             <div className="bg-white p-8 mx-16">
                 <div>
                     <div className="w-full flex justify-between items-center">
+                        <h1 className="text-3xl font-bold mb-4">
+                            {displayName}'s Recipe Box
+                        </h1>
+                        {(userRole === "Admin" ||
+                            userRole === "PremiumUser") && (
+                            <button
+                                className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+                                onClick={() => {
+                                    handleAddNewRecipe();
+                                }}
+                            >
+                                Add a Recipe
+                            </button>
+                        )}
                         <h1 className="text-3xl font-bold mb-4">
                             {displayName}'s Recipe Box
                         </h1>
