@@ -3,7 +3,7 @@ import Plan from '../models/planModel.js';
 // Controller to create a new plan
 const createPlan = async (req, res) => {
     try {
-        const { startDate, endDate, name, user, posts, ingredients } = req.body;
+        const { startDate, endDate, name, user, posts, type, ingredients } = req.body;
 
         if (!startDate || !endDate || !name || !user) {
             return res.status(400).json({ message: 'Start date, End date, name, and user are required.' });
@@ -13,7 +13,8 @@ const createPlan = async (req, res) => {
             startDate,
             endDate,
             name,
-            user
+            user, 
+            type,
         };
 
         if (posts) planData.posts = posts;
@@ -43,7 +44,7 @@ const deletePlan = async (req, res) => {
         }
 
         const deletedPlan = await Plan.findByIdAndDelete(planId);
-        
+
         if (!deletedPlan) {
             return res.status(404).json({ message: 'Plan not found.' });
         }
@@ -96,7 +97,7 @@ const getPlanByDate = async (req, res) => {
 
         if (!plan || plan.length === 0) {
             return res.status(404).json({ message: 'No plans found for this date.' });
-        }
+        } 
 
         res.status(200).json(plan);
     } catch (error) {
@@ -176,8 +177,7 @@ const calculatePlan = async (req, res) => {
 const updatePlan = async (req, res) => {
     try {
         const { planId } = req.params;
-        const { startDate, endDate, name, posts, ingredients } = req.body;
-
+        const { startDate, endDate, name, posts, type, ingredients} = req.body;
         if (!planId) {
             return res.status(400).json({ message: 'Plan ID is required.' });
         }
@@ -188,9 +188,10 @@ const updatePlan = async (req, res) => {
         if (name) updateData.name = name;
         if (posts) updateData.posts = posts;
         if (ingredients) updateData.ingredients = ingredients;
+        if (type) updateData.type = type;
 
         const updatedPlan = await Plan.findByIdAndUpdate(
-            planId, 
+            planId,
             updateData,
             { new: true, runValidators: true }
         )
@@ -201,9 +202,9 @@ const updatePlan = async (req, res) => {
             return res.status(404).json({ message: 'Plan not found.' });
         }
 
-        res.status(200).json({ 
+        res.status(200).json({
             message: 'Plan updated successfully.',
-            plan: updatedPlan 
+            plan: updatedPlan
         });
     } catch (error) {
         console.error('Error updating plan:', error);
