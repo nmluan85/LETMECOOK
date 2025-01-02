@@ -6,7 +6,7 @@ import "./searchResult.css";
 const SearchResult = ({ queri, filters  }) => {
     const [data, setData] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
-    const [itemsPerPage] = useState(6);
+    const [itemsPerPage] = useState(12);
     const [totalPages, setTotalPages] = useState(0);
     const [sortOrder, setSortOrder] = useState("A-Z");
     const [slideDirection, setSlideDirection] = useState("");
