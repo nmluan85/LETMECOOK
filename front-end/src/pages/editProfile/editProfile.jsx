@@ -28,13 +28,33 @@ const EditProfile = () => {
     // Handle Save Changes
     const handleSaveChanges = async () => {
         try {
-            const updatedUser = {
+            // Prepare the updated fields
+            const updatedFields = {
                 username: displayName,
                 avatar: preview,
                 description: description
+            };
+
+            // Call the PUT API to update the user profile
+            const response = await fetch('http://localhost:3000/api/users/edit-profile', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(updatedFields),
+                credentials: "include"
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Failed to update profile');
             }
 
-            login(updatedUser); // Update the user in AuthContext
+            const data = await response.json();
+
+            // Update the user in AuthContext
+            login(data.user);
+
             alert("Profile updated successfully!");
         } catch (error) {
             console.error("Error updating profile:", error);

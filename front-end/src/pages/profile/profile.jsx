@@ -12,6 +12,7 @@ const Profile = () => {
     const [error, setError] = useState(null);
     const [userRole, setRole] = useState("");
     const [displayName, setDisplayName] = useState("");
+    const [displayDescription, setDisplayDescription] = useState(null);
     const [preview, setPreview] = useState("");
     const navigate = useNavigate();
 
@@ -41,8 +42,8 @@ const Profile = () => {
         console.log(user);
         if (user) {
             setRole(user.role || "");
-            setRole(user.role || "");
             setDisplayName(user.username || "");
+            setDisplayDescription(user.description || null);
             setPreview(user.avatar || ""); // Assume avatar URL is in user object
         }
     }, [user]);
@@ -148,13 +149,11 @@ const Profile = () => {
                             width="150"
                         />
                         <p className="text-lg">
-                            {displayName} is a deputy editor at Chefify,
-                            bringing her expertise as a former cooking editor at
-                            The Los Angeles Times. She is also an accomplished
-                            author, contributing to numerous cookbooks and food
-                            publications. Originally from East Los Angeles, Emma
-                            now resides in New York City, where she explores a
-                            wide range of culinary delights.
+                            {displayDescription
+                                ? displayDescription
+                                : `${displayName} is a passionate home chef and food enthusiast, 
+                                sharing their favorite recipes and cooking tips on LETMECOOK Cooking Recipe 
+                                Application.`}
                         </p>
                     </div>
                 </div>
