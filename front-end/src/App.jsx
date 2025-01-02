@@ -16,6 +16,8 @@ import { LoginModalProvider } from "./contexts/LoginModalContext";
 import { AuthProvider } from "./contexts/AuthContext";
 import ProfileModal from "./components/profile/profileModal";
 import EditProfile from "./pages/editProfile/editProfile";
+import AdminHub from "./pages/admin/adminHub/adminHub";
+import CheckPost from "./pages/admin/checkPost/checkPost";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -23,18 +25,10 @@ const router = createBrowserRouter(
       <Route path="/" element={<Layout />}>
         <Route index element={<Home />}></Route>
         <Route path="/recipe/:_id" element={<RecipeDetails />}></Route>
-        <Route
-            path="/profile"
-            element={
-              <Profile />
-            }
-        />
-        <Route
-            path="/edit-profile"
-            element={
-              <EditProfile />
-            }
-        />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/edit-profile" element={<EditProfile />} />
+        <Route path="/admin-hub" element={<AdminHub />} />
+        <Route path="/check-post/:userId" element={<CheckPost />} />
         <Route path="/search" element={<Search />}></Route>
         <Route
           path="/nutrition"

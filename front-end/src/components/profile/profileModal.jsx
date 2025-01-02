@@ -41,11 +41,11 @@ const ProfileModal = ({onComplete}) => {
                             </span>
                         </div>
                     </Link>
-                    {role != "premium" ? (
+                    {role == "User" ? (
                         <div className="flex items-center mt-2">
                             <MdOutlineTipsAndUpdates className="w-5 h-5 mr-4"/>
                             <span 
-                                className="text-gray-700 text-sm cursor-pointer"
+                                className="text-gray-700 text-sm cursor-pointer" 
                                 onClick={() => {
                                     onComplete() 
                                 }}
@@ -54,20 +54,23 @@ const ProfileModal = ({onComplete}) => {
                             </span>
                         </div>
                     ) : null}
-
-                    {role == "Admin" ? (
-                        <div className="flex items-center mt-2">
-                            <MdOutlineTipsAndUpdates className="w-5 h-5 mr-4"/>
-                            <span 
-                                className="text-gray-700 text-sm cursor-pointer"
-                                onClick={() => {
-                                    onComplete() 
-                                }}
-                            >
-                                In heat
-                            </span>
-                        </div>
-                    ) : null}
+                    {
+                        role == "Admin" ? (
+                            <Link to="/admin-hub">
+                                <div className="flex items-center mt-2">
+                                <MdOutlineTipsAndUpdates className="w-5 h-5 mr-4" />
+                                <span
+                                    className="text-gray-700 text-sm cursor-pointer"
+                                    onClick={() => {
+                                    onComplete();
+                                    }}
+                                >
+                                    In heat
+                                </span>
+                                </div>
+                            </Link>
+                        ) : null
+                    }
                 </div>
                 <div className="border-t-2 w-full items-center border-gray-200 p-4">
                     <div className="flex items-center">

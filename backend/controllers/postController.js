@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import User from '../models/userModel.js';
 import Post from '../models/postModel.js';
 import Comment from '../models/commentModel.js';
 import Plan from '../models/planModel.js';
@@ -211,6 +212,8 @@ const addPostFromFreeMeal = async (req, res) => {
     } catch (error) {
         console.error('Error saving meals as posts:', error);
         res.status(500).json({ message: 'An error occurred while saving meals to the database.' });
+    }
+};
 
 // Controller to view all posts of a user
 const viewUserAllPosts = async (req, res) => {
@@ -232,6 +235,43 @@ const viewUserAllPosts = async (req, res) => {
     }
 };
 
+// Controller to add report to a post
+const addReport = async (req, res) => {
+    try {
+        const { postId, report } = req.body;
+
+        if (!postId || !report) {
+            return res.status(400).json({ message: 'Post ID and report are required.' });
+        }
+
+        const post = await Post.findById(postId);
+
+        if (!post) {
+            return res.status(404).json({ message: 'Post not found.' });
+        }
+
+        const user = await User.findById(post.author);
+        if (!user) {
+            return res.status(404).json({ message: 'Post author not found.' });
+        }
+
+        user.numberReports += 1;
+        await user.save();
+
+        post.reports.push(report);
+        await post.save();
+        
+        res.status(200).json({ 
+            message: 'Report added successfully.',
+            updatedNumberReports: user.numberReports 
+        });
+    }
+    catch (error) {
+        console.error('Error adding report:', error);
+        res.status(500).json({ message: 'Server error. Could not add report.' });
+    }
+}
+
 export { 
     getAllPosts,
     searchPosts, 
@@ -239,5 +279,6 @@ export {
     addPost, 
     deletePost,
     addPostFromFreeMeal,
-    viewUserAllPosts
+    viewUserAllPosts,
+    addReport
 };

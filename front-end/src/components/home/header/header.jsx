@@ -152,7 +152,7 @@ const Header = () => {
                 <ProfileModal
                     onComplete={() => {
                         setIsExpanded(false);
-                        navigate("/edit-profile");
+                        // navigate("/edit-profile");
                     }}
                 />
                 </div>

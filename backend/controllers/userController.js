@@ -70,7 +70,7 @@ const createUser = async (req, res) => {
             message: 'Server error. Could not create user.' 
         });
     }
-};  
+};
 
 // Controller to verify email
 const verifyEmail = async (req, res) => {
@@ -456,6 +456,28 @@ const getSavedPosts = async (req, res) => {
     }
 };
 
+// Controller to change role of a user
+const changeRole = async (req, res) => {
+    try {
+        const { id, role } = req.body;
+
+        if (!id || !role) {
+            return res.status(400).json({ message: 'User ID and role are required.' });
+        }
+
+        const user = await User.findByIdAndUpdate(id, { role }, { new: true });
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found.' });
+        }
+
+        res.status(200).json({ message: 'Role updated successfully.', user });
+    } catch (error) {
+        console.error('Error changing role:', error);
+        res.status(500).json({ message: 'Server error. Could not change role.' });
+    }
+}
+
 export { 
     createUser, 
     verifyEmail,
@@ -469,5 +491,6 @@ export {
     checkAuth,
     savePostToUser,
     deleteSavedPost,
-    getSavedPosts
+    getSavedPosts,
+    changeRole
 };
