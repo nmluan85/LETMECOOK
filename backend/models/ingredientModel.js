@@ -10,6 +10,9 @@ const ingredientSchema = new mongoose.Schema({
         fiber: Number,
         sodium: Number
     },
+    type: {
+        type: String
+    }
 }, { timestamps: true });
 
 const Ingredient = mongoose.models.Ingredient || mongoose.model('Ingredient', ingredientSchema);

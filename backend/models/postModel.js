@@ -14,6 +14,10 @@ const postSchema = new mongoose.Schema({
         type: String, 
         required: true
     },
+    description: {
+        type: String,
+        default: "This is a delicious dish"
+    },
     category: {
         type: String,
     },
@@ -44,6 +48,10 @@ const postSchema = new mongoose.Schema({
     },
     duration: {
         type: Number
+    },
+    rating: {
+        type: Number,
+        default: 4
     },
     comments: {
         type: [mongoose.Schema.Types.ObjectId],

@@ -90,20 +90,41 @@ const viewPost = async (req, res) => {
     }
 };
 
-// Controller to add a post
+// Add new post
 const addPost = async (req, res) => {
     try {
-        const { title, content, author, tags, ingredients } = req.body;
+        const {
+            title,
+            description,
+            category,
+            area,
+            content, // Directions
+            contentIngredients, // Ingredients with measures
+            video,
+            duration,
+            tags,
+            photo,
+            author
+        } = req.body;
 
+        // Validate required fields
         if (!title || !content || !author) {
-            return res.status(400).json({ message: 'Title, content, and author are required.' });
+            return res.status(400).json({
+                message: 'Title, content (directions), and author are required.'
+            });
         }
 
-        // Create post object with optional tags
+        // Create post object
         const postData = {
             title,
+            description: description || "", // Optional
+            category: category || "Miscellaneous", // Optional, with a default
+            area: area || "Unknown", // Optional, with a default
             content,
-            author
+            duration: duration || 0, // Optional, default to 0
+            video: video || "", // Optional
+            photo: photo || "", // Optional
+            author,
         };
 
         // Add tags if they exist
@@ -111,13 +132,17 @@ const addPost = async (req, res) => {
             postData.tags = tags.map(tag => tag.trim().toLowerCase());
         }
 
-        if (ingredients && Array.isArray(ingredients)) {
-            postData.ingredients = ingredients;
+        // Add contentIngredients if they exist
+        if (contentIngredients && Array.isArray(contentIngredients)) {
+            postData.ingredients = contentIngredients;
         }
 
+        // Save the post
         const newPost = new Post(postData);
         await newPost.save();
-        res.status(200).json({ message: 'Post added successfully.' });
+
+        // Respond with success
+        res.status(200).json({ message: 'Post added successfully.', post: newPost });
     } catch (error) {
         console.error('Error adding post:', error);
         res.status(500).json({ message: 'Server error. Could not add post.' });
@@ -270,7 +295,73 @@ const addReport = async (req, res) => {
         console.error('Error adding report:', error);
         res.status(500).json({ message: 'Server error. Could not add report.' });
     }
-}
+};
+
+const getPostsByCategory = async (req, res) => {
+    const { name } = req.params; // Extract category from route parameters
+
+    // Capitalize the first letter of the category
+    const category = name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
+
+    try {
+        // Fetch posts with the formatted category from the database
+        const posts = await Post.find({ category: category }).populate('author');
+
+        if (!posts.length) {
+            return res.status(201).json({ message: 'No posts found for this category.' });
+        }
+
+        // Respond with the retrieved posts
+        res.status(200).json(posts);
+    } catch (error) {
+        // Handle errors (e.g., database issues)
+        console.error('Error fetching posts by category:', error);
+        res.status(500).json({ message: 'Server error. Please try again later.' });
+    }
+};
+
+const setAuthorForAllPosts = async (req, res) => {
+    const authorId = '676d862128ff79e6061a0cd5'; // The ID to set as the author
+
+    try {
+        // Update all posts with the given author ID
+        const result = await Post.updateMany({}, { author: authorId });
+
+        // Respond with a success message and the count of updated documents
+        res.status(200).json({
+            message: 'Author updated for all posts successfully.',
+            updatedCount: result.nModified,
+        });
+    } catch (error) {
+        console.error('Error updating author for posts:', error);
+        res.status(500).json({
+            message: 'Failed to update author for posts.',
+            error: error.message,
+        });
+    }
+};
+
+const resetRatingAllPosts = async (req, res) => {
+    try {
+        // Update all posts to add the 'rating' field with a default value of 5
+        const result = await Post.updateMany(
+            { rating: { $exists: false } }, // Only update documents where 'rating' does not exist
+            { $set: { rating: 4 } }
+        );
+
+        // Respond with a success message and the count of updated documents
+        res.status(200).json({
+            message: 'Rating field added to all posts successfully.',
+            updatedCount: result.nModified,
+        });
+    } catch (error) {
+        console.error('Error adding rating to posts:', error);
+        res.status(500).json({
+            message: 'Failed to add rating field to posts.',
+            error: error.message,
+        });
+    }
+};
 
 export { 
     getAllPosts,
@@ -280,5 +371,8 @@ export {
     deletePost,
     addPostFromFreeMeal,
     viewUserAllPosts,
-    addReport
+    addReport,
+    getPostsByCategory,
+    setAuthorForAllPosts,
+    resetRatingAllPosts
 };

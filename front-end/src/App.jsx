@@ -18,6 +18,10 @@ import ProfileModal from "./components/profile/profileModal";
 import EditProfile from "./pages/editProfile/editProfile";
 import AdminHub from "./pages/admin/adminHub/adminHub";
 import CheckPost from "./pages/admin/checkPost/checkPost";
+import AddNewRecipe from "./pages/addNewRecipe/addNewRecipe";
+import AllRecipes from "./pages/allRecipes/allRecipes";
+import CategoryFullRecipes from "./components/allRecipes/categoryFullRecipes";
+import NutritionTracking from "./pages/nutritionTracking/nutritionTracking";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -30,15 +34,25 @@ const router = createBrowserRouter(
         <Route path="/admin-hub" element={<AdminHub />} />
         <Route path="/check-post/:userId" element={<CheckPost />} />
         <Route path="/search" element={<Search />}></Route>
-        <Route
-          path="/nutrition"
-          element={
-            // <ProtectedRoute roles={["premium"]}>
-            <Profile />
-            // </ProtectedRoute>
-          }
-        />
         <Route path="profile1" element={<ProfileModal />} />
+        <Route
+          path="/profile/add-recipe"
+          element={<AddNewRecipe />}
+        />
+        <Route 
+            path="/recipes"
+            element={
+              <AllRecipes />
+            }
+        />
+        <Route path="/nutrition"
+            element={
+                // <ProtectedRoute roles={["premium"]}>
+                    <NutritionTracking />
+                // </ProtectedRoute>
+            }
+        />
+        <Route path="/category/:category" element={<CategoryFullRecipes />} />
       </Route>
     </Route>
   )
