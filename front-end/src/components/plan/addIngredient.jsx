@@ -2,8 +2,11 @@ import React, { useState, useEffect } from "react";
 import { use } from "react";
 
 const AddIngredient = ({ingre, listIngredients}) => {
-  const [ingredients, setIngredients] = useState(ingre); // Store selected ingredients
+  const [ingredients, setIngredients] = useState(
+    ingre.map((item) => ({ ingredient: item.ingredient, weight: item.weight}))
+  ); // Store selected ingredients with weights
   const [searchTerm, setSearchTerm] = useState(""); // Store search input value
+  
   const allIngredients = [
     "strawberry", "beef", "cheese", "flour", "pork",
     "tomatto", "onion", "garlic", "chicken", "egg",
@@ -16,12 +19,15 @@ const AddIngredient = ({ingre, listIngredients}) => {
     "coconut", "fig", "melon", "pomegranate", "cranberry",
   ];
   useEffect(() => {
+    // Update the parent component with the current ingredient list
+    console.log("In AddIngredient", ingredients);
     listIngredients(ingredients);
   }, [ingredients]);
+
   // Handle tag selection
   const handleTagClick = (tag) => {
-    if (!ingredients.includes(tag)) {
-      setIngredients([...ingredients, tag]); // Add to selected ingredients
+    if (!ingredients.find((ing) => ing.name === tag)) {
+      setIngredients([...ingredients, { ingredient: tag, weight: "" }]); // Add ingredient with default weight
     }
   };
 
@@ -33,32 +39,59 @@ const AddIngredient = ({ingre, listIngredients}) => {
   // Add ingredient manually when pressing Enter
   const handleKeyPress = (e) => {
     if (e.key === "Enter" && searchTerm.trim() !== "") {
-      if (!ingredients.includes(searchTerm.trim())) {
-        setIngredients([...ingredients, searchTerm.trim()]);
+      if (!ingredients.find((ing) => ing.ingredient === searchTerm.trim())) {
+        setIngredients([
+          ...ingredients,
+          { ingredient: searchTerm.trim(), weight: "" },
+        ]);
       }
-      setSearchTerm(""); // Clear the search input
-      e.preventDefault(); // Prevent form submission
+      setSearchTerm("");
+      e.preventDefault();
     }
   };
 
-  // Remove ingredient from input
-  const handleRemoveIngredient = (ingredient) => {
-    setIngredients(ingredients.filter((ing) => ing !== ingredient));
+  // Remove ingredient
+  const handleRemoveIngredient = (ingredientName) => {
+    setIngredients(ingredients.filter((ing) => ing.ingredient !== ingredientName));
   };
 
+  // Handle weight change
+  const handleWeightChange = (ingredientName, weight) => {
+    setIngredients(
+      ingredients.map((ing) =>
+        ing.ingredient === ingredientName ? { ...ing, weight } : ing
+      )
+    );
+  };
   return (
     <div>
       <div className="mb-4">
-        <label className="block font-medium mb-2">Ingredient</label>
+        <label className="block font-medium mb-2">Selected Ingredients</label>
         <div className="border border-gray-300 rounded-md p-2 flex flex-wrap gap-2">
           {ingredients.map((ingredient) => (
-            <span
-              key={ingredient}
-              className="bg-primary-500 text-white px-3 py-1 rounded-full text-sm cursor-pointer"
-              onClick={() => handleRemoveIngredient(ingredient)}
+            <div
+              key={ingredient.ingredient}
+              className="flex items-center gap-2 bg-primary-100 px-2 py-1 rounded-md"
             >
-              {ingredient} &times;
-            </span>
+              <span className="text-primary-500 font-medium">
+                {ingredient.ingredient}
+              </span>
+              <input
+                type="number"
+                className="w-20 border border-gray-300 rounded-md px-2 py-1"
+                placeholder="gram?"
+                value={ingredient.weight}
+                onChange={(e) =>
+                  handleWeightChange(ingredient.ingredient, e.target.value)
+                }
+              />
+              <button
+                className="text-red-500 font-bold"
+                onClick={() => handleRemoveIngredient(ingredient.ingredient)}
+              >
+                &times;
+              </button>
+            </div>
           ))}
           <input
             type="text"
@@ -72,7 +105,8 @@ const AddIngredient = ({ingre, listIngredients}) => {
       </div>
       <div className="mb-4">
         <label className="block font-medium mb-2">Available Ingredients</label>
-        <div className="flex flex-wrap gap-2 overflow-auto" 
+        <div
+          className="flex flex-wrap gap-2 overflow-auto"
           style={{
             display: "-webkit-box",
             WebkitBoxOrient: "vertical",
@@ -82,12 +116,14 @@ const AddIngredient = ({ingre, listIngredients}) => {
           }}
         >
           {allIngredients
-            .filter((tag) => tag.toLowerCase().includes(searchTerm.toLowerCase())) // Filter tags by search
+            .filter((tag) =>
+              tag.toLowerCase().includes(searchTerm.toLowerCase())
+            ) // Filter tags by search
             .map((tag) => (
               <button
                 key={tag}
                 className={`px-3 py-1 rounded-full text-sm font-medium cursor-pointer m-1 ${
-                  ingredients.includes(tag)
+                  ingredients.find((ing) => ing.ingredient === tag)
                     ? "bg-primary-500 text-white"
                     : "bg-gray-200 text-gray-700"
                 }`}
