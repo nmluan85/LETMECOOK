@@ -1,14 +1,13 @@
 import { FaStar } from "react-icons/fa";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import CommentCard from "./commentCard";
 import moment from "moment";
-import { useAuth } from "../../contexts/AuthContext";
 
-const CommentSection = () => {
+const CommentSection = ({recipeId}) => {
   const [comment, setComment] = useState(""); // State for comment text
   const [rating, setRating] = useState(4); // State for rating (default 4)
   const [allComments, setAllComments] = useState([]); // State for all comments
-  const { isLoggedIn, user, login, logout} = useAuth();
+  const [loading, setLoading] = useState(true); // Loading state
 
   const handleCommentChange = (e) => {
     setComment(e.target.value); // Update comment state
@@ -18,22 +17,65 @@ const CommentSection = () => {
     setRating(newRating); // Update rating state
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (comment.trim()) {
-      // Create new comment object
-      const newComment = {
-        user: user,
-        content: comment,
-        rating: rating,
-        createdAt: new Date(),
-      };
-      // Add new comment to the list
-      setAllComments((prevComments) => [...prevComments, newComment]);
-      // Reset input fields
-      setComment("");
-      setRating(4);
+      try {
+        const response = await fetch("http://localhost:3000/api/comments/create", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            content: comment,
+            rating,
+            postId: recipeId,
+          }),
+          credentials: "include"
+        });
+  
+        if (!response.ok) {
+          throw new Error("Failed to create comment");
+        }
+  
+        const newComment = await response.json();
+  
+        // Add new comment to the list
+        setAllComments((prevComments) => [...prevComments, newComment]);
+        // Reset input fields
+        setComment("");
+        setRating(4);
+      } catch (error) {
+        console.error("Error creating comment:", error.message);
+      }
     }
   };
+
+  // Fetch comments when the component mounts
+  useEffect(() => {
+    const fetchComments = async () => {
+      try {
+        const response = await fetch(`http://localhost:3000/api/comments/post/${recipeId}`);
+        if (!response.ok) {
+          throw new Error("Failed to fetch comments");
+        }
+
+        const comments = await response.json();
+
+        console.log(comments);
+        setAllComments(comments);
+      } catch (error) {
+        console.error("Error fetching comments:", error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchComments();
+  }, [recipeId]);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
   
   return (
     <div className="bg-white p-6 rounded-lg shadow-md w-full">
@@ -69,17 +111,19 @@ const CommentSection = () => {
         </div>
       </div>
         
-      {/* List of comments with ScrollToBottom */}
+      {/* List of comments */}
       <div className="mt-8">
-        {allComments.map((c) => (
-          <CommentCard
-            user={c.user}
-            key={c.createdAt} 
-            comment={c.content} 
-            rating={c.rating} 
-            createdAt={moment(c.createdAt).fromNow()} 
-          />
-        ))}
+        {
+          allComments.map((c) => (
+            <CommentCard
+              user={c.user}
+              key={c.createdAt}
+              comment={c.content}
+              rating={c.rating}
+              createdAt={moment(c.createdAt).fromNow()}
+            />
+          ))
+        }
       </div>
     </div>
   );

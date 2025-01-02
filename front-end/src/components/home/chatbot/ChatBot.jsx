@@ -108,7 +108,7 @@ const Chatbot = () => {
     // Auto-scroll to the latest message
     useEffect(() => {
         if (messagesEndRef.current) {
-        messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+            messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
         }
     }, [messages]);
 
