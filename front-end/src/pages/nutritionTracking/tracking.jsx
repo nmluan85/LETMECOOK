@@ -7,13 +7,13 @@ const Tracking = ({inputData}) => {
   const [data, setData] = useState(inputData);
   useEffect(() => {
     console.log('inputData', inputData);
-    setData(inputData.nutritionPercentages);
+    setData(inputData);
   }, [inputData]);
   return (
     <PieChart
       series={[
         {
-          data: inputData,
+          data: data,
           highlightScope: { fade: 'global', highlight: 'item' },
           faded: { innerRadius: 30, additionalRadius: -30, color: 'gray' },
           valueFormatter,

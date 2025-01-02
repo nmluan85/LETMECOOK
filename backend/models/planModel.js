@@ -24,7 +24,7 @@ const planSchema = new mongoose.Schema({
     },
     type: {
         type: String,
-        enum: ['breakfast', 'lunch', 'dinner', 'snack', 'supper', 'brunch', 'other'],
+        enum: ['breakfast', 'lunch', 'dinner', 'snacks', 'supper', 'brunch', 'other'],
         default: 'other',
         required: true,
     },

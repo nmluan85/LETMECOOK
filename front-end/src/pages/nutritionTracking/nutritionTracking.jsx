@@ -15,6 +15,7 @@ const NutritionTracking = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [datePick, setDatePick] = useState(null);
     const [dataTracking, setDataTracking] = useState([]);
+    const [warning, setWarning] = useState([]);
 
     // Function to get all plans
     useEffect(() => {
@@ -87,6 +88,27 @@ const NutritionTracking = () => {
         };
         caclueCalories();
     }, [datePick, plans]);
+    useEffect(() => {
+        const listWarning = [];
+        dataTracking.forEach((item) => {
+            if (item.label === 'calories' && item.value > 50){
+                listWarning.push("This plan contains too many calories. It may exceed your daily caloric needs.");
+            } else if (item.label === 'protein' && item.value > 35){
+                listWarning.push("High protein intake can stress your kidneys. Consider moderating protein consumption.");
+            } else if (item.label === 'protein' && item.value < 10){
+                listWarning.push("Low protein intake. Protein is crucial for muscle repair and overall health.");
+            } else if (item.label === 'fat' && item.value < 20){
+                listWarning.push("Your fat intake is too low. Fats are essential for brain function and energy.");
+            } else if (item.label === 'fat' && item.value > 35){
+                listWarning.push("Fat content is excessively high. This may increase the risk of cardiovascular diseases.")
+            } else if (item.label == 'carbs' && item.value < 45){
+                listWarning.push("Your carbohydrate intake is very low. This may cause fatigue and lack of energy.");
+            } else if (item.label == 'carbs' && item.value > 65){
+                listWarning.push("Excessive carbohydrate intake can lead to spikes in blood sugar levels. Consider reducing carbs.");
+            }
+        });
+        setWarning(listWarning);
+    }, [dataTracking])
     // Function to handle adding a new event
     const handleAddEvent = async (newEvent) => {
         try {
@@ -212,27 +234,49 @@ const NutritionTracking = () => {
                             handleUpdateEvent={(updateEvent) => handleUpdateEvent(updateEvent)}
                             handleDeleteEvent={(deleteEvent) => handleDeleteEvent(deleteEvent)}
                     />}
-                    {activeTab === 'tracking' && 
+                    {activeTab === 'tracking' && dataTracking.length > 0 &&
                         <Tracking
+                            warning={warning}
                             inputData={dataTracking}
                     />}
+                    {activeTab === 'tracking' && dataTracking.length === 0 &&
+                        <div className="flex justify-center items-center h-2/3 flex-col">
+                            <p>There is no data available for today.</p>
+                            <p>Please select another day that has nutrition tracking data.</p>
+                        </div>                    
+                    }
                 </div>   
                 <div className="w-1/4 border-2 border-gray-100">
                     <Calender
                         events={plans}
                         handleDatePick={(date) => {setDatePick(date)}}
                     />
-                    {activeTab === 'tracking' && 
+                    {activeTab === 'tracking' && dataTracking.length > 0 && (
                         <div className="flex justify-center items-center flex-col">
-                            
-                            <h2 className="text-red-600 font-medium flex-row flex items-center">Attention
-                                <TbAlertTriangle className="m-2 h-6 w-6"/>
+                            <h2 className="text-red-600 font-medium flex-row flex items-center">
+                                Attention
+                                <TbAlertTriangle className="m-2 h-6 w-6" />
                             </h2>
-                            <div className="bg-red-100 rounded-lg p-4 m-4">
-                                "You have exceeded the daily limit of calories. Please consider reducing the amount of food you consume."
+                            <div className="mt-4 rounded-lg p-2 max-h-60 overflow-y-auto w-full">
+                            {warning.length > 0 ? (
+                                <ul className="flex flex-col gap-4">
+                                {warning.map((message, index) => (
+                                    <li
+                                    key={index}
+                                    className="bg-red-50 shadow-md p-4 rounded-md text-black text-sm border border-gray-300"
+                                    >
+                                    {message}
+                                    </li>
+                                ))}
+                                </ul>
+                            ) : (
+                                <p className="text-green-600 font-medium text-sm text-center">
+                                Your plan is good!
+                                </p>
+                            )}
                             </div>
                         </div>
-                    }
+                    )}
                 </div> 
             </div>
         </div>

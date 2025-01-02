@@ -11,35 +11,20 @@ const AddIngredient = ({ingre, listIngredients}) => {
   useEffect(() => { 
     const fetchIngredients = async () => {
         try {
-          setIsLoading(true);
-          const response = await fetch("http://localhost:3000/api/plans/all/" + test, {
+          const response = await fetch("http://localhost:3000/api/ingredients/names", {
               method: "GET",
               headers: {
                   "Content-Type": "application/json",
               },
           });
           const data = await response.json();
-          setPlans(
-              data.map((plan) => ({
-                  id: plan._id,
-                  start: new Date(plan.startDate),
-                  end: new Date(plan.endDate),
-                  title: plan.name,
-                  extendedProps: {
-                      recipe: plan?.posts?.title || "",
-                      ingredients: plan?.ingredients?.map((item) => ({
-                          ingredient: item.ingredient.name,
-                          weight: item.weight})) || [],
-                      type: plan.type || "other",
-                  },
-              }))
-          );
+          setAllIngredients(data);
       } catch (error) {
           console.log(error.message || "An unexpected error occurred.");
       }
     };
     fetchIngredients();
-  })
+  }, []);
   // const allIngredients = [
   //   "strawberry", "beef", "cheese", "flour", "pork",
   //   "tomatto", "onion", "garlic", "chicken", "egg",
