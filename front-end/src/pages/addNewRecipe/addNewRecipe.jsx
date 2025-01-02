@@ -52,6 +52,9 @@ const AddNewRecipe = () => {
         alert(`Failed to submit recipe: ${errorData.message}`);
         return;
       }
+
+      const data = await response.json();
+      console.log(data);
   
       alert(`Recipe submitted successfully`);
       // Redirect to profile page

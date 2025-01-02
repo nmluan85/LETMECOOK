@@ -4,22 +4,24 @@ import { useAuth } from "../../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 
 const Profile = () => {
-    const {isLoggedIn, user, login, logout} = useAuth();
+    const { isLoggedIn, user, login, logout } = useAuth();
     const [activeButton, setActiveButton] = useState("My Recipes");
     const [savedPosts, setSavedPosts] = useState([]);
+    const [personalPosts, setPersonalPosts] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [displayName, setDisplayName] = useState("");
     const [preview, setPreview] = useState("");
+    const [currentPage, setCurrentPage] = useState(1); // Current page number
+    const postsPerPage = 12; // Number of posts per page
     const navigate = useNavigate();
 
     const handleAddNewRecipe = () => {
         navigate("/profile/add-recipe");
-    }
+    };
 
     // Load current user data into form fields
     useEffect(() => {
-        console.log(user);
         if (user) {
             setDisplayName(user.username || "");
             setPreview(user.avatar || ""); // Assume avatar URL is in user object
@@ -27,38 +29,70 @@ const Profile = () => {
     }, [user]);
 
     useEffect(() => {
-        // Fetch saved posts
-        fetch("http://localhost:3000/api/users/save-post", {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            credentials: "include", // Include cookies for authentication
-        })
-            .then((response) => {
+        const fetchSavedPosts = async () => {
+            try {
+                const response = await fetch("http://localhost:3000/api/users/save-post", {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    credentials: "include", // Include cookies for authentication
+                });
+
                 if (!response.ok) {
                     throw new Error("Failed to fetch saved posts");
                 }
-                return response.json();
-            })
-            .then((savedData) => {
-                console.log('Saved Data:', savedData);
+
+                const savedData = await response.json();
                 setSavedPosts(savedData.savedPosts);
-                setIsLoading(false);
-            })
-            .catch((error) => {
+            } catch (error) {
                 console.error("Error fetching saved posts:", error);
                 setError(error.message);
+            }
+        };
+
+        const fetchPersonalPosts = async () => {
+            try {
+                const response = await fetch("http://localhost:3000/api/users/personal-post", {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    credentials: "include", // Include cookies for authentication
+                });
+
+                if (!response.ok) {
+                    throw new Error("Failed to fetch personal posts");
+                }
+
+                const personalData = await response.json();
+                setPersonalPosts(personalData.personalPosts);
+            } catch (error) {
+                console.error("Error fetching personal posts:", error);
+                setError(error.message);
+            } finally {
                 setIsLoading(false);
-            });
-            console.log(savedPosts);
+            }
+        };
+
+        fetchSavedPosts();
+        fetchPersonalPosts();
     }, []);
+
+    // Pagination calculations
+    const activePosts =
+        activeButton === "My Recipes" ? personalPosts : savedPosts;
+    const totalPages = Math.ceil(activePosts.length / postsPerPage);
+    const startIndex = (currentPage - 1) * postsPerPage;
+    const currentPosts = activePosts.slice(startIndex, startIndex + postsPerPage);
+
     if (isLoading) {
         return <div>Loading...</div>;
     }
     if (error) {
         return <div>Error: {error}</div>;
     }
+
     return (
         <div>
             <div className="bg-white text-black w-full max-w-4xl p-4 rounded-lg flex items-center justify-between ml-20">
@@ -79,7 +113,7 @@ const Profile = () => {
                         <h1 className="text-3xl font-bold mb-4">{displayName}'s Recipe Box</h1>
                         <button
                             className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
-                            onClick={() => {handleAddNewRecipe()}}
+                            onClick={handleAddNewRecipe}
                         >
                             Add a Recipe
                         </button>
@@ -111,7 +145,10 @@ const Profile = () => {
                                 ? "bg-gray-200 text-blue-700 font-bold rounded-tl-xl rounded-tr-xl p-3"
                                 : "ml-2 text-gray-700 p-3"
                         }`}
-                        onClick={() => setActiveButton("My Recipes")}
+                        onClick={() => {
+                            setActiveButton("My Recipes");
+                            setCurrentPage(1); // Reset to page 1
+                        }}
                     >
                         My Recipes
                     </span>
@@ -121,40 +158,50 @@ const Profile = () => {
                                 ? "bg-gray-200 text-blue-700 font-bold rounded-tl-xl rounded-tr-xl p-3"
                                 : "ml-2 text-gray-700 p-3"
                         }`}
-                        onClick={() => setActiveButton("Saved Recipe")}
+                        onClick={() => {
+                            setActiveButton("Saved Recipe");
+                            setCurrentPage(1); // Reset to page 1
+                        }}
                     >
-                        Saved Recipe
+                        Saved Recipes
                     </span>
                 </div>
                 <hr className="border-t border-gray-300" />
                 <div className="grid grid-cols-4 gap-4 gap-y-8 pt-6 pb-6">
-                    {savedPosts.map((item, index) => (
+                    {currentPosts.map((item, index) => (
                         <div className="w-full sm:w-1/2 lg:w-1/4" key={index}>
-                            { <RecipeCard recipe = {item} isSaved = {true}/> }
+                            <RecipeCard recipe={item} isSaved={activeButton === "Saved Recipe"} />
                         </div>
                     ))}
                 </div>
-                <div className="flex justify-end items-center space-x-2 pr-6 pb-6">
-                    <button className="p-2 rounded-full hover:bg-gray-300">
+                <div className="flex justify-center items-center space-x-2 pr-6 pb-6">
+                    <button
+                        className="p-2 rounded-full hover:bg-gray-300"
+                        disabled={currentPage === 1}
+                        onClick={() => setCurrentPage((prev) => prev - 1)}
+                    >
                         &lt;
                     </button>
 
-                    <div className="flex space-x-2">
-                        <button className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
-                            1
+                    {Array.from({ length: totalPages }, (_, i) => (
+                        <button
+                            key={i}
+                            className={`px-4 py-2 ${
+                                currentPage === i + 1
+                                    ? "bg-blue-500 text-white"
+                                    : "bg-gray-200 hover:bg-gray-300"
+                            } rounded-md`}
+                            onClick={() => setCurrentPage(i + 1)}
+                        >
+                            {i + 1}
                         </button>
-                        <button className="px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300">
-                            2
-                        </button>
-                        <button className="px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300">
-                            3
-                        </button>
-                        <button className="px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300">
-                            4
-                        </button>
-                    </div>
+                    ))}
 
-                    <button className="p-2 rounded-full hover:bg-gray-300">
+                    <button
+                        className="p-2 rounded-full hover:bg-gray-300"
+                        disabled={currentPage === totalPages}
+                        onClick={() => setCurrentPage((prev) => prev + 1)}
+                    >
                         &gt;
                     </button>
                 </div>
@@ -162,4 +209,5 @@ const Profile = () => {
         </div>
     );
 };
+
 export default Profile;

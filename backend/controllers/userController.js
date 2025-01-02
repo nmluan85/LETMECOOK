@@ -478,6 +478,28 @@ const changeRole = async (req, res) => {
     }
 }
 
+const getPersonalPosts = async (req, res) => {
+    try {
+        // Extract the user's ID from the authenticated request
+        const userId = req.userId;
+
+        // Fetch all posts where the author matches the current user's ID
+        const personalPosts = await Post.find({ author: userId }).populate('author').populate('comments');
+
+        // Return the posts in the response
+        res.status(200).json({
+            success: true,
+            personalPosts: personalPosts,
+        });
+    } catch (error) {
+        console.error('Error fetching personal posts:', error);
+        res.status(500).json({
+            success: false,
+            message: 'An error occurred while fetching personal posts',
+        });
+    }
+};
+
 export { 
     createUser, 
     verifyEmail,
@@ -492,5 +514,6 @@ export {
     savePostToUser,
     deleteSavedPost,
     getSavedPosts,
-    changeRole
+    changeRole,
+    getPersonalPosts
 };
