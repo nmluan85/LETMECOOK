@@ -20,6 +20,7 @@ import AddNewRecipe from "./pages/addNewRecipe/addNewRecipe";
 import AllRecipes from "./pages/allRecipes/allRecipes";
 import CategoryFullRecipes from "./components/allRecipes/categoryFullRecipes";
 import NutritionTracking from "./pages/nutritionTracking/nutritionTracking";
+import Upgrade from "./pages/premiumUpgrade/upgrade";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -41,6 +42,12 @@ const router = createBrowserRouter(
             path="/edit-profile"
             element={
               <EditProfile />
+            }
+        />
+        <Route
+            path="/upgrade"
+            element={
+              <Upgrade />
             }
         />
         <Route 

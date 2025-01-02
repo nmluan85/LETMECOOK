@@ -1,17 +1,61 @@
 import React, { useEffect, useState } from "react";
+import { useAuth } from "../../contexts/AuthContext";
+import { Link, useNavigate } from "react-router-dom";
 import foodPic from "../../assets/foodPic.png";
 
 const Upgrade = () => {
+    const { user } = useAuth()
+    const premiumRole = "PremiumUser"
+
+    const [id, setID] = useState("");
+    const [name, setName] = useState("");
+
+    useEffect(() => {
+        if (user) {
+            setID(user.id || "")
+            setName(user.username || "")
+        }
+    }, [user]);
+
+    const subscribeClick = async() => {
+        console.log(id)
+        try {
+            const response = await fetch("http://localhost:3000/api/users/change-role", {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ id, role: premiumRole }),
+              credentials: "include",
+            });
+        
+            const data = await response.json(); // Parse the JSON response
+        
+            console.log("Response Data:", data); // Log the entire response for debugging
+        
+            if (response.ok) {
+              // Check the response's HTTP status code
+              alert(`Welcome, ${name}! You have successfully upgraded your account to a premium user!`);
+            } else {
+              // Display the error message returned from the server
+              alert(`Error: ${data.message}`);
+            }
+          } catch (error) {
+            console.error("Error making the request:", error);
+            alert("A network error occurred. Please try again later.");
+          }
+    }
+
     return (
         <div>
             <div className="bg-white text-black w-full max-w-4xl p-4 rounded-lg flex items-center justify-between ml-20">
                 <div className="flex items-center space-x-2">
                     <span className="text-gray-500" href="#">
-                        Recipes
+                        Home
                     </span>
                     <span className="text-gray-500">&gt;</span>
                     <span className="text-blue-500" href="#">
-                        Subscribe
+                        Premium
                     </span>
                 </div>
             </div>
@@ -65,12 +109,15 @@ const Upgrade = () => {
                     <p className="text-gray-500 mb-6">
                         Billed as $1 every 4 weeks for the first year
                     </p>
-                    <button className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-700 transition">
+                    <button className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-700 transition"
+                    onClick={subscribeClick}>
                         Subscribe Now
                     </button>
+                    <Link to = "/">
                     <button className="text-gray-500 w-full text-sm mt-4 text-center">
                         Cancel or Pause anytime
                     </button>
+                    </Link>
                 </div>
 
                 {/* Image Section */}
