@@ -10,6 +10,7 @@ const Profile = () => {
     const [myPosts, setMyPosts] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [userRole, setRole] = useState("");
     const [displayName, setDisplayName] = useState("");
     const [preview, setPreview] = useState("");
     const navigate = useNavigate();
@@ -39,6 +40,7 @@ const Profile = () => {
     useEffect(() => {
         console.log(user);
         if (user) {
+            setRole(user.role || "");
             setDisplayName(user.username || "");
             setPreview(user.avatar || ""); // Assume avatar URL is in user object
         }
@@ -97,14 +99,17 @@ const Profile = () => {
                         <h1 className="text-3xl font-bold mb-4">
                             {displayName}'s Recipe Box
                         </h1>
-                        <button
-                            className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
-                            onClick={() => {
-                                handleAddNewRecipe();
-                            }}
-                        >
-                            Add a Recipe
-                        </button>
+                        {(userRole === "Admin" ||
+                            userRole === "PremiumUser") && (
+                            <button
+                                className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+                                onClick={() => {
+                                    handleAddNewRecipe();
+                                }}
+                            >
+                                Add a Recipe
+                            </button>
+                        )}
                     </div>
                     <div className="p-4 rounded-lg flex items-center">
                         <img

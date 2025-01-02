@@ -7,25 +7,26 @@ const Upgrade = () => {
     const { user } = useAuth()
     const premiumRole = "PremiumUser"
 
-    const [id, setID] = useState("");
+    const [userID, setID] = useState("");
     const [name, setName] = useState("");
 
     useEffect(() => {
         if (user) {
-            setID(user.id || "")
+            setID(user._id || "")
             setName(user.username || "")
         }
     }, [user]);
 
     const subscribeClick = async() => {
-        console.log(id)
+        console.log(userID)
+        console.log(user.role)
         try {
             const response = await fetch("http://localhost:3000/api/users/change-role", {
               method: "PUT",
               headers: {
                 "Content-Type": "application/json",
               },
-              body: JSON.stringify({ id, role: premiumRole }),
+              body: JSON.stringify({ id: userID, role: premiumRole }),
               credentials: "include",
             });
         
