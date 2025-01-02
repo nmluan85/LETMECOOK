@@ -5,34 +5,15 @@ import { useNavigate } from "react-router-dom";
 
 const Profile = () => {
     const { isLoggedIn, user, login, logout } = useAuth();
-    const { isLoggedIn, user, login, logout } = useAuth();
     const [activeButton, setActiveButton] = useState("My Recipes");
     const [savedPosts, setSavedPosts] = useState([]);
     const [myPosts, setMyPosts] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [userRole, setRole] = useState("");
-    const [userRole, setRole] = useState("");
     const [displayName, setDisplayName] = useState("");
     const [preview, setPreview] = useState("");
     const navigate = useNavigate();
-
-    const [currentPage, setCurrentPage] = useState(1);
-    const postsPerPage = 8;
-    const postsToShow = activeButton === "My Recipes" ? myPosts : savedPosts;
-
-    // Calculate the index of the first and last posts for the current page
-    const lastPostIndex = currentPage * postsPerPage;
-    const firstPostIndex = lastPostIndex - postsPerPage;
-    const currentPosts = postsToShow.slice(firstPostIndex, lastPostIndex);
-
-    // Calculate the total number of pages
-    const totalPages = Math.ceil(postsToShow.length / postsPerPage);
-
-    // Handle page change
-    const handlePageChange = (pageNumber) => {
-        setCurrentPage(pageNumber);
-    };
 
     const [currentPage, setCurrentPage] = useState(1);
     const postsPerPage = 8;
