@@ -44,6 +44,27 @@ const Login = ({onSuccess, changeState}) => {
             setIsLoading(false); // Stop loading
         }
     }
+    const handleForgotPassword = async () => {
+        setResponseMessage("");
+        try {
+            const response = await fetch("http://localhost:3000/api/users/forgot-password", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ email }),
+            });
+            const data = await response.json();
+            if (data.success) {
+                setResponseMessage(data.message);
+            } else {
+                setResponseMessage(data.message);
+            }
+        } catch (error) {
+            setResponseMessage(error.message);
+        }
+    };
+    
     return (
         <form onSubmit={handleSubmitLogin}>
             <div className="mb-4">
@@ -84,12 +105,22 @@ const Login = ({onSuccess, changeState}) => {
             >
                 {isLoading ? "Loading..." : "Continue"}
             </button>
-            <p className="text-sm text-gray-500 mt-4 mb-14">
-                Don't have an account? 
+            <p className="text-sm text-gray-500 mt-4 mb-14 flex justify-between items-center">
+                <span>
+                    Don't have an account? 
+                    <span 
+                        className="font-bold text-primary-default hover:text-primary-800 cursor-pointer"
+                        onClick={changeState}
+                    >
+                        Sign up now
+                    </span>
+                </span>
                 <span 
                     className="font-bold text-primary-default hover:text-primary-800 cursor-pointer"
-                    onClick={changeState}
-                > Sign up now</span>
+                    onClick={handleForgotPassword}
+                >
+                    Forgot password?
+                </span>
             </p>
         </form>
     )
