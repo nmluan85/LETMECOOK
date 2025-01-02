@@ -73,7 +73,7 @@ const ProfileModal = ({ onComplete }) => {
                                     onComplete();
                                     }}
                                 >
-                                    In heat
+                                    Manage Accounts
                                 </span>
                                 </div>
                             </Link>

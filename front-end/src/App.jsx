@@ -7,13 +7,15 @@ import {
 import Layout from "./components/layout/layout";
 import RecipeDetails from "./pages/recipeDetails/recipeDetails";
 import Search from "./pages/search/search";
-import { useState, useEffect } from "react";
-import "./App.css";
-import Home from "./pages/home/home";
-import Profile from "./pages/profile/profile";
+import Ingredients from "./pages/ingredients/ingredients";
+import { useState, useEffect } from 'react';
+import './App.css';
+import Home from './pages/home/home';
+import Profile from './pages/profile/profile';
 import ProtectedRoute from "./components/protectedRoute/protectedRoute";
 import { LoginModalProvider } from "./contexts/LoginModalContext";
 import { AuthProvider } from "./contexts/AuthContext";
+import ResetPassword from "./components/authentication/resetPassword";
 import ProfileModal from "./components/profile/profileModal";
 import EditProfile from "./pages/editProfile/editProfile";
 import AdminHub from "./pages/admin/adminHub/adminHub";
@@ -29,6 +31,7 @@ const router = createBrowserRouter(
     <Route>
       <Route path="/" element={<Layout />}>
         <Route index element={<Home />}></Route>
+        <Route path="/reset-password/:token" element={<ResetPassword />} />
         <Route path="/recipe/:_id" element={<RecipeDetails />}></Route>
         <Route path="/profile" element={<Profile />} />
         <Route path="/edit-profile" element={<EditProfile />} />
@@ -58,6 +61,21 @@ const router = createBrowserRouter(
               <AllRecipes />
             }
         />
+
+        <Route 
+            path="/search" 
+            element={
+              <Search />
+            }
+          ></Route>
+        
+        <Route
+            path="/ingredients"
+            element={
+                <Ingredients />
+            }
+        />
+
         <Route path="/nutrition"
             element={
                 // <ProtectedRoute roles={["premium"]}>
