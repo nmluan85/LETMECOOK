@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
+import { useAuth } from "../../../contexts/AuthContext";
 
 const CheckPost = () => {
+  const { user } = useAuth();
   const { userId } = useParams();
   const [posts, setPosts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
