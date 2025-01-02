@@ -14,6 +14,7 @@ import Profile from "./pages/profile/profile";
 import ProtectedRoute from "./components/protectedRoute/protectedRoute";
 import { LoginModalProvider } from "./contexts/LoginModalContext";
 import { AuthProvider } from "./contexts/AuthContext";
+import ResetPassword from "./components/authentication/resetPassword";
 import ProfileModal from "./components/profile/profileModal";
 import EditProfile from "./pages/editProfile/editProfile";
 import AdminHub from "./pages/admin/adminHub/adminHub";
@@ -29,6 +30,7 @@ const router = createBrowserRouter(
     <Route>
       <Route path="/" element={<Layout />}>
         <Route index element={<Home />}></Route>
+        <Route path="/reset-password/:token" element={<ResetPassword />} />
         <Route path="/recipe/:_id" element={<RecipeDetails />}></Route>
         <Route path="/profile" element={<Profile />} />
         <Route path="/edit-profile" element={<EditProfile />} />
