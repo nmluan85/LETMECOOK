@@ -28,7 +28,6 @@ const EditProfile = () => {
     // Handle Save Changes
     const handleSaveChanges = async () => {
         try {
-            console.log("Avatar:", preview);
             const updatedUser = {
                 username: displayName,
                 avatar: preview,

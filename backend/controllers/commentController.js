@@ -7,7 +7,7 @@ const createComment = async (req, res) => {
         const userId = req.userId;
 
         const newComment = new Comment({
-            username: userId,
+            user: userId,
             content,
             rating,
             post: postId,
@@ -23,7 +23,9 @@ const createComment = async (req, res) => {
             { $push: { comments: newComment._id } }
         );
 
-        res.status(201).json(newComment);
+        const populatedComment = await Comment.findById(newComment._id).populate('user');
+
+        res.status(201).json(populatedComment);
     } catch (error) {
         res.status(400).json({ message: error.message });
     }
@@ -93,4 +95,13 @@ const reactToComment = async (req, res) => {
     }
 };
 
-export { createComment, replyComment, reactToComment };
+const getCommentsByPostId = async (req, res) => {
+    try {
+        const comments = await Comment.find({ post: req.params.recipeId }).populate('user');
+        res.status(200).json(comments);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+}
+
+export { createComment, replyComment, reactToComment, getCommentsByPostId };

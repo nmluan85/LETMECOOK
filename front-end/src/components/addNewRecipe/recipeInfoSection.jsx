@@ -9,21 +9,22 @@ const NewRecipeInfoSection = ({ onChange }) => {
   const handleTitleChange = (e) => {
     const value = e.target.value;
     setTitle(value);
-    onChange({ title: value, description, photo });
+    onChange({ title: value, description, photo: photoPreview });
   };
 
   const handleDescriptionChange = (e) => {
     const value = e.target.value;
     setDescription(value);
-    onChange({ title, description: value, photo });
+    onChange({ title, description: value, photo: photoPreview });
   };
 
   const handlePhotoChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+      const previewURL = URL.createObjectURL(file); // Generate the URL here
       setPhoto(file);
-      setPhotoPreview(URL.createObjectURL(file)); // Create a preview URL
-      onChange({ title, description, photo: photoPreview });
+      setPhotoPreview(previewURL); // Create a preview URL
+      onChange({ title, description, photo: previewURL });
     }
   };
 

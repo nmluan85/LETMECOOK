@@ -85,7 +85,7 @@ const RecipeDetails = () => {
 
             {/* Comment Section */}
             <div className="w-full p-4">
-                <CommentSection />
+                <CommentSection recipeId={recipeInfo.item._id}/>
             </div>
 
         </div>

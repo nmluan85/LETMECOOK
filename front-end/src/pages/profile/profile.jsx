@@ -41,44 +41,72 @@ const Profile = () => {
         console.log(user);
         if (user) {
             setRole(user.role || "");
+            setRole(user.role || "");
             setDisplayName(user.username || "");
             setPreview(user.avatar || ""); // Assume avatar URL is in user object
         }
     }, [user]);
 
     useEffect(() => {
-        // Fetch saved posts
-        fetch("http://localhost:3000/api/users/save-post", {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            credentials: "include", // Include cookies for authentication
-        })
-            .then((response) => {
+        const fetchSavedPosts = async () => {
+            try {
+                const response = await fetch("http://localhost:3000/api/users/save-post", {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    credentials: "include", // Include cookies for authentication
+                });
+
                 if (!response.ok) {
                     throw new Error("Failed to fetch saved posts");
                 }
-                return response.json();
-            })
-            .then((savedData) => {
-                console.log("Saved Data:", savedData);
+
+                const savedData = await response.json();
                 setSavedPosts(savedData.savedPosts);
-                setIsLoading(false);
-            })
-            .catch((error) => {
+            } catch (error) {
                 console.error("Error fetching saved posts:", error);
                 setError(error.message);
                 setIsLoading(false);
-            });
-        console.log(savedPosts);
+            }
+        };
+
+        const fetchPersonalPosts = async () => {
+            try {
+                const response = await fetch("http://localhost:3000/api/users/personal-post", {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    credentials: "include", // Include cookies for authentication
+                });
+
+                if (!response.ok) {
+                    throw new Error("Failed to fetch personal posts");
+                }
+
+                const personalData = await response.json();
+                setMyPosts(personalData.personalPosts);
+            } catch (error) {
+                console.error("Error fetching personal posts:", error);
+                setError(error.message);
+                setIsLoading(false);
+            }
+        };
+
+        fetchSavedPosts();
+        fetchPersonalPosts();
+        setIsLoading(false);
     }, []);
+
+
     if (isLoading) {
         return <div>Loading...</div>;
     }
     if (error) {
         return <div>Error: {error}</div>;
     }
+
     return (
         <div>
             <div className="bg-white text-black w-full max-w-4xl p-4 rounded-lg flex items-center justify-between ml-20">
@@ -154,7 +182,6 @@ const Profile = () => {
                     </span>
                 </div>
                 <hr className="border-t border-gray-300" />
-                {/* Check if the list is empty */}
                 {postsToShow.length === 0 ? (
                     <div className="text-center text-gray-500 mt-6">
                         {activeButton === "My Recipes"
@@ -200,4 +227,5 @@ const Profile = () => {
         </div>
     );
 };
+
 export default Profile;

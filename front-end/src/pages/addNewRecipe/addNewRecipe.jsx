@@ -52,6 +52,9 @@ const AddNewRecipe = () => {
         alert(`Failed to submit recipe: ${errorData.message}`);
         return;
       }
+
+      const data = await response.json();
+      console.log(data);
   
       alert(`Recipe submitted successfully`);
       // Redirect to profile page
@@ -70,7 +73,7 @@ const AddNewRecipe = () => {
       }} />
       <hr className="mb-6 mt-2" />
       <NewRecipeIngredientsSection
-        onChange={(data) => handleChange("contentIngredients", data.ingredients)}
+        onChange={(data) => handleChange("contentIngredients", data.contentIngredients)}
       />
       <hr className="mb-6 mt-2" />
       <NewRecipeDirectionsSection onChange={(data) => handleChange("content", data.content)} />

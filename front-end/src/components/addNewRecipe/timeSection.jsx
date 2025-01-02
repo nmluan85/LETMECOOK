@@ -22,25 +22,28 @@ const NewRecipeOtherSection = ({onChange}) => {
   const handleCookTimeChange = (e) => {
     const value = parseInt(e.target.value, 10) || 0;
     setCookTime(value);
+    console.log(value);
     onChange({ duration: value, category, area, video});
   };
 
   const handleCategoryChange = (e) => {
     const value = e.target.value;
     setCategory(value);
-    onChange({ duration, category: value, area, video });
+    console.log(value);
+    onChange({ duration: cookTime, category: value, area, video });
   };
 
   const handleAreaChange = (e) => {
     const value = e.target.value;
     setArea(value);
-    onChange({ duration, category, area: value, video });
+    console.log(value);
+    onChange({ duration: cookTime, category, area: value, video });
   };
 
   const handleVideoChange = (e) => {
     const value = e.target.value;
-    setYoutubeVideo(value);
-    onChange({ duration, category, area, video: value });
+    setVideo(value);
+    onChange({ duration: cookTime, category, area, video: value });
   };
 
   return (

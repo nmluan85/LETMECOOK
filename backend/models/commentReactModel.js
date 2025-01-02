@@ -6,14 +6,14 @@ const commentReactSchema = new mongoose.Schema({
         ref: 'Comment',
         required: true
     },
-    username: {
+    user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
         required: true
     },
     type: { 
         type: String, 
-        enum: ['like', 'heart', 'angry', 'sad', 'laugh'],
+        enum: ['like', 'heart', 'wow', 'sad', 'laugh'],
         required: true 
     }
 }, { timestamps: true });
