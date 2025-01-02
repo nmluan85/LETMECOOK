@@ -7,7 +7,12 @@ const getAllIngredientNames = async (req, res) => {
         const ingredients = await Ingredient.find({}, "name");
 
         // Extract names from the result
-        const ingredientNames = ingredients.map(ingredient => ingredient.name);
+        const ingredientNames = ingredients.map(ingredient => {
+            return {
+                id: ingredient._id,
+                name: ingredient.name
+            };
+        });
 
         // Send the names as an array to the front-end
         res.status(200).json(ingredientNames);

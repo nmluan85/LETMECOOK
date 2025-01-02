@@ -1,13 +1,16 @@
+import { id } from "date-fns/locale";
 import React, { useState, useEffect } from "react";
 import { use } from "react";
 
 const AddIngredient = ({ingre, listIngredients}) => {
   const [ingredients, setIngredients] = useState(
-    ingre.map((item) => ({ ingredient: item.ingredient, weight: item.weight}))
-  ); // Store selected ingredients with weights
+    ingre.map((item) => ({ ingredient: item.ingredient, weight: item.weight, id: item.id}))
+  );
   const [searchTerm, setSearchTerm] = useState(""); // Store search input value
   const [allIngredients, setAllIngredients] = useState([]);
-  
+  useEffect(() => {
+    console.log(ingredients);
+  }, [ingredients]);
   useEffect(() => { 
     const fetchIngredients = async () => {
         try {
@@ -25,27 +28,14 @@ const AddIngredient = ({ingre, listIngredients}) => {
     };
     fetchIngredients();
   }, []);
-  // const allIngredients = [
-  //   "strawberry", "beef", "cheese", "flour", "pork",
-  //   "tomatto", "onion", "garlic", "chicken", "egg",
-  //   "carrot", "salt", "oil", "corn", "bean", "rice",
-  //   "potato", "milk", "butter", "sugar", "bread",
-  //   "lettuce", "cucumber", "apple", "banana", "orange",
-  //   "grape", "watermelon", "pineapple", "mango", "pear",
-  //   "kiwi", "blueberry", "peach", "plum", "apricot",
-  //   "cherry", "lemon", "lime", "avocado", "papaya",
-  //   "coconut", "fig", "melon", "pomegranate", "cranberry",
-  // ];
   useEffect(() => {
-    // Update the parent component with the current ingredient list
-    console.log("In AddIngredient", ingredients);
     listIngredients(ingredients);
   }, [ingredients]);
 
   // Handle tag selection
   const handleTagClick = (tag) => {
-    if (!ingredients.find((ing) => ing.name === tag)) {
-      setIngredients([...ingredients, { ingredient: tag, weight: "" }]); // Add ingredient with default weight
+    if (!ingredients.find((ing) => ing.name === tag.name)) {
+      setIngredients([...ingredients, { ingredient: tag.name, weight: "" , id: tag.id}]); // Add ingredient with default weight
     }
   };
 
@@ -60,7 +50,7 @@ const AddIngredient = ({ingre, listIngredients}) => {
       if (!ingredients.find((ing) => ing.ingredient === searchTerm.trim())) {
         setIngredients([
           ...ingredients,
-          { ingredient: searchTerm.trim(), weight: "" },
+          { ingredient: searchTerm.trim(), weight: ""},
         ]);
       }
       setSearchTerm("");
@@ -98,10 +88,13 @@ const AddIngredient = ({ingre, listIngredients}) => {
                 type="number"
                 className="w-20 border border-gray-300 rounded-md px-2 py-1"
                 placeholder="gram?"
-                value={ingredient.weight}
-                onChange={(e) =>
-                  handleWeightChange(ingredient.ingredient, e.target.value)
-                }
+                value={ingredient?.weight}
+                onChange={(e) => { 
+                  const value = e.target.value;
+                  if (value >= 0) {
+                    handleWeightChange(ingredient.ingredient, Number(value));
+                  }
+                }}
               />
               <button
                 className="text-red-500 font-bold"
@@ -135,19 +128,19 @@ const AddIngredient = ({ingre, listIngredients}) => {
         >
           {allIngredients
             .filter((tag) =>
-              tag.toLowerCase().includes(searchTerm.toLowerCase())
+              tag.name.toLowerCase().includes(searchTerm.toLowerCase())
             ) // Filter tags by search
             .map((tag) => (
               <button
-                key={tag}
+                key={tag.name}
                 className={`px-3 py-1 rounded-full text-sm font-medium cursor-pointer m-1 ${
-                  ingredients.find((ing) => ing.ingredient === tag)
+                  ingredients.find((ing) => ing.ingredient === tag.name)
                     ? "bg-primary-500 text-white"
                     : "bg-gray-200 text-gray-700"
                 }`}
                 onClick={() => handleTagClick(tag)}
               >
-                {tag.charAt(0).toUpperCase() + tag.slice(1)}
+                {tag.name.charAt(0).toUpperCase() + tag.name.slice(1)}
               </button>
             ))}
         </div>

@@ -39,8 +39,9 @@ const NutritionTracking = () => {
                         extendedProps: {
                             recipe: plan?.posts?.title || "",
                             ingredients: plan?.ingredients?.map((item) => ({
+                                id: item.ingredient._id,
                                 ingredient: item.ingredient.name,
-                                weight: item.weight})) || [],
+                                weight: +item.weight})) || [],
                             type: plan.type || "other",
                         },
                     }))
@@ -111,6 +112,21 @@ const NutritionTracking = () => {
     }, [dataTracking])
     // Function to handle adding a new event
     const handleAddEvent = async (newEvent) => {
+        console.log("Add");
+        const test = {
+                startDate: newEvent.start,
+                endDate: newEvent.end,
+                name: newEvent.title,
+                user: user._id,
+                posts: newEvent.extendedProps.recipe,
+                type: newEvent.extendedProps.type,
+                ingredients: newEvent.extendedProps.ingredients.map((item) => ({
+                    ingredient: item.id,
+                    quantity: item.weight
+                }))
+            };
+            
+        console.log("Add:", test);
         try {
             setIsLoading(true);
             const response = await fetch("http://localhost:3000/api/plans/create", {
@@ -122,12 +138,12 @@ const NutritionTracking = () => {
                     startDate: newEvent.start,
                     endDate: newEvent.end,
                     name: newEvent.title,
-                    user: user,
+                    user: user._id,
                     posts: newEvent.extendedProps.recipe,
                     type: newEvent.extendedProps.type,
                     ingredients: newEvent.extendedProps.ingredients.map((item) => ({
-                        ingredient: item.ingredient,
-                        weight: item.weight
+                        ingredient: item.id,
+                        quantity: +item.weight
                     })),
                 }),
             });
@@ -145,9 +161,11 @@ const NutritionTracking = () => {
     };
     // Function to handle updating an event
     const handleUpdateEvent = async (updateEvent) => {
+        console.log("Update");
+        console.log("Update:", updateEvent);
         try {
             setIsLoading(true);
-            const response = await fetch("http://localhost:3000/api/plans/update/" + updateEvent.id, {
+            const response = await fetch(`http://localhost:3000/api/plans/update/${updateEvent.id}`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
@@ -160,8 +178,8 @@ const NutritionTracking = () => {
                     posts: updateEvent.extendedProps.recipe,
                     type: updateEvent.extendedProps.type,
                     ingredients: updateEvent.extendedProps.ingredients.map((item) => ({
-                        ingredient: item.ingredient,
-                        weight: item.weight
+                        ingredient: item.id,
+                        quantity: +item.weight
                     })),
                 }),
             });
@@ -185,9 +203,10 @@ const NutritionTracking = () => {
     };
     // Function to handle deleting an event
     const handleDeleteEvent = async (deleteEvent) => {
+        console.log("Delete");
         try {
             setIsLoading(true);
-            const response = await fetch("http://localhost:3000/api/plans/delete/" + deleteEvent.id, {
+            const response = await fetch(`http://localhost:3000/api/plans/delete/"${deleteEvent.id}`, {
                 method: "DELETE",
                 headers: {
                     "Content-Type": "application/json",
