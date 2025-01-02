@@ -22,6 +22,8 @@ export const AuthProvider = ({ children }) => {
             if (data.success) {
                 setUser(null);
                 setIsLoggedIn(false)
+                window.location.href = '/';
+
             }       
             else {
                 // setResponseMessage(data.message);

@@ -66,7 +66,6 @@ const getAllPlans = async (req, res) => {
         }
 
         const plans = await Plan.find({ user: userId })
-            .populate('posts')
             .populate('ingredients.ingredient')
             .sort({ startDate: 1 });
 
@@ -92,7 +91,6 @@ const getPlanByDate = async (req, res) => {
             endDate: { $gte: date },
             user: userId 
         })
-        .populate('posts')
         .populate('ingredients.ingredient');
 
         if (!plan || plan.length === 0) {
@@ -109,15 +107,17 @@ const getPlanByDate = async (req, res) => {
 // Controller to calculate the total nutrition for a plan
 const calculatePlan = async (req, res) => {
     try {
-        const { userId, planId } = req.body;
+        const { userId, planIds } = req.body;
 
-        if (!userId || !planId) {
+        if (!userId || planIds.length === 0 || !Array.isArray(planIds)) {
             return res.status(400).json({ message: 'User ID and Plan ID are required.' });
         }
 
-        const plan = await Plan.findById(planId).populate('ingredients.ingredient');
+        const plans = await Promise.all(
+            planIds.map(planId => Plan.findById(planId).populate('ingredients.ingredient'))
+        );
 
-        if (!plan) {
+        if (plans.length === 0) {
             return res.status(404).json({ message: 'Plan not found.' });
         }
 
@@ -132,39 +132,51 @@ const calculatePlan = async (req, res) => {
         };
 
         // Calculate total nutrition values
-        plan.ingredients.forEach(item => {
-            const weight = item.weight;
-            const nutrition = item.ingredient.nutrition;
-            
-            totalNutrition.carbs += nutrition.carbs * weight;
-            totalNutrition.fat += nutrition.fat * weight;
-            totalNutrition.protein += nutrition.protein * weight;
-            totalNutrition.calories += nutrition.calories * weight;
-            totalNutrition.fiber += nutrition.fiber * weight;
-            totalNutrition.sodium += nutrition.sodium * weight;
+        plans.forEach(plan => {
+            plan.ingredients.forEach(item => {
+                const weight = item.weight || 0;
+                const nutrition = item.ingredient.nutrition || {};
+                
+                totalNutrition.carbs += nutrition.carbs * weight;
+                totalNutrition.fat += nutrition.fat * weight;
+                totalNutrition.protein += nutrition.protein * weight;
+                totalNutrition.calories += nutrition.calories * weight;
+                totalNutrition.fiber += nutrition.fiber * weight;
+                totalNutrition.sodium += nutrition.sodium * weight;
+            })
         });
 
-        // Calculate percentage for each ingredient
-        const nutritionPercentages = plan.ingredients.map(item => {
-            const weight = item.weight;
-            const nutrition = item.ingredient.nutrition;
+        // // Calculate percentage for each ingredient
+        // const nutritionPercentages = plan.ingredients.map(item => {
+        //     const weight = item.weight;
+        //     const nutrition = item.ingredient.nutrition;
             
-            return {
-                ingredientName: item.ingredient.name,
-                percentages: {
-                    carbs: ((nutrition.carbs * weight) / totalNutrition.carbs) * 100,
-                    fat: ((nutrition.fat * weight) / totalNutrition.fat) * 100,
-                    protein: ((nutrition.protein * weight) / totalNutrition.protein) * 100,
-                    calories: ((nutrition.calories * weight) / totalNutrition.calories) * 100,
-                    fiber: ((nutrition.fiber * weight) / totalNutrition.fiber) * 100,
-                    sodium: ((nutrition.sodium * weight) / totalNutrition.sodium) * 100
-                }
-            };
-        });
+        //     return {
+        //         ingredientName: item.ingredient.name,
+        //         percentages: {
+        //             carbs: ((nutrition.carbs * weight) / totalNutrition.carbs) * 100,
+        //             fat: ((nutrition.fat * weight) / totalNutrition.fat) * 100,
+        //             protein: ((nutrition.protein * weight) / totalNutrition.protein) * 100,
+        //             calories: ((nutrition.calories * weight) / totalNutrition.calories) * 100,
+        //             fiber: ((nutrition.fiber * weight) / totalNutrition.fiber) * 100,
+        //             sodium: ((nutrition.sodium * weight) / totalNutrition.sodium) * 100
+        //         }
+        //     };
+        // });
+        const totalSum = totalNutrition.carbs + totalNutrition.fat + totalNutrition.protein + 
+                 totalNutrition.calories + totalNutrition.fiber + totalNutrition.sodium;
 
+        const nutritionPercentages = [
+            { label: 'carbs', value: (totalNutrition.carbs / totalSum) * 100 },
+            { label: 'fat', value: (totalNutrition.fat / totalSum) * 100 },
+            { label: 'protein', value: (totalNutrition.protein / totalSum) * 100 },
+            { label: 'calories', value: (totalNutrition.calories / totalSum) * 100 },
+            { label: 'fiber', value: (totalNutrition.fiber / totalSum) * 100 },
+            { label: 'sodium', value: (totalNutrition.sodium / totalSum) * 100 }
+        ];
         res.status(200).json({
-            totalNutrition,
-            nutritionPercentages
+            message: 'Plan nutrition calculated successfully.',
+            nutritionPercentages,            
         });
 
     } catch (error) {
@@ -195,7 +207,6 @@ const updatePlan = async (req, res) => {
             updateData,
             { new: true, runValidators: true }
         )
-        .populate('posts')
         .populate('ingredients.ingredient');
 
         if (!updatedPlan) {

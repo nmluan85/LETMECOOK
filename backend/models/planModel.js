@@ -20,12 +20,11 @@ const planSchema = new mongoose.Schema({
         required: true,
     },
     posts: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Post'
+        type: String,
     },
     type: {
         type: String,
-        enum: ['breakfast', 'lunch', 'dinner', 'snack', 'supper', 'brunch', 'other'],
+        enum: ['breakfast', 'lunch', 'dinner', 'snacks', 'supper', 'brunch', 'other'],
         default: 'other',
         required: true,
     },
