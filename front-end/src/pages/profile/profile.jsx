@@ -7,14 +7,30 @@ const Profile = () => {
     const { isLoggedIn, user, login, logout } = useAuth();
     const [activeButton, setActiveButton] = useState("My Recipes");
     const [savedPosts, setSavedPosts] = useState([]);
-    const [personalPosts, setPersonalPosts] = useState([]);
+    const [myPosts, setMyPosts] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [userRole, setRole] = useState("");
     const [displayName, setDisplayName] = useState("");
     const [preview, setPreview] = useState("");
-    const [currentPage, setCurrentPage] = useState(1); // Current page number
-    const postsPerPage = 12; // Number of posts per page
     const navigate = useNavigate();
+
+    const [currentPage, setCurrentPage] = useState(1);
+    const postsPerPage = 8;
+    const postsToShow = activeButton === "My Recipes" ? myPosts : savedPosts;
+
+    // Calculate the index of the first and last posts for the current page
+    const lastPostIndex = currentPage * postsPerPage;
+    const firstPostIndex = lastPostIndex - postsPerPage;
+    const currentPosts = postsToShow.slice(firstPostIndex, lastPostIndex);
+
+    // Calculate the total number of pages
+    const totalPages = Math.ceil(postsToShow.length / postsPerPage);
+
+    // Handle page change
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
+    };
 
     const handleAddNewRecipe = () => {
         navigate("/profile/add-recipe");
@@ -22,7 +38,9 @@ const Profile = () => {
 
     // Load current user data into form fields
     useEffect(() => {
+        console.log(user);
         if (user) {
+            setRole(user.role || "");
             setDisplayName(user.username || "");
             setPreview(user.avatar || ""); // Assume avatar URL is in user object
         }
@@ -48,6 +66,7 @@ const Profile = () => {
             } catch (error) {
                 console.error("Error fetching saved posts:", error);
                 setError(error.message);
+                setIsLoading(false);
             }
         };
 
@@ -66,25 +85,19 @@ const Profile = () => {
                 }
 
                 const personalData = await response.json();
-                setPersonalPosts(personalData.personalPosts);
+                setMyPosts(personalData.personalPosts);
             } catch (error) {
                 console.error("Error fetching personal posts:", error);
                 setError(error.message);
-            } finally {
                 setIsLoading(false);
             }
         };
 
         fetchSavedPosts();
         fetchPersonalPosts();
+        setIsLoading(false);
     }, []);
 
-    // Pagination calculations
-    const activePosts =
-        activeButton === "My Recipes" ? personalPosts : savedPosts;
-    const totalPages = Math.ceil(activePosts.length / postsPerPage);
-    const startIndex = (currentPage - 1) * postsPerPage;
-    const currentPosts = activePosts.slice(startIndex, startIndex + postsPerPage);
 
     if (isLoading) {
         return <div>Loading...</div>;
@@ -110,13 +123,20 @@ const Profile = () => {
             <div className="bg-white p-8 mx-16">
                 <div>
                     <div className="w-full flex justify-between items-center">
-                        <h1 className="text-3xl font-bold mb-4">{displayName}'s Recipe Box</h1>
-                        <button
-                            className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
-                            onClick={handleAddNewRecipe}
-                        >
-                            Add a Recipe
-                        </button>
+                        <h1 className="text-3xl font-bold mb-4">
+                            {displayName}'s Recipe Box
+                        </h1>
+                        {(userRole === "Admin" ||
+                            userRole === "PremiumUser") && (
+                            <button
+                                className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+                                onClick={() => {
+                                    handleAddNewRecipe();
+                                }}
+                            >
+                                Add a Recipe
+                            </button>
+                        )}
                     </div>
                     <div className="p-4 rounded-lg flex items-center">
                         <img
@@ -145,10 +165,7 @@ const Profile = () => {
                                 ? "bg-gray-200 text-blue-700 font-bold rounded-tl-xl rounded-tr-xl p-3"
                                 : "ml-2 text-gray-700 p-3"
                         }`}
-                        onClick={() => {
-                            setActiveButton("My Recipes");
-                            setCurrentPage(1); // Reset to page 1
-                        }}
+                        onClick={() => setActiveButton("My Recipes")}
                     >
                         My Recipes
                     </span>
@@ -158,53 +175,53 @@ const Profile = () => {
                                 ? "bg-gray-200 text-blue-700 font-bold rounded-tl-xl rounded-tr-xl p-3"
                                 : "ml-2 text-gray-700 p-3"
                         }`}
-                        onClick={() => {
-                            setActiveButton("Saved Recipe");
-                            setCurrentPage(1); // Reset to page 1
-                        }}
+                        onClick={() => setActiveButton("Saved Recipe")}
                     >
-                        Saved Recipes
+                        Saved Recipe
                     </span>
                 </div>
                 <hr className="border-t border-gray-300" />
-                <div className="grid grid-cols-4 gap-4 gap-y-8 pt-6 pb-6">
-                    {currentPosts.map((item, index) => (
-                        <div className="w-full sm:w-1/2 lg:w-1/4" key={index}>
-                            <RecipeCard recipe={item} isSaved={activeButton === "Saved Recipe"} />
+                {postsToShow.length === 0 ? (
+                    <div className="text-center text-gray-500 mt-6">
+                        {activeButton === "My Recipes"
+                            ? "You have not uploaded any posts"
+                            : "You have not saved any post"}
+                    </div>
+                ) : (
+                    <>
+                        <div className="grid grid-cols-4 gap-4 gap-y-8 pt-6 pb-6">
+                            {currentPosts.map((item, index) => (
+                                <div
+                                    className="w-full sm:w-1/2 lg:w-1/4"
+                                    key={index}
+                                >
+                                    {
+                                        <RecipeCard
+                                            recipe={item}
+                                            isSaved={true}
+                                        />
+                                    }
+                                </div>
+                            ))}
                         </div>
-                    ))}
-                </div>
-                <div className="flex justify-center items-center space-x-2 pr-6 pb-6">
-                    <button
-                        className="p-2 rounded-full hover:bg-gray-300"
-                        disabled={currentPage === 1}
-                        onClick={() => setCurrentPage((prev) => prev - 1)}
-                    >
-                        &lt;
-                    </button>
 
-                    {Array.from({ length: totalPages }, (_, i) => (
-                        <button
-                            key={i}
-                            className={`px-4 py-2 ${
-                                currentPage === i + 1
-                                    ? "bg-blue-500 text-white"
-                                    : "bg-gray-200 hover:bg-gray-300"
-                            } rounded-md`}
-                            onClick={() => setCurrentPage(i + 1)}
-                        >
-                            {i + 1}
-                        </button>
-                    ))}
-
-                    <button
-                        className="p-2 rounded-full hover:bg-gray-300"
-                        disabled={currentPage === totalPages}
-                        onClick={() => setCurrentPage((prev) => prev + 1)}
-                    >
-                        &gt;
-                    </button>
-                </div>
+                        <div className="flex justify-end items-center space-x-2 pr-6 pb-6">
+                            {Array.from({ length: totalPages }, (_, index) => (
+                                <button
+                                    key={index}
+                                    onClick={() => handlePageChange(index + 1)}
+                                    className={`px-3 py-1 mx-1 border rounded ${
+                                        currentPage === index + 1
+                                            ? "bg-blue-500 text-white"
+                                            : "bg-white text-blue-500 border-blue-500"
+                                    }`}
+                                >
+                                    {index + 1}
+                                </button>
+                            ))}
+                        </div>
+                    </>
+                )}
             </div>
         </div>
     );
