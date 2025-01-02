@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { TriangleAlert } from 'lucide-react';
-import { useAuth } from "../../../contexts/AuthContext";
 
 const AdminHub = () => {
-  const { user: currentUser } = useAuth();
   const [users, setUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -192,7 +190,6 @@ const AdminHub = () => {
                       setShowRoleModal(true);
                     }}
                     className="bg-gray-200 text-gray-800 py-1 px-3 rounded hover:bg-gray-300"
-                    style={{ visibility: currentUser._id === user._id ? 'hidden' : 'visible' }}
                   >
                     Modify Role
                   </button>

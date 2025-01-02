@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../../../contexts/AuthContext";
 
 const CheckPost = () => {
   const { user } = useAuth();
   const { userId } = useParams();
+  const navigate = useNavigate();
   const [posts, setPosts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -38,6 +39,15 @@ const CheckPost = () => {
     fetchUserPosts();
   }, [userId]);
 
+  const handlePostClick = (post) => {
+    navigate(`/recipe/${post._id}`, {
+      state: {
+        item: post,
+        isSaved: false
+      }
+    });
+  };
+
   if (isLoading) return <div>Loading posts...</div>;
   if (error) return <div>Error: {error}</div>;
 
@@ -53,7 +63,11 @@ const CheckPost = () => {
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {posts.map((post) => (
-          <div key={post._id} className="bg-white rounded-lg shadow-md p-4">
+          <div 
+            key={post._id} 
+            onClick={() => handlePostClick(post)}
+            className="bg-white rounded-lg shadow-md p-4 cursor-pointer transition-all hover:shadow-lg hover:scale-105"
+          >
             {post.photo && (
               <img
                 src={post.photo}

@@ -5,9 +5,11 @@ import { IoMdClose } from "react-icons/io";
 import { FaGoogle } from "react-icons/fa";
 import Login from "./login"; 
 import SignUp from "./signUp";
+import ForgotPassword from "./forgotPassword";
 
 const LoginModal = ({isLogin, onClose}) => {
-    const [currentState, setCurrentState] = useState(isLogin);
+    // Update state to handle three possible values: 'login', 'signup', 'forgot'
+    const [currentState, setCurrentState] = useState(isLogin ? 'login' : 'signup');
     
     return (
         <div 
@@ -25,7 +27,7 @@ const LoginModal = ({isLogin, onClose}) => {
 
                 <div className="w-3/5 p-6 flex flex-col">
                     <div className="flex justify-between items-center mb-6">
-                        <h2 className="text-3xl font-bold text-primary-default">{currentState ? 'Log in' : 'Sign up'}</h2>
+                        <h2 className="text-3xl font-bold text-primary-default">{currentState === 'login' ? 'Log in' : currentState === 'signup' ? 'Sign up' : 'Forgot Password'}</h2>
                         <IoMdClose
                             className="text-2xl text-gray-400 hover:text-gray-600 cursor-pointer transition"
                             onClick={onClose}     
@@ -33,15 +35,22 @@ const LoginModal = ({isLogin, onClose}) => {
                     </div>
 
                     <div className="flex-grow">
-                        {currentState ? (
+                        {currentState === 'login' && (
                             <Login 
-                                // onSuccess = {onSuccess} 
-                                changeState={() => setCurrentState(!currentState)}
+                                onSuccess={onClose}
+                                changeState={() => setCurrentState('signup')}
+                                onForgotPassword={() => setCurrentState('forgot')}
                             />
-                        ) : (
+                        )}
+                        {currentState === 'signup' && (
                             <SignUp 
-                                // onSuccess = {onSuccess} 
-                                changeState={() => setCurrentState(!currentState)}
+                                onSuccess={onClose}
+                                changeState={() => setCurrentState('login')}
+                            />
+                        )}
+                        {currentState === 'forgot' && (
+                            <ForgotPassword 
+                                onBack={() => setCurrentState('login')}
                             />
                         )}
                     </div>
