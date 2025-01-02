@@ -2,17 +2,18 @@ import React, { useState } from 'react';
 import TypeFilter from './typeFilter';
 import RatingFilter from './ratingFilter';
 import TimeFilter from './timeFilter';
+import './filter.css'
 
 const FilterSection = ({onApplyFilters}) => {
     const [type, setType] = useState({
-        panFried: true,
-        stirFried: true,
-        grilled: true,
-        roasted: true,
-        sauteed: true,
-        baked: true,
-        steamed: true,
-        stewed: true,
+        breakfast: true,
+        dessert: true,
+        seafood: true,
+        vegetarian: true,
+        beef: true,
+        chicken: true,
+        pork: true,
+        starter: true,
     });
     const [time, setTime] = useState({ min: 0, max: 120 });
     // first element is for 5 stars, the last element is for 1 star
