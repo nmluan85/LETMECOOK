@@ -114,7 +114,7 @@ const SearchResult = ({ queri, filters  }) => {
                 } ${slideDirection === "left" ? "slide-in-from-left" : ""}`}
                 onAnimationEnd={() => setSlideDirection("")}
             >
-                {sortedItems.slice(indexOfFirstItem, indexOfLastItem).map((item) => (
+                {sortedItems.slice(indexOfFirstItem, indexOfLastItem).map((item, index) => (
                     <div className="pt-4 pb-6 pl-2 pr-2" key={item.id}>
                         <RecipeCard recipe={item} />
                     </div>

@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import cookieParser from "cookie-parser";
 import connectDB from "./config/mongodb.js";
 import userRouter from "./routes/userRoutes.js";
 import postRouter from "./routes/postRoutes.js";
@@ -15,9 +16,14 @@ const PORT = process.env.PORT || 3000;
 connectDB();
 
 // Middlewares
-app.use(cors());
+app.use(
+    cors({
+        origin: "http://localhost:5173", // Frontend origin
+        credentials: true, // Allow cookies and credentials
+    })
+);
 app.use(express.json());
-
+app.use(cookieParser());
 // Routes
 app.use("/api/users", userRouter);
 app.use("/api/posts", postRouter);

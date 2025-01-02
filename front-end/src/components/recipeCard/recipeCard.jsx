@@ -1,20 +1,28 @@
 import React, {useState} from 'react';
 import { motion } from 'framer-motion';
+import { useNavigate } from "react-router-dom";
+import { useAuth } from '../../contexts/AuthContext';
+import LoginModal from '../authentication/loginModal';
 
 import SaveButton from './saveButton';
 import Rating from '../layout/rating';
 import ClockIcon from '../../assets/icons/clock.png';
 import CommentIcon from '../../assets/icons/comment.png';
 import HeartIcon from '../../assets/icons/heart.png';
-import { useNavigate } from "react-router-dom";
-const RecipeCard = ({recipe}) => {
+const RecipeCard = ({recipe, isSaved}) => {
     const idString = (_id) => {
         return String(_id).toLowerCase().split(" ").join("");
     };
     const rootId = idString(recipe._id);
 
-    const navigate = useNavigate();
+    const [isClicked, setIsClicked] = useState(false);
     const [isSaveHovered, setIsSaveHovered] = useState(false);  // Track hover state
+
+    const handleSaveRecipe = () => {
+        setIsClicked(!isClicked);
+    };
+
+    const navigate = useNavigate();
     // Handle recipe details navigation
     const handleRecipeDetails = () => {
         if(!isSaveHovered) {
@@ -32,7 +40,7 @@ const RecipeCard = ({recipe}) => {
     const handleMouseLeave = () => {
         setIsSaveHovered(false); // Set hover state to false when mouse leaves
     };
-    
+
     return (
         <motion.div
             whileHover={{
@@ -57,7 +65,11 @@ const RecipeCard = ({recipe}) => {
                             {recipe.duration} minutes
                         </div>
                         <div className='ml-auto' onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}> 
-                            <SaveButton isClicked={false}/>
+                            <SaveButton
+                                recipeId={rootId}
+                                isClicked={isSaved} 
+                                onClick={handleSaveRecipe}
+                            />
                         </div>
                         
                     </span>
@@ -76,7 +88,7 @@ const RecipeCard = ({recipe}) => {
                             </div>
                             </div>
                             <div className="ml-auto flex items-center mr-4">
-                            <Rating />
+                                <Rating />
                             </div>
                         </div>
                     </span>
