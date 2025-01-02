@@ -5,13 +5,15 @@ import RecipeCard from '../recipeCard/recipeCard';
 const CategoryFullRecipes = () => {
     const { category } = useParams();
     const [recipesList, setRecipesList] = useState([]);
+    const [savedPostList, setSavedPostList] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const location = useLocation();
 
     useEffect(() => {
-        const {recipes} = location.state;
+        const {recipes, savedPosts} = location.state;
         setRecipesList(recipes);
+        setSavedPostList(savedPosts);
 
         setIsLoading(false);
     }, [category]);
@@ -30,7 +32,10 @@ const CategoryFullRecipes = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
                     {recipesList.map((recipe, index) => (
                         <div className="pt-4 pb-6 pl-2 pr-2" key={index}>
-                            <RecipeCard recipe={recipe} />
+                            <RecipeCard 
+                                recipe={recipe}
+                                isSaved={savedPostList.some(savedPost => savedPost._id === recipe._id)}
+                            />
                         </div>
                     ))}
                 </div>
