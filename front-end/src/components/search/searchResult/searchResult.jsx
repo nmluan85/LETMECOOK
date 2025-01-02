@@ -3,7 +3,7 @@ import RecipeCard from "../../recipeCard/recipeCard";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import "./searchResult.css";
 
-const SearchResult = ({ queri, filters  }) => {
+const SearchResult = ({ queri, filters }) => {
     const [data, setData] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage] = useState(12);
@@ -11,7 +11,36 @@ const SearchResult = ({ queri, filters  }) => {
     const [sortOrder, setSortOrder] = useState("A-Z");
     const [slideDirection, setSlideDirection] = useState("");
     const [filteredData, setFilteredData] = useState([]);
-    console.log(queri);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    const [savedPosts, setSavedPosts] = useState([]);
+
+    useEffect(() => {
+        // Fetch saved posts
+        fetch('http://localhost:3000/api/users/save-post', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            credentials: 'include', // Include cookies for authentication
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to fetch saved posts');
+            }
+            return response.json()
+        })
+        .then(savedData => {
+            setSavedPosts(savedData.savedPosts);
+            setIsLoading(false);
+        })
+        .catch(error => {
+            console.error('Error fetching saved posts:', error);
+            setError(error.message);
+            setIsLoading(false);
+        });
+    }, [queri, filters]);
 
     useEffect(() => {
         fetch(`http://localhost:3000/api/posts/search?query=${queri}`, {
@@ -29,11 +58,14 @@ const SearchResult = ({ queri, filters  }) => {
                 setData(data);
                 setFilteredData(data);
                 setTotalPages(Math.ceil(data.length / itemsPerPage));
+                setIsLoading(false);
             })
             .catch((error) => {
                 console.error("Error:", error.message);
+                setError(error);
+                setIsLoading(false);
             });
-    }, [queri,itemsPerPage]);
+    }, [queri, itemsPerPage, savedPosts]);
 
     useEffect(() => {
         const applyFilters = () => {
@@ -84,6 +116,13 @@ const SearchResult = ({ queri, filters  }) => {
         return b.title.localeCompare(a.title);
     });
 
+    if (isLoading) {
+        return <div>Loading...</div>;
+    }
+    if (error) {
+        return <div>Error: {error}</div>;
+    }
+
     return (
         <div className="search-result-container">
             {/* Header */}
@@ -116,7 +155,10 @@ const SearchResult = ({ queri, filters  }) => {
             >
                 {sortedItems.slice(indexOfFirstItem, indexOfLastItem).map((item, index) => (
                     <div className="pt-4 pb-6 pl-2 pr-2" key={item.id}>
-                        <RecipeCard recipe={item} />
+                        <RecipeCard 
+                            recipe={item} 
+                            isSaved={savedPosts.some(savedPost => savedPost._id === item._id)}
+                        />
                     </div>
                 ))}
             </div>

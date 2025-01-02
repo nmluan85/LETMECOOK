@@ -15,6 +15,7 @@ const CategoryPreview = ({ category, savedPosts }) => {
         navigate(`/category/${category}`, {
                 state: {
                     recipes: recipes,
+                    savedPosts: savedPosts
                 }
             }
         );
