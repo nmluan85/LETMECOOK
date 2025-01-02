@@ -138,20 +138,6 @@ const Profile = () => {
                                 Add a Recipe
                             </button>
                         )}
-                        <h1 className="text-3xl font-bold mb-4">
-                            {displayName}'s Recipe Box
-                        </h1>
-                        {(userRole === "Admin" ||
-                            userRole === "PremiumUser") && (
-                            <button
-                                className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
-                                onClick={() => {
-                                    handleAddNewRecipe();
-                                }}
-                            >
-                                Add a Recipe
-                            </button>
-                        )}
                     </div>
                     <div className="p-4 rounded-lg flex items-center">
                         <img
