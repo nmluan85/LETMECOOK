@@ -163,8 +163,7 @@ POST http://localhost:3000/api/plans/create
   "ingredients": [
     {
       "ingredient": "{ingredientId}",
-      "quantity": 2,
-      "unit": "pieces"
+      "quantity": 2
     }
   ]
 }
