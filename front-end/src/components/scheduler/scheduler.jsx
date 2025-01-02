@@ -1,13 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import Plan from "../plan/plan";
-import { set } from "date-fns";
 
-const Scheduler = (date) => {
-    const [selectedDate, setSelectedDate] = useState(date);
+const Scheduler = ({datePick}) => {
+    const calendarRef = useRef(null); 
     const [selectedEvent, setSelectedEvent] = useState(null);
     const [isOpenModal, setIsOpenModal] = useState(false);
     const [type, setType] = useState("edit");
@@ -16,10 +15,13 @@ const Scheduler = (date) => {
             id: 1,
             title: "Pancakes with Cheese and Egg",
             start: "2025-01-05T08:00:00",
-            end: "2025-01-05T010:00:00",
+            end: "2025-01-05T10:00:00",
             extendedProps: {
                 recipe: "Recipe 01",
-                ingredient: ["beef", "cheese"],
+                ingredients: [
+                    {ingredient: "beef", weight: 100},
+                    {ingredient: "cheese", weight: 50},
+                ],
                 type: "breakfast",
             },
         },
@@ -29,7 +31,10 @@ const Scheduler = (date) => {
             start: "2025-01-04T10:00:00",
             end: "2025-01-04T11:00:00",
             extendedProps: {
-                ingredient: ["beef", "cheese"],
+                ingredients: [
+                    {ingredient: "beef", weight: 100},
+                    {ingredient: "cheese", weight: 20},
+                ],
                 recipe: "Recipe 01",
                 type: "brunch",
             },
@@ -41,7 +46,10 @@ const Scheduler = (date) => {
             end: "2025-01-03T11:00:00",
             extendedProps: {
                 recipe: "Recipe 01",
-                ingredient: ["chicken", "egg"],
+                ingredients: [
+                    {ingredient: "chicken", weight: 200},
+                    {ingredient: "egg", weight: null},
+                ],
                 type: "lunch",
             },
         },
@@ -52,7 +60,7 @@ const Scheduler = (date) => {
             end: "2025-01-02T11:00:00",
             extendedProps: {
                 recipe: "Recipe 01",
-                ingredient: [],
+                ingredients: [],
                 type: "snacks",
             },
         },
@@ -63,7 +71,10 @@ const Scheduler = (date) => {
             end: "2025-01-01T11:00:00",
             extendedProps: {
                 recipe: "Recipe 01",
-                ingredient: ["beef", "cheese"],
+                ingredients: [
+                    {ingredient: "pasta", weight: 100},
+                    {ingredient: "tomato", weight: 50},
+                ],
                 type: "dinner",
             },
         },
@@ -74,35 +85,71 @@ const Scheduler = (date) => {
             end: "2025-01-04T12:00:00",
             extendedProps: {
                 recipe: "Recipe 01",
-                ingredient: [],
+                ingredients: [],
                 type: "supper",
             },
         },
-        // Add more events as needed
     ]);
+    useEffect(() => {
+        console.log("In scheduler"); 
+        if (datePick && calendarRef.current) {
+            const calendarApi = calendarRef.current.getApi();
+            calendarApi.gotoDate(datePick); // Update the calendar's displayed date
+        }
+    }, [datePick]);
+    const formatDate = (dateStr) => {
+        if (!dateStr) return "";
+        const date = new Date(dateStr);
+        return date.toISOString().slice(0, 19);
+      };
     const handleDateClick = (arg) => {
+        const selectedDate = arg.dateStr;
+        const defaultStartTime = "T10:00:00";
+        const defaultEndTime = "T11:00:00";
+
+        setSelectedEvent({
+            id: -1,
+            title: "",
+            start: `${selectedDate}${defaultStartTime}`,
+            end: `${selectedDate}${defaultEndTime}`,
+            extendedProps: {},
+        });
         setType("add");
-        setSelectedDate(arg.dateStr);
         setIsOpenModal(true);
     };
     const handleEventClick = (info) => {
         setSelectedEvent({
             id: info.event.id,
             title: info.event.title,
-            start: info.event.startStr,
-            end: info.event.endStr,
+            start: formatDate(info.event.startStr),
+            end: formatDate(info.event.endStr),
             extendedProps: info.event.extendedProps,
         });
         setType("edit");
         setIsOpenModal(true);
     };
-    const handleSaveChanges = (events) => {
-        setEvents((prevEvents) =>
-            prevEvents.map((event) =>
-              event.id === events.id ? events : event
-            )
-        );
-        setIsOpenModal(false);
+    const handleSaveChanges = (updateEvent) => {
+
+        if (updateEvent.id === -1) {
+            setEvents((prevEvents) => [
+                ...prevEvents,
+                { ...updateEvent, id: prevEvents.length + 1 }, // Assign a new id
+            ]);
+        } else {
+            setEvents((prevEvents) =>
+                prevEvents.map((event) => {
+                    if (event.id === updateEvent.id) {
+                      // Directly modify the matching event's properties
+                      event.title = updateEvent.title;
+                      event.start = updateEvent.start;
+                      event.end = updateEvent.end;
+                      event.extendedProps = { ...updateEvent.extendedProps };
+                    }
+                    return event; // Return the event (modified or unmodified)
+                })
+            );
+        }
+        setIsOpenModal(false); // Close the modal
     };
     return (
         <div className="scheduler-container">
@@ -135,12 +182,13 @@ const Scheduler = (date) => {
             `}
         </style>
         <FullCalendar
+            ref={calendarRef}
             plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
             initialView="timeGridWeek"
             headerToolbar={{
-            start: "title",
-            center: "prev,next today",
-            end: "dayGridMonth timeGridWeek timeGridDay",
+                start: "title",
+                center: "prev,next today",
+                end: "dayGridMonth timeGridWeek timeGridDay",
             }}
             dateClick={handleDateClick}
             eventClick={handleEventClick}
@@ -156,8 +204,8 @@ const Scheduler = (date) => {
                     >
                     {title}
                     </p>
-                    <p className="text-sm text-primary-500"> Recipe:  {extendedProps.recipe ? "Yes" : "No"}</p>
-                    <p className="text-sm text-primary-500"> Ingredient: {extendedProps.ingredient ? extendedProps.ingredient.length : 0}</p>
+                    <p className="text-sm text-primary-500"> Recipe:  {extendedProps?.recipe ? "Yes" : "No"}</p>
+                    <p className="text-sm text-primary-500"> Ingredient: {extendedProps?.ingredients?.length|| 0}</p>
                     <span
                         className={`text-xs px-2 py-1 rounded-full w-fit mt-1 ${
                         extendedProps.type === "breakfast"
@@ -175,8 +223,9 @@ const Scheduler = (date) => {
                             : "bg-orange-300 text-black"
                         }`}
                     >
-                        {extendedProps.type.charAt(0).toUpperCase() +
-                        extendedProps.type.slice(1)}
+                        {extendedProps?.type
+                        ? extendedProps.type.charAt(0).toUpperCase() + extendedProps.type.slice(1)
+                        : "Other"}
                     </span>
                 </div>
             );
@@ -187,9 +236,9 @@ const Scheduler = (date) => {
             <Plan
                 type={type}
                 event={selectedEvent}
-                handleSaveChange={(events) => {
-                    console.log("Scheduler", events);
-                    handleSaveChanges(events)}}
+                handleSaveChange={(updateEvent) => {
+                    console.log("Scheduler", updateEvent);
+                    handleSaveChanges(updateEvent)}}
                 handleCancel={() => setIsOpenModal(false)}
             />
         )}
