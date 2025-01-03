@@ -151,12 +151,13 @@ const Scheduler = ({datePick, event, handleUpdateEvent, handleDeleteEvent, handl
             <Plan
                 type={type}
                 event={selectedEvent}
-                handleSaveChange={(updateEvent) => {
-                    handleSaveChanges(updateEvent)}}
-                handleCancel={(currentEvent) => {
-                    handleDeleteEvent(currentEvent)
+                handleDelete={(currentEvent) => {
+                    handleDeleteEvent(currentEvent);
                     setIsOpenModal(false);
                 }}
+                handleSaveChange={(updateEvent) => {
+                    handleSaveChanges(updateEvent)}}
+                handleCancel={() => setIsOpenModal(false)}
             />
         )}
         </div>

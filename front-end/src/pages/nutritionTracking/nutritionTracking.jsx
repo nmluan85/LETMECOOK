@@ -17,7 +17,6 @@ const NutritionTracking = () => {
     const [dataTracking, setDataTracking] = useState([]);
     const [warning, setWarning] = useState([]);
 
-    // Function to get all plans
     useEffect(() => {
         const getAllPlans = async () => {
             try {
@@ -53,7 +52,6 @@ const NutritionTracking = () => {
         };
         getAllPlans();
     }, [user]);
-    // Function to calculate the calories
     useEffect(() => {
         const pickDate = new Date(datePick);
         const normalizeDate = (date) => {
@@ -190,6 +188,7 @@ const NutritionTracking = () => {
                     )
                 );
                 alert("Plan updated successfully");
+                window.location.reload();
             } else {
                 const error = await response.json();
                 alert(error.message);
@@ -215,6 +214,7 @@ const NutritionTracking = () => {
             if (response.ok) {
                 setPlans(prevEvents => prevEvents.filter(event => event.id !== deleteEvent.id));
                 alert("Plan deleted successfully");
+                window.location.reload();
             } else {
                 const error = await response.json();
                 alert(error.message);

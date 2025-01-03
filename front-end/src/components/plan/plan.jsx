@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import AddIngredient from "./addIngredient";
 import { useEffect} from "react";
 
-const Plan = ({type, event, handleSaveChange, handleCancel}) => {
+const Plan = ({type, event, handleSaveChange, handleCancel, handleDelete}) => {
     const [events, setEvents] = useState(event);
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -114,7 +114,7 @@ const Plan = ({type, event, handleSaveChange, handleCancel}) => {
                                     end: "",
                                     extendedProps: null
                                 });
-                                handleCancel(events);
+                                handleDelete(events);
                             }}
                         >
                             Delete plan
