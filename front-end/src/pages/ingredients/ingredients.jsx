@@ -54,7 +54,7 @@ const Ingredients = () => {
 
                     return (
                         <div
-                            key={index}
+                            key={ingredient.id}
                             className="absolute"
                             style={{
                                 transform: `translate(${x}px, ${y}px) rotate(${angle}deg)`,
@@ -66,7 +66,7 @@ const Ingredients = () => {
                                     transform: `rotate(-${angle}deg)`,
                                 }}
                             >
-                                {ingredient}
+                                {ingredient.name}
                             </span>
                         </div>
                     );
