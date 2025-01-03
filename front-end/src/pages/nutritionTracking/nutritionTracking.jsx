@@ -111,14 +111,18 @@ const NutritionTracking = () => {
     }, [dataTracking])
     // Function to handle adding a new event
     const handleAddEvent = async (newEvent) => {
-        console.log("Add");
+        const test = "6774f5a8d3191c559faeaf74"
         const planData = {
             startDate: newEvent.start,
             endDate: newEvent.end,
+            user: test, 
             name: newEvent.title,
             type: newEvent.extendedProps.type || 'other',
-            ingredients: newEvent.extendedProps.ingredients || []
+            ingredients: newEvent.extendedProps.ingredients.map(
+                (item) => ({ ingredient: item.id, quantity: item.weight })
+            ) || []
         };
+        console.log(planData);
         try {
             setIsLoading(true);
             const response = await fetch("http://localhost:3000/api/plans/create", {
