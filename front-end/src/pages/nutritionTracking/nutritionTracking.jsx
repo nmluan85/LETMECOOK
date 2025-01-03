@@ -112,20 +112,13 @@ const NutritionTracking = () => {
     // Function to handle adding a new event
     const handleAddEvent = async (newEvent) => {
         console.log("Add");
-        const test = {
-                startDate: newEvent.start,
-                endDate: newEvent.end,
-                name: newEvent.title,
-                user: user._id,
-                posts: newEvent.extendedProps.recipe,
-                type: newEvent.extendedProps.type,
-                ingredients: newEvent.extendedProps.ingredients.map((item) => ({
-                    ingredient: item.id,
-                    quantity: item.weight
-                }))
-            };
-            
-        console.log("Add:", test);
+        const planData = {
+            startDate: newEvent.start,
+            endDate: newEvent.end,
+            name: newEvent.title,
+            type: newEvent.extendedProps.type || 'other',
+            ingredients: newEvent.extendedProps.ingredients || []
+        };
         try {
             setIsLoading(true);
             const response = await fetch("http://localhost:3000/api/plans/create", {
@@ -133,18 +126,7 @@ const NutritionTracking = () => {
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({
-                    startDate: newEvent.start,
-                    endDate: newEvent.end,
-                    name: newEvent.title,
-                    user: user._id,
-                    posts: newEvent.extendedProps.recipe,
-                    type: newEvent.extendedProps.type,
-                    ingredients: newEvent.extendedProps.ingredients.map((item) => ({
-                        ingredient: item.id,
-                        quantity: +item.weight
-                    })),
-                }),
+                body: JSON.stringify(planData)
             });
             const data = await response.json();
             if (data.message === 'Plan created successfully.'){
@@ -153,6 +135,7 @@ const NutritionTracking = () => {
                     ...prevEvents,
                     { ...newEvent, id: data.plan.id}, // Assign a new id
                 ]);
+                window.location.reload();
             }
         } catch (error) {
             console.log(error.message || "An unexpected error occurred.");
