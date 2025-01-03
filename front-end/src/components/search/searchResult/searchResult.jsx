@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import RecipeCard from "../../recipeCard/recipeCard";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import "./searchResult.css";
+import { useAuth } from "../../../contexts/AuthContext";
 
 const SearchResult = ({ queri, filters }) => {
     const [data, setData] = useState([]);
@@ -11,36 +12,12 @@ const SearchResult = ({ queri, filters }) => {
     const [sortOrder, setSortOrder] = useState("A-Z");
     const [slideDirection, setSlideDirection] = useState("");
     const [filteredData, setFilteredData] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
 
     const [savedPosts, setSavedPosts] = useState([]);
-
-    useEffect(() => {
-        // Fetch saved posts
-        fetch('http://localhost:3000/api/users/save-post', {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            credentials: 'include', // Include cookies for authentication
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Failed to fetch saved posts');
-            }
-            return response.json()
-        })
-        .then(savedData => {
-            setSavedPosts(savedData.savedPosts);
-            setIsLoading(false);
-        })
-        .catch(error => {
-            console.error('Error fetching saved posts:', error);
-            setError(error.message);
-            setIsLoading(false);
-        });
-    }, [queri, filters]);
+    const [isLoadingPosts, setIsLoadingPosts] = useState(true);
+    const [isLoadingSavedPosts, setIsLoadingSavedPosts] = useState(false);
+    const { isLoggedIn } = useAuth();
 
     useEffect(() => {
         fetch(`http://localhost:3000/api/posts/search?query=${queri}`, {
@@ -58,14 +35,42 @@ const SearchResult = ({ queri, filters }) => {
                 setData(data);
                 setFilteredData(data);
                 setTotalPages(Math.ceil(data.length / itemsPerPage));
-                setIsLoading(false);
+                setIsLoadingPosts(false);
             })
             .catch((error) => {
                 console.error("Error:", error.message);
                 setError(error);
-                setIsLoading(false);
+                setIsLoadingPosts(false);
             });
-    }, [queri, itemsPerPage, savedPosts]);
+    }, [queri, itemsPerPage]);
+
+    useEffect(() => {
+        if (isLoggedIn) {
+            // Fetch saved posts
+            fetch('http://localhost:3000/api/users/save-post', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include', // Include cookies for authentication
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to fetch saved posts');
+                }
+                return response.json()
+            })
+            .then(savedData => {
+                setSavedPosts(savedData.savedPosts);
+                setIsLoadingSavedPosts(false);
+            })
+            .catch(error => {
+                console.error('Error fetching saved posts:', error);
+                setError(error.message);
+                setIsLoadingSavedPosts(false);
+            });
+        }
+    }, [isLoggedIn]);
 
     useEffect(() => {
         const applyFilters = () => {
@@ -116,7 +121,7 @@ const SearchResult = ({ queri, filters }) => {
         return b.title.localeCompare(a.title);
     });
 
-    if (isLoading) {
+    if (isLoadingPosts || isLoadingSavedPosts) {
         return <div>Loading...</div>;
     }
     if (error) {

@@ -2,6 +2,8 @@ import { FaStar } from "react-icons/fa";
 import { useState, useRef, useEffect } from "react";
 import CommentCard from "./commentCard";
 import moment from "moment";
+import { useLoginModal } from "../../contexts/LoginModalContext";
+import { useAuth } from "../../contexts/AuthContext";
 
 
 const CommentSection = ({recipeId}) => {
@@ -9,6 +11,9 @@ const CommentSection = ({recipeId}) => {
   const [rating, setRating] = useState(4); // State for rating (default 4)
   const [allComments, setAllComments] = useState([]); // State for all comments
   const [loading, setLoading] = useState(true); // Loading state
+
+  const { openLoginModal } = useLoginModal(); // Access the openLoginModal function
+  const { isLoggedIn } = useAuth(); // Access the isLoggedIn state
 
   const handleCommentChange = (e) => {
     setComment(e.target.value); // Update comment state
@@ -19,6 +24,11 @@ const CommentSection = ({recipeId}) => {
   };
 
   const handleSubmit = async () => {
+    if (!isLoggedIn) {
+      // If the user is not logged in, open the login modal
+      openLoginModal(true); // Pass true to indicate login mode
+      return;
+    }
     if (comment.trim()) {
       try {
         const response = await fetch("http://localhost:3000/api/comments/create", {
