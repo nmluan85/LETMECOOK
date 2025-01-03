@@ -36,6 +36,7 @@ const NutritionTracking = () => {
                         start: new Date(plan.startDate),
                         end: new Date(plan.endDate),
                         title: plan.name,
+                        posts: plan.posts,
                         extendedProps: {
                             recipe: plan?.posts?.title || "",
                             ingredients: plan?.ingredients?.map((item) => ({
@@ -161,66 +162,68 @@ const NutritionTracking = () => {
     };
     // Function to handle updating an event
     const handleUpdateEvent = async (updateEvent) => {
-        console.log("Update");
-        console.log("Update:", updateEvent);
         try {
             setIsLoading(true);
+            const planData = {
+                startDate: updateEvent.start,
+                endDate: updateEvent.end,
+                name: updateEvent.title,
+                type: updateEvent.extendedProps.type || 'other',
+                ingredients: updateEvent.extendedProps.ingredients || []
+            };
+
             const response = await fetch(`http://localhost:3000/api/plans/update/${updateEvent.id}`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({
-                    id: updateEvent.id,
-                    startDate: updateEvent.start,
-                    endDate: updateEvent.end,
-                    name: updateEvent.title,
-                    posts: updateEvent.extendedProps.recipe,
-                    type: updateEvent.extendedProps.type,
-                    ingredients: updateEvent.extendedProps.ingredients.map((item) => ({
-                        ingredient: item.id,
-                        quantity: +item.weight
-                    })),
-                }),
+                body: JSON.stringify(planData)
             });
-            const data = await response.json();
-            if (data.massage == 'Plan updated successfully.'){
-                alert("Plan updated successfully.");
-                setPlans((prevEvents) =>
-                    prevEvents.map((event) => {
-                        if (event.id === updateEvent.id) {
-                          event.title = updateEvent.title;
-                          event.start = updateEvent.start;
-                          event.end = updateEvent.end;
-                          event.extendedProps = { ...updateEvent.extendedProps };
-                        }
-                    })
+
+            if (response.ok) {
+                const updatedPlan = await response.json();
+                setPlans(prevEvents => 
+                    prevEvents.map(event => 
+                        event.id === updateEvent.id ? 
+                        {...event, ...updateEvent} : 
+                        event
+                    )
                 );
+                alert("Plan updated successfully");
+            } else {
+                const error = await response.json();
+                alert(error.message);
             }
         } catch (error) {
-            console.log(error.message || "An unexpected error occurred.");
+            console.error("Error updating plan:", error);
+            alert("Failed to update plan");
+        } finally {
+            setIsLoading(false);
         }
     };
     // Function to handle deleting an event
     const handleDeleteEvent = async (deleteEvent) => {
-        console.log("Delete");
         try {
             setIsLoading(true);
-            const response = await fetch(`http://localhost:3000/api/plans/delete/"${deleteEvent.id}`, {
+            const response = await fetch(`http://localhost:3000/api/plans/delete/${deleteEvent.id}`, {
                 method: "DELETE",
                 headers: {
                     "Content-Type": "application/json",
                 },
             });
-            const data = await response.json();
-            if (data.massage == 'Plan deleted successfully.'){
-                alert("Plan deleted successfully.");
-                setPlans((prevEvents) =>
-                    prevEvents.filter((event) => event.id !== deleteEvent.id)
-                );
+
+            if (response.ok) {
+                setPlans(prevEvents => prevEvents.filter(event => event.id !== deleteEvent.id));
+                alert("Plan deleted successfully");
+            } else {
+                const error = await response.json();
+                alert(error.message);
             }
         } catch (error) {
-            console.log(error.message || "An unexpected error occurred.");
+            console.error("Error deleting plan:", error);
+            alert("Failed to delete plan");
+        } finally {
+            setIsLoading(false);
         }
     };
     return (
