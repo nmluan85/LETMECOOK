@@ -189,7 +189,8 @@ const calculatePlan = async (req, res) => {
 const updatePlan = async (req, res) => {
     try {
         const { planId } = req.params;
-        const { startDate, endDate, name, posts, type, ingredients} = req.body;
+        const { startDate, endDate, name, posts, type, ingredients } = req.body;
+
         if (!planId) {
             return res.status(400).json({ message: 'Plan ID is required.' });
         }
@@ -199,15 +200,21 @@ const updatePlan = async (req, res) => {
         if (endDate) updateData.endDate = endDate;
         if (name) updateData.name = name;
         if (posts) updateData.posts = posts;
-        if (ingredients) updateData.ingredients = ingredients;
         if (type) updateData.type = type;
+
+        // Format ingredients properly if they exist
+        if (ingredients && Array.isArray(ingredients)) {
+            updateData.ingredients = ingredients.map(item => ({
+                ingredient: item.id || item.ingredient, // Use the ID from the ingredient object
+                weight: item.weight || 0
+            }));
+        }
 
         const updatedPlan = await Plan.findByIdAndUpdate(
             planId,
             updateData,
             { new: true, runValidators: true }
-        )
-        .populate('ingredients.ingredient');
+        ).populate('ingredients.ingredient');
 
         if (!updatedPlan) {
             return res.status(404).json({ message: 'Plan not found.' });
@@ -219,7 +226,10 @@ const updatePlan = async (req, res) => {
         });
     } catch (error) {
         console.error('Error updating plan:', error);
-        res.status(500).json({ message: 'Server error. Could not update plan.' });
+        res.status(500).json({ 
+            message: 'Server error. Could not update plan.',
+            error: error.message 
+        });
     }
 };
 

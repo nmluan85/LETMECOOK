@@ -17,7 +17,6 @@ const NutritionTracking = () => {
     const [dataTracking, setDataTracking] = useState([]);
     const [warning, setWarning] = useState([]);
 
-    // Function to get all plans
     useEffect(() => {
         const getAllPlans = async () => {
             try {
@@ -36,11 +35,13 @@ const NutritionTracking = () => {
                         start: new Date(plan.startDate),
                         end: new Date(plan.endDate),
                         title: plan.name,
+                        posts: plan.posts,
                         extendedProps: {
                             recipe: plan?.posts?.title || "",
                             ingredients: plan?.ingredients?.map((item) => ({
+                                id: item.ingredient._id,
                                 ingredient: item.ingredient.name,
-                                weight: item.weight})) || [],
+                                weight: +item.weight})) || [],
                             type: plan.type || "other",
                         },
                     }))
@@ -51,7 +52,6 @@ const NutritionTracking = () => {
         };
         getAllPlans();
     }, [user]);
-    // Function to calculate the calories
     useEffect(() => {
         const pickDate = new Date(datePick);
         const normalizeDate = (date) => {
@@ -111,6 +111,21 @@ const NutritionTracking = () => {
     }, [dataTracking])
     // Function to handle adding a new event
     const handleAddEvent = async (newEvent) => {
+        console.log("Add");
+        const test = {
+                startDate: newEvent.start,
+                endDate: newEvent.end,
+                name: newEvent.title,
+                user: user._id,
+                posts: newEvent.extendedProps.recipe,
+                type: newEvent.extendedProps.type,
+                ingredients: newEvent.extendedProps.ingredients.map((item) => ({
+                    ingredient: item.id,
+                    quantity: item.weight
+                }))
+            };
+            
+        console.log("Add:", test);
         try {
             setIsLoading(true);
             const response = await fetch("http://localhost:3000/api/plans/create", {
@@ -122,12 +137,12 @@ const NutritionTracking = () => {
                     startDate: newEvent.start,
                     endDate: newEvent.end,
                     name: newEvent.title,
-                    user: user,
+                    user: user._id,
                     posts: newEvent.extendedProps.recipe,
                     type: newEvent.extendedProps.type,
                     ingredients: newEvent.extendedProps.ingredients.map((item) => ({
-                        ingredient: item.ingredient,
-                        weight: item.weight
+                        ingredient: item.id,
+                        quantity: +item.weight
                     })),
                 }),
             });
@@ -147,61 +162,68 @@ const NutritionTracking = () => {
     const handleUpdateEvent = async (updateEvent) => {
         try {
             setIsLoading(true);
-            const response = await fetch("http://localhost:3000/api/plans/update/" + updateEvent.id, {
+            const planData = {
+                startDate: updateEvent.start,
+                endDate: updateEvent.end,
+                name: updateEvent.title,
+                type: updateEvent.extendedProps.type || 'other',
+                ingredients: updateEvent.extendedProps.ingredients || []
+            };
+
+            const response = await fetch(`http://localhost:3000/api/plans/update/${updateEvent.id}`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({
-                    id: updateEvent.id,
-                    startDate: updateEvent.start,
-                    endDate: updateEvent.end,
-                    name: updateEvent.title,
-                    posts: updateEvent.extendedProps.recipe,
-                    type: updateEvent.extendedProps.type,
-                    ingredients: updateEvent.extendedProps.ingredients.map((item) => ({
-                        ingredient: item.ingredient,
-                        weight: item.weight
-                    })),
-                }),
+                body: JSON.stringify(planData)
             });
-            const data = await response.json();
-            if (data.massage == 'Plan updated successfully.'){
-                alert("Plan updated successfully.");
-                setPlans((prevEvents) =>
-                    prevEvents.map((event) => {
-                        if (event.id === updateEvent.id) {
-                          event.title = updateEvent.title;
-                          event.start = updateEvent.start;
-                          event.end = updateEvent.end;
-                          event.extendedProps = { ...updateEvent.extendedProps };
-                        }
-                    })
+
+            if (response.ok) {
+                const updatedPlan = await response.json();
+                setPlans(prevEvents => 
+                    prevEvents.map(event => 
+                        event.id === updateEvent.id ? 
+                        {...event, ...updateEvent} : 
+                        event
+                    )
                 );
+                alert("Plan updated successfully");
+                window.location.reload();
+            } else {
+                const error = await response.json();
+                alert(error.message);
             }
         } catch (error) {
-            console.log(error.message || "An unexpected error occurred.");
+            console.error("Error updating plan:", error);
+            alert("Failed to update plan");
+        } finally {
+            setIsLoading(false);
         }
     };
     // Function to handle deleting an event
     const handleDeleteEvent = async (deleteEvent) => {
         try {
             setIsLoading(true);
-            const response = await fetch("http://localhost:3000/api/plans/delete/" + deleteEvent.id, {
+            const response = await fetch(`http://localhost:3000/api/plans/delete/${deleteEvent.id}`, {
                 method: "DELETE",
                 headers: {
                     "Content-Type": "application/json",
                 },
             });
-            const data = await response.json();
-            if (data.massage == 'Plan deleted successfully.'){
-                alert("Plan deleted successfully.");
-                setPlans((prevEvents) =>
-                    prevEvents.filter((event) => event.id !== deleteEvent.id)
-                );
+
+            if (response.ok) {
+                setPlans(prevEvents => prevEvents.filter(event => event.id !== deleteEvent.id));
+                alert("Plan deleted successfully");
+                window.location.reload();
+            } else {
+                const error = await response.json();
+                alert(error.message);
             }
         } catch (error) {
-            console.log(error.message || "An unexpected error occurred.");
+            console.error("Error deleting plan:", error);
+            alert("Failed to delete plan");
+        } finally {
+            setIsLoading(false);
         }
     };
     return (

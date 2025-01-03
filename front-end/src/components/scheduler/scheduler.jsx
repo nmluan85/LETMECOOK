@@ -57,7 +57,7 @@ const Scheduler = ({datePick, event, handleUpdateEvent, handleDeleteEvent, handl
         if (updateEvent.id === -1) {
             setEvents((prevEvents) => [
                 ...prevEvents,
-                { ...updateEvent, id: prevEvents.length + 1 }, // Assign a new id
+                { ...updateEvent, id: prevEvents.length + 1 },
             ]);
             handleAddEvent(updateEvent);
 
@@ -151,13 +151,13 @@ const Scheduler = ({datePick, event, handleUpdateEvent, handleDeleteEvent, handl
             <Plan
                 type={type}
                 event={selectedEvent}
-                handleSaveChange={(updateEvent) => {
-                    console.log("Scheduler", updateEvent);
-                    handleSaveChanges(updateEvent)}}
-                handleCancel={(currentEvent) => {
-                    handleDeleteEvent(currentEvent)
+                handleDelete={(currentEvent) => {
+                    handleDeleteEvent(currentEvent);
                     setIsOpenModal(false);
                 }}
+                handleSaveChange={(updateEvent) => {
+                    handleSaveChanges(updateEvent)}}
+                handleCancel={() => setIsOpenModal(false)}
             />
         )}
         </div>
