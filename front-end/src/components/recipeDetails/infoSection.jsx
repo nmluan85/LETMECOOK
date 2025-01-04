@@ -1,14 +1,19 @@
 import SaveButton from "../recipeCard/saveButton";
+import ReportButton from "./reportButton";
 import { FaStar } from "react-icons/fa";
 import { useState } from "react";
 
 const RecipeDetailsInfoSection = ({recipeInfo}) => {
-    const [rating, setRating] = useState(recipeInfo.item.rating); // State for rating (default 4)
+    const [rating, setRating] = useState(recipeInfo.item.rating);
+    
     return (
         <div>
-            <h1 className="text-3xl font-bold mb-4">
-                How to make a {recipeInfo.item.title}
-            </h1>
+            <div className="flex justify-between items-start mb-4">
+                <h1 className="text-3xl font-bold">
+                    How to make a {recipeInfo.item.title}
+                </h1>
+                <ReportButton postId={recipeInfo.item._id} />
+            </div>
             <p className="text-gray-700 mb-4">
                 This is a delicious dish.
             </p>
