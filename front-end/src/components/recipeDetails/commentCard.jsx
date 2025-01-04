@@ -25,13 +25,13 @@ const CommentCard = ({ user, comment, rating, createdAt }) => {
         <img
           alt="User avatar"
           className="w-12 h-12 rounded-full"
-          src={user.avatar}
+          src={user?.avatar || 'https://storage.googleapis.com/a1aa/image/LfeF62dMscvPXUwP7Wxy4tP0kj4t1fAVP6LnZtZTyuS0VuvnA.jpg?fbclid=IwY2xjawHFTmBleHRuA2FlbQIxMAABHa5SDm64IKSbbEmqhAG-PemXSUcbNxvVx7AD_9Qshz4XP73gSFfKmOfXXA_aem_Rz9cJD1d5qoi6ZqV5P28LA'}
         />
       </div>
       <div className="flex-1">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <h4 className="font-semibold mr-1">{user.username}</h4>
+            <h4 className="font-semibold mr-1">{user?.username || 'Anonymous'}</h4>
             <div className="flex items-center">
                 {[1, 2, 3, 4, 5].map((star) => (
                   <FaStar
