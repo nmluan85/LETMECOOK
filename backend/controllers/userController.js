@@ -132,6 +132,13 @@ const loginUser = async (req, res) => {
             });
         }
 
+        if (!user.isVerified) {
+            return res.status(401).json({
+                success: false,
+                message: 'Email not verified. Please verify your email.'
+            });
+        }
+
         generateCookie(res, user._id);
         user.lastLogin = new Date();
         await user.save();
