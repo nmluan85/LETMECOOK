@@ -35,6 +35,60 @@ npm run dev
 * Email: `duyphuc070104@gmail.com`
 * Password: `123456`
 
+# Guidance for Some Use Cases
+
+**Note:** From anywhere, to go back to the homepage, just click on our website icon on the header at the top left.
+
+## Searching
+- Use the search bar, then click enter or press the search icon.
+- You can choose additional filters and click **"Apply"**.
+
+## Edit Profile
+- Click on your avatar.
+- You will see options to:
+  - Edit profile.
+  - Upgrade to premium (if you are a normal user).
+  - Manage account (if you are an administrator).
+
+## View Profile
+- Click on **"Your Recipe Box"** on the header.
+- Here, you can see the posts you have uploaded and saved by switching between **"My Recipes"** and **"Saved Recipes"**.
+- To upload a post, click on **"Add a Recipe"** (available only for premium users and administrators).
+
+## View Post
+- Search for a post, then simply click on it.
+- Alternatively, click on a post displayed on the homepage or any other screen that shows posts.
+
+## Save Post
+- Click on the **flag icon** displayed on each post.
+- You can view saved posts in your profile.
+
+## Interact with Post
+- When viewing a post, you can:
+  - Leave reactions (like, heart, etc.).
+  - Give ratings.
+  - Add comments (scroll down to the comment section).
+- You can also see other users' comments.
+
+## View Recipes by Ingredient
+- Click on **"Recipe"** on the header to see posts categorized by ingredients.
+
+## View Ingredients
+- Click on **"Ingredients"** on the header to see the funny wheel of all ingredients on our website.
+
+## Plan Your Eating Schedule
+- Click on **"Nutrition Tracking"** on the header.
+- You will see a calendar.
+- Click on any date on the calendar, add your dish, then click **OK** to save it.
+
+## Track Nutrition
+- Click on **"Nutrition Tracking"** on the header.
+- Switch to the **"Tracking"** section.
+- Click on a date on the calendar to see the amount of nutrition you have consumed.
+  - **Note:** This is only available for days where you have added dishes to your planning schedule.
+  - You can also receive warnings and advice for these days.
+
+
 # API Test Cases
 
 ## 1. Ingredients API Tests
