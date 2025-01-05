@@ -51,13 +51,16 @@ const Profile = () => {
     useEffect(() => {
         const fetchSavedPosts = async () => {
             try {
-                const response = await fetch("http://localhost:3000/api/users/save-post", {
-                    method: "GET",
-                    headers: {
-                        "Content-Type": "application/json",
+                const response = await fetch(
+                    "http://localhost:3000/api/users/save-post",
+                    {
+                        method: "GET",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        credentials: "include", // Include cookies for authentication
                     },
-                    credentials: "include", // Include cookies for authentication
-                });
+                );
 
                 if (!response.ok) {
                     throw new Error("Failed to fetch saved posts");
@@ -74,13 +77,16 @@ const Profile = () => {
 
         const fetchPersonalPosts = async () => {
             try {
-                const response = await fetch("http://localhost:3000/api/users/personal-post", {
-                    method: "GET",
-                    headers: {
-                        "Content-Type": "application/json",
+                const response = await fetch(
+                    "http://localhost:3000/api/users/personal-post",
+                    {
+                        method: "GET",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        credentials: "include", // Include cookies for authentication
                     },
-                    credentials: "include", // Include cookies for authentication
-                });
+                );
 
                 if (!response.ok) {
                     throw new Error("Failed to fetch personal posts");
@@ -99,7 +105,6 @@ const Profile = () => {
         fetchPersonalPosts();
         setIsLoading(false);
     }, []);
-
 
     if (isLoading) {
         return <div>Loading...</div>;

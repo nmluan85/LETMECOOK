@@ -1,4 +1,4 @@
-import { FaStar } from 'react-icons/fa';
+import { FaStar } from "react-icons/fa";
 const Rating = () => {
     return (
         <div class="flex items-center mt-2 justify-end">
@@ -18,6 +18,6 @@ const Rating = () => {
                 <FaStar />
             </span>
         </div>
-    )
-}
+    );
+};
 export default Rating;

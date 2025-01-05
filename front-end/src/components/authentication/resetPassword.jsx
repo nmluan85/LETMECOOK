@@ -27,21 +27,26 @@ const ResetPassword = () => {
 
         try {
             setIsLoading(true);
-            const response = await fetch(`http://localhost:3000/api/users/reset-password/${token}`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
+            const response = await fetch(
+                `http://localhost:3000/api/users/reset-password/${token}`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ password }),
                 },
-                body: JSON.stringify({ password }),
-            });
+            );
 
             const data = await response.json();
-            
+
             if (data.success) {
                 setSuccess(true);
-                setResponseMessage("Password reset successful. Redirecting to login...");
+                setResponseMessage(
+                    "Password reset successful. Redirecting to login...",
+                );
                 setTimeout(() => {
-                    navigate('/');
+                    navigate("/");
                 }, 3000);
             } else {
                 setResponseMessage(data.message);
@@ -77,7 +82,9 @@ const ResetPassword = () => {
                             <input
                                 type="password"
                                 value={repeatPassword}
-                                onChange={(e) => setRepeatPassword(e.target.value)}
+                                onChange={(e) =>
+                                    setRepeatPassword(e.target.value)
+                                }
                                 placeholder="Confirm new password"
                                 className="w-full bg-gray-100 rounded-lg px-3 py-2 focus:outline-none focus:ring focus:ring-blue-200"
                             />
@@ -85,7 +92,9 @@ const ResetPassword = () => {
                     </div>
 
                     {responseMessage && (
-                        <p className={`text-sm mb-4 ${success ? 'text-green-500' : 'text-red-500'}`}>
+                        <p
+                            className={`text-sm mb-4 ${success ? "text-green-500" : "text-red-500"}`}
+                        >
                             {responseMessage}
                         </p>
                     )}

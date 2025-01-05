@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext } from 'react';
+import React, { createContext, useState, useContext } from "react";
 
 const LoginModalContext = createContext();
 
@@ -9,11 +9,18 @@ export const LoginModalProvider = ({ children }) => {
     const openLoginModal = (type) => {
         setLoginModalOpen(true);
         setLogin(type);
-    }
+    };
     const closeLoginModal = () => setLoginModalOpen(false);
 
     return (
-        <LoginModalContext.Provider value={{ isLoginModalOpen, isLogin, openLoginModal, closeLoginModal }}>
+        <LoginModalContext.Provider
+            value={{
+                isLoginModalOpen,
+                isLogin,
+                openLoginModal,
+                closeLoginModal,
+            }}
+        >
             {children}
         </LoginModalContext.Provider>
     );

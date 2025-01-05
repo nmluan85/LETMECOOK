@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import Slider from 'react-slider';
-import './filter.css';
+import React, { useState } from "react";
+import Slider from "react-slider";
+import "./filter.css";
 
 const Filters = ({ onApplyFilters }) => {
     const [type, setType] = useState({
@@ -56,7 +56,7 @@ const Filters = ({ onApplyFilters }) => {
                                 checked={type[key]}
                                 onChange={handleTypeChange}
                             />
-                            {key.replace(/([A-Z])/g, ' $1').trim()}
+                            {key.replace(/([A-Z])/g, " $1").trim()}
                         </label>
                     ))}
                 </div>
@@ -67,12 +67,14 @@ const Filters = ({ onApplyFilters }) => {
                 <Slider
                     className="time-slider"
                     thumbClassName="thumb"
-                    trackClassName={(index) => (index === 1 ? 'track track-1' : 'track')}
+                    trackClassName={(index) =>
+                        index === 1 ? "track track-1" : "track"
+                    }
                     min={0}
                     max={120}
                     value={[time.min, time.max]}
                     onChange={handleTimeChange}
-                    ariaLabel={['Minimum time', 'Maximum time']}
+                    ariaLabel={["Minimum time", "Maximum time"]}
                     ariaValuetext={(state) => `Time: ${state} minutes`}
                     withTracks
                 />
@@ -90,7 +92,9 @@ const Filters = ({ onApplyFilters }) => {
                         <span
                             key={star}
                             onClick={() => handleRatingChange(star)}
-                            style={{ color: star <= rating ? '#ffc107' : '#ddd' }}
+                            style={{
+                                color: star <= rating ? "#ffc107" : "#ddd",
+                            }}
                         >
                             ★
                         </span>

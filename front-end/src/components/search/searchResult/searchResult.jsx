@@ -23,7 +23,7 @@ const SearchResult = ({ queri, filters }) => {
         fetch(`http://localhost:3000/api/posts/search?query=${queri}`, {
             method: "GET", // Explicitly specify GET method (optional, as it's the default)
         })
-            .then((response) => { 
+            .then((response) => {
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
                 }
@@ -47,28 +47,28 @@ const SearchResult = ({ queri, filters }) => {
     useEffect(() => {
         if (isLoggedIn) {
             // Fetch saved posts
-            fetch('http://localhost:3000/api/users/save-post', {
-                method: 'GET',
+            fetch("http://localhost:3000/api/users/save-post", {
+                method: "GET",
                 headers: {
-                    'Content-Type': 'application/json',
+                    "Content-Type": "application/json",
                 },
-                credentials: 'include', // Include cookies for authentication
+                credentials: "include", // Include cookies for authentication
             })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Failed to fetch saved posts');
-                }
-                return response.json()
-            })
-            .then(savedData => {
-                setSavedPosts(savedData.savedPosts);
-                setIsLoadingSavedPosts(false);
-            })
-            .catch(error => {
-                console.error('Error fetching saved posts:', error);
-                setError(error.message);
-                setIsLoadingSavedPosts(false);
-            });
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error("Failed to fetch saved posts");
+                    }
+                    return response.json();
+                })
+                .then((savedData) => {
+                    setSavedPosts(savedData.savedPosts);
+                    setIsLoadingSavedPosts(false);
+                })
+                .catch((error) => {
+                    console.error("Error fetching saved posts:", error);
+                    setError(error.message);
+                    setIsLoadingSavedPosts(false);
+                });
         }
     }, [isLoggedIn]);
 
@@ -78,7 +78,8 @@ const SearchResult = ({ queri, filters }) => {
                 // const matchesType =
                 //     filters.type.length === 0 || filters.type.includes(item.type);
                 const matchesTime =
-                    item.duration >= filters.time.min && item.duration <= filters.time.max;
+                    item.duration >= filters.time.min &&
+                    item.duration <= filters.time.max;
                 // const matchesRating = item.rating >= filters.rating;
 
                 return matchesTime;
@@ -136,7 +137,10 @@ const SearchResult = ({ queri, filters }) => {
                     {queri} ({filteredData.length})
                 </h1>
                 <div>
-                    <label htmlFor="sort" className="mr-2 font-medium text-gray-600">
+                    <label
+                        htmlFor="sort"
+                        className="mr-2 font-medium text-gray-600"
+                    >
                         Sort:
                     </label>
                     <select
@@ -158,14 +162,18 @@ const SearchResult = ({ queri, filters }) => {
                 } ${slideDirection === "left" ? "slide-in-from-left" : ""}`}
                 onAnimationEnd={() => setSlideDirection("")}
             >
-                {sortedItems.slice(indexOfFirstItem, indexOfLastItem).map((item, index) => (
-                    <div className="pt-4 pb-6 pl-2 pr-2" key={item.id}>
-                        <RecipeCard 
-                            recipe={item} 
-                            isSaved={savedPosts.some(savedPost => savedPost._id === item._id)}
-                        />
-                    </div>
-                ))}
+                {sortedItems
+                    .slice(indexOfFirstItem, indexOfLastItem)
+                    .map((item, index) => (
+                        <div className="pt-4 pb-6 pl-2 pr-2" key={item.id}>
+                            <RecipeCard
+                                recipe={item}
+                                isSaved={savedPosts.some(
+                                    (savedPost) => savedPost._id === item._id,
+                                )}
+                            />
+                        </div>
+                    ))}
             </div>
 
             {/* Pagination */}

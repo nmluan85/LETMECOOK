@@ -1,5 +1,5 @@
-import Comment from '../models/commentModel.js';
-import Post from '../models/postModel.js';
+import Comment from "../models/commentModel.js";
+import Post from "../models/postModel.js";
 
 const createComment = async (req, res) => {
     try {
@@ -12,24 +12,25 @@ const createComment = async (req, res) => {
             rating,
             post: postId,
             reactions: [],
-            replies: []
+            replies: [],
         });
 
         await newComment.save();
 
         // Optional: Update post's comments array
-        await Post.findByIdAndUpdate(
-            postId,
-            { $push: { comments: newComment._id } }
-        );
+        await Post.findByIdAndUpdate(postId, {
+            $push: { comments: newComment._id },
+        });
 
-        const populatedComment = await Comment.findById(newComment._id).populate('user');
+        const populatedComment = await Comment.findById(
+            newComment._id,
+        ).populate("user");
 
         res.status(201).json(populatedComment);
     } catch (error) {
         res.status(400).json({ message: error.message });
     }
-}; 
+};
 
 const replyComment = async (req, res) => {
     try {
@@ -43,15 +44,14 @@ const replyComment = async (req, res) => {
             rating: 0,
             post: req.body.postId,
             reactions: [],
-            replies: []
+            replies: [],
         });
 
         await replyComment.save();
 
-        await Comment.findByIdAndUpdate(
-            commentId,
-            { $push: { replies: replyComment._id } }
-        );
+        await Comment.findByIdAndUpdate(commentId, {
+            $push: { replies: replyComment._id },
+        });
 
         res.status(201).json(replyComment);
     } catch (error) {
@@ -66,7 +66,7 @@ const reactToComment = async (req, res) => {
 
         const existingReaction = await CommentReact.findOne({
             commentId,
-            username: userId
+            username: userId,
         });
 
         if (existingReaction) {
@@ -79,15 +79,14 @@ const reactToComment = async (req, res) => {
         const newReaction = new CommentReact({
             commentId,
             username: userId,
-            type
+            type,
         });
 
         await newReaction.save();
 
-        await Comment.findByIdAndUpdate(
-            commentId,
-            { $push: { reactions: newReaction._id } }
-        );
+        await Comment.findByIdAndUpdate(commentId, {
+            $push: { reactions: newReaction._id },
+        });
 
         res.status(201).json(newReaction);
     } catch (error) {
@@ -97,11 +96,13 @@ const reactToComment = async (req, res) => {
 
 const getCommentsByPostId = async (req, res) => {
     try {
-        const comments = await Comment.find({ post: req.params.recipeId }).populate('user');
+        const comments = await Comment.find({
+            post: req.params.recipeId,
+        }).populate("user");
         res.status(200).json(comments);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
-}
+};
 
 export { createComment, replyComment, reactToComment, getCommentsByPostId };

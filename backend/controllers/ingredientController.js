@@ -1,4 +1,4 @@
-import Ingredient from '../models/ingredientModel.js';
+import Ingredient from "../models/ingredientModel.js";
 
 // Controller to get all ingredient names
 const getAllIngredientNames = async (req, res) => {
@@ -7,18 +7,20 @@ const getAllIngredientNames = async (req, res) => {
         const ingredients = await Ingredient.find({}, "name");
 
         // Extract names from the result
-        const ingredientNames = ingredients.map(ingredient => {
+        const ingredientNames = ingredients.map((ingredient) => {
             return {
                 id: ingredient._id,
-                name: ingredient.name
+                name: ingredient.name,
             };
         });
 
         // Send the names as an array to the front-end
         res.status(200).json(ingredientNames);
     } catch (error) {
-        console.error('Error fetching ingredient names:', error);
-        res.status(500).json({ message: 'Server error. Could not fetch ingredient names.' });
+        console.error("Error fetching ingredient names:", error);
+        res.status(500).json({
+            message: "Server error. Could not fetch ingredient names.",
+        });
     }
 };
 
@@ -29,8 +31,10 @@ const viewIngredient = async (req, res) => {
         const ingredient = await Ingredient.findById(ingredientId);
         res.status(200).json(ingredient);
     } catch (error) {
-        console.error('Error viewing ingredient:', error);
-        res.status(500).json({ message: 'Server error. Could not view ingredient.' });
+        console.error("Error viewing ingredient:", error);
+        res.status(500).json({
+            message: "Server error. Could not view ingredient.",
+        });
     }
 };
 
@@ -40,25 +44,27 @@ const createIngredient = async (req, res) => {
         const { name, nutrition } = req.body;
 
         if (!name) {
-            return res.status(400).json({ message: 'Name is required.' });
+            return res.status(400).json({ message: "Name is required." });
         }
 
         // Create ingredient object with required and optional fields
         const ingredientData = {
             name,
-            nutrition: nutrition || {} // Optional nutrition data
+            nutrition: nutrition || {}, // Optional nutrition data
         };
 
         const newIngredient = new Ingredient(ingredientData);
         await newIngredient.save();
-        
-        res.status(201).json({ 
-            message: 'Ingredient created successfully.',
-            ingredient: newIngredient 
+
+        res.status(201).json({
+            message: "Ingredient created successfully.",
+            ingredient: newIngredient,
         });
     } catch (error) {
-        console.error('Error creating ingredient:', error);
-        res.status(500).json({ message: 'Server error. Could not create ingredient.' });
+        console.error("Error creating ingredient:", error);
+        res.status(500).json({
+            message: "Server error. Could not create ingredient.",
+        });
     }
 };
 
@@ -68,19 +74,24 @@ const deleteIngredient = async (req, res) => {
         const { ingredientId } = req.params;
 
         if (!ingredientId) {
-            return res.status(400).json({ message: 'Ingredient ID is required.' });
+            return res
+                .status(400)
+                .json({ message: "Ingredient ID is required." });
         }
 
-        const deletedIngredient = await Ingredient.findByIdAndDelete(ingredientId);
-        
+        const deletedIngredient =
+            await Ingredient.findByIdAndDelete(ingredientId);
+
         if (!deletedIngredient) {
-            return res.status(404).json({ message: 'Ingredient not found.' });
+            return res.status(404).json({ message: "Ingredient not found." });
         }
 
-        res.status(200).json({ message: 'Ingredient deleted successfully.' });
+        res.status(200).json({ message: "Ingredient deleted successfully." });
     } catch (error) {
-        console.error('Error deleting ingredient:', error);
-        res.status(500).json({ message: 'Server error. Could not delete ingredient.' });
+        console.error("Error deleting ingredient:", error);
+        res.status(500).json({
+            message: "Server error. Could not delete ingredient.",
+        });
     }
 };
 
@@ -91,14 +102,16 @@ const updateIngredient = async (req, res) => {
         const { name, nutrition } = req.body;
 
         if (!ingredientId) {
-            return res.status(400).json({ message: 'Ingredient ID is required.' });
+            return res
+                .status(400)
+                .json({ message: "Ingredient ID is required." });
         }
 
         // First, get the existing ingredient
         const existingIngredient = await Ingredient.findById(ingredientId);
-        
+
         if (!existingIngredient) {
-            return res.status(404).json({ message: 'Ingredient not found.' });
+            return res.status(404).json({ message: "Ingredient not found." });
         }
 
         // Create update object with only provided fields
@@ -108,23 +121,25 @@ const updateIngredient = async (req, res) => {
             // Merge existing nutrition with new nutrition data
             updateData.nutrition = {
                 ...existingIngredient.nutrition.toObject(), // Convert to plain object
-                ...nutrition
+                ...nutrition,
             };
         }
 
         const updatedIngredient = await Ingredient.findByIdAndUpdate(
             ingredientId,
             updateData,
-            { new: true, runValidators: true }
+            { new: true, runValidators: true },
         );
 
         res.status(200).json({
-            message: 'Ingredient updated successfully.',
-            ingredient: updatedIngredient
+            message: "Ingredient updated successfully.",
+            ingredient: updatedIngredient,
         });
     } catch (error) {
-        console.error('Error updating ingredient:', error);
-        res.status(500).json({ message: 'Server error. Could not update ingredient.' });
+        console.error("Error updating ingredient:", error);
+        res.status(500).json({
+            message: "Server error. Could not update ingredient.",
+        });
     }
 };
 
@@ -137,7 +152,7 @@ const addIngredientsFreeMeal = async (req, res) => {
 
     try {
         // Map the meals array to prepare data for insertion
-        const ingredients = meals.map(meal => ({
+        const ingredients = meals.map((meal) => ({
             name: meal.strIngredient,
             type: meal.strType || null, // Default to 'Unknown' if strType is null
             nutrition: {
@@ -154,17 +169,24 @@ const addIngredientsFreeMeal = async (req, res) => {
         const insertedIngredients = await Ingredient.insertMany(ingredients);
 
         res.status(201).json({
-            message: 'Ingredients added successfully.',
+            message: "Ingredients added successfully.",
             addedCount: insertedIngredients.length,
             ingredients: insertedIngredients,
         });
     } catch (error) {
-        console.error('Error adding ingredients:', error);
+        console.error("Error adding ingredients:", error);
         res.status(500).json({
-            message: 'Failed to add ingredients.',
+            message: "Failed to add ingredients.",
             error: error.message,
         });
     }
 };
 
-export { createIngredient, deleteIngredient, updateIngredient, viewIngredient, getAllIngredientNames, addIngredientsFreeMeal }; 
+export {
+    createIngredient,
+    deleteIngredient,
+    updateIngredient,
+    viewIngredient,
+    getAllIngredientNames,
+    addIngredientsFreeMeal,
+};

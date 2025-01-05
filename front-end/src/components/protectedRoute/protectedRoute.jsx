@@ -1,21 +1,20 @@
-import React, { useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import { useLoginModal } from "../../contexts/LoginModalContext";
 import LoadingScreen from "../loading";
-import { Navigate} from "react-router-dom";
+import { Navigate } from "react-router-dom";
 
-const ProtectedRoute = ({children, roles}) => {
-    const {isLoggedIn, user} = useAuth();
-    const {openLoginModal} = useLoginModal();
+const ProtectedRoute = ({ children, roles }) => {
+    const { isLoggedIn, user } = useAuth();
+    const { openLoginModal } = useLoginModal();
     const [isLoading, setIsLoading] = useState(true);
     useEffect(() => {
-        if (!user){
+        if (!user) {
             setIsLoading(true);
-        }
-        else if (!isLoggedIn){
+        } else if (!isLoggedIn) {
             setIsLoading(false);
             openLoginModal(true);
-        } else if (!roles.includes(user.role)){
+        } else if (!roles.includes(user.role)) {
             setIsLoading(false);
             openLoginModal(true);
         } else {
@@ -23,10 +22,6 @@ const ProtectedRoute = ({children, roles}) => {
         }
     });
 
-    return (
-        <>
-            {isLoading ? <LoadingScreen /> : children}
-        </>
-    );
+    return <>{isLoading ? <LoadingScreen /> : children}</>;
 };
 export default ProtectedRoute;

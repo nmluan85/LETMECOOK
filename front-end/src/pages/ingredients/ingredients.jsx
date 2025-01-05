@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 
 const Ingredients = () => {
     const [ingredients, setIngredients] = useState([]);
@@ -9,16 +9,23 @@ const Ingredients = () => {
         const fetchIngredients = async () => {
             try {
                 setLoading(true);
-                const response = await fetch('http://localhost:3000/api/ingredients/names');
+                const response = await fetch(
+                    "http://localhost:3000/api/ingredients/names",
+                );
                 const data = await response.json();
 
                 if (!response.ok) {
-                    throw new Error(data.message || "Failed to fetch ingredients");
+                    throw new Error(
+                        data.message || "Failed to fetch ingredients",
+                    );
                 }
 
                 setIngredients(data); // Assume the API returns an array of names
             } catch (err) {
-                setError(err.message || "An error occurred while fetching ingredients");
+                setError(
+                    err.message ||
+                        "An error occurred while fetching ingredients",
+                );
             } finally {
                 setLoading(false);
             }
@@ -28,7 +35,9 @@ const Ingredients = () => {
     }, []);
 
     if (loading) {
-        return <p className="text-center text-gray-500">Loading ingredients...</p>;
+        return (
+            <p className="text-center text-gray-500">Loading ingredients...</p>
+        );
     }
 
     if (error) {
@@ -39,12 +48,14 @@ const Ingredients = () => {
         <div className="relative w-[900px] h-[900px] mx-auto overflow-hidden">
             <div className="absolute inset-0 flex items-center justify-center">
                 <div className="w-[200px] h-[200px] bg-primary-100 rounded-full shadow-inner flex items-center justify-center">
-                    <p className="text-center text-gray-700 font-bold">Ingredients</p>
+                    <p className="text-center text-gray-700 font-bold">
+                        Ingredients
+                    </p>
                 </div>
             </div>
             <div
                 className="relative w-full h-full flex items-center justify-center animate-[spin_30s_linear_infinite]"
-                style={{ transformOrigin: 'center' }}
+                style={{ transformOrigin: "center" }}
             >
                 {ingredients.map((ingredient, index) => {
                     const angle = (360 / ingredients.length) * index;

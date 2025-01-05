@@ -1,19 +1,24 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
-const ingredientSchema = new mongoose.Schema({
-    name: { type: String, required: true },
-    nutrition: {
-        carbs: Number,
-        fat: Number,
-        protein: Number,
-        calories: Number,
-        fiber: Number,
-        sodium: Number
+const ingredientSchema = new mongoose.Schema(
+    {
+        name: { type: String, required: true },
+        nutrition: {
+            carbs: Number,
+            fat: Number,
+            protein: Number,
+            calories: Number,
+            fiber: Number,
+            sodium: Number,
+        },
+        type: {
+            type: String,
+        },
     },
-    type: {
-        type: String
-    }
-}, { timestamps: true });
+    { timestamps: true },
+);
 
-const Ingredient = mongoose.models.Ingredient || mongoose.model('Ingredient', ingredientSchema);
+const Ingredient =
+    mongoose.models.Ingredient ||
+    mongoose.model("Ingredient", ingredientSchema);
 export default Ingredient;

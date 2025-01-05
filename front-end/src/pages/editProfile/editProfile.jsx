@@ -32,22 +32,27 @@ const EditProfile = () => {
             const updatedFields = {
                 username: displayName,
                 avatar: preview,
-                description: description
+                description: description,
             };
 
             // Call the PUT API to update the user profile
-            const response = await fetch('http://localhost:3000/api/users/edit-profile', {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
+            const response = await fetch(
+                "http://localhost:3000/api/users/edit-profile",
+                {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(updatedFields),
+                    credentials: "include",
                 },
-                body: JSON.stringify(updatedFields),
-                credentials: "include"
-            });
+            );
 
             if (!response.ok) {
                 const errorData = await response.json();
-                throw new Error(errorData.message || 'Failed to update profile');
+                throw new Error(
+                    errorData.message || "Failed to update profile",
+                );
             }
 
             const data = await response.json();
@@ -118,7 +123,9 @@ const EditProfile = () => {
                             ) : (
                                 <div className="flex flex-col items-center justify-center">
                                     <FaCamera className="text-orange-500 text-4xl mb-2" />
-                                    <p className="text-sm font-bold">Profile Photo</p>
+                                    <p className="text-sm font-bold">
+                                        Profile Photo
+                                    </p>
                                 </div>
                             )}
                             <input

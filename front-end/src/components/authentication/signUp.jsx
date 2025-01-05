@@ -1,18 +1,18 @@
 import React from "react";
-import { useState, useEffect} from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 
-const SignUp = ({onSuccess, changeState}) => {
-    const {login} = useAuth();
+const SignUp = ({ onSuccess, changeState }) => {
+    const { login } = useAuth();
     const [email, setEmail] = useState("");
-    const [username, setUsername] = useState(""); 
+    const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [repeatPassword, setRepeatPassword] = useState("");
     const [responseMessage, setResponseMessage] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [code, setCode] = useState();
     const [isVerify, setIsVerify] = useState(false);
-    
+
     const handleSubmitSignUp = async (e) => {
         e.preventDefault();
         setResponseMessage("");
@@ -23,27 +23,36 @@ const SignUp = ({onSuccess, changeState}) => {
         }
         try {
             setIsLoading(true);
-            const response = await fetch("http://localhost:3000/api/users/create", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
+            const response = await fetch(
+                "http://localhost:3000/api/users/create",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        username,
+                        email,
+                        password,
+                        repeatPassword,
+                    }),
                 },
-                body: JSON.stringify({ username, email, password, repeatPassword }),
-            });
+            );
             const data = await response.json();
             console.log(data);
             if (data.success) {
                 setIsVerify(true);
-            }
-            else {
+            } else {
                 setResponseMessage(data.message);
             }
         } catch (error) {
-            setResponseMessage(error.message || "An unexpected error occurred.");
+            setResponseMessage(
+                error.message || "An unexpected error occurred.",
+            );
         } finally {
             setIsLoading(false); // Stop loading
         }
-    }
+    };
     const handleSubmitVerify = async (e) => {
         e.preventDefault();
         setResponseMessage("");
@@ -54,13 +63,16 @@ const SignUp = ({onSuccess, changeState}) => {
         }
         try {
             setIsLoading(true);
-            const response = await fetch("http://localhost:3000/api/users/verify", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
+            const response = await fetch(
+                "http://localhost:3000/api/users/verify",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ code }),
                 },
-                body: JSON.stringify({code}),
-            });
+            );
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
@@ -71,19 +83,21 @@ const SignUp = ({onSuccess, changeState}) => {
                 setResponseMessage(data.message);
                 onSuccess();
                 window.location.reload();
-            }
-            else {
-                setResponseMessage(data.message || "Login failed. Please try again.");
+            } else {
+                setResponseMessage(
+                    data.message || "Login failed. Please try again.",
+                );
             }
         } catch (error) {
-            setResponseMessage(error.message || "An unexpected error occurred.");
+            setResponseMessage(
+                error.message || "An unexpected error occurred.",
+            );
         } finally {
             setIsLoading(false);
         }
-    }
-    return (
-        !isVerify ? (
-            <form onSubmit={handleSubmitSignUp}>
+    };
+    return !isVerify ? (
+        <form onSubmit={handleSubmitSignUp}>
             <div className="mb-4">
                 <label className="block text-lg font-normal text-gray-700 mb-5">
                     Create your free account.
@@ -143,15 +157,18 @@ const SignUp = ({onSuccess, changeState}) => {
             </button>
             <p className="text-sm text-gray-500 mt-4 mb-10">
                 Already have an account?
-                <span 
+                <span
                     className="font-bold text-primary-default hover:text-primary-800 cursor-pointer"
                     onClick={changeState}
-                > Log in</span>
+                >
+                    {" "}
+                    Log in
+                </span>
             </p>
         </form>
-        ) : (
-            <form onSubmit={handleSubmitVerify}>
-                <div className="mb-4">
+    ) : (
+        <form onSubmit={handleSubmitVerify}>
+            <div className="mb-4">
                 <label className="block text-lg font-normal text-gray-700 mb-5">
                     An email with a verification code was just send to {email}.
                 </label>
@@ -180,8 +197,7 @@ const SignUp = ({onSuccess, changeState}) => {
                 {isLoading ? "Loading..." : "Continue"}
             </button>
         </form>
-        )
-    )
-}
+    );
+};
 
 export default SignUp;

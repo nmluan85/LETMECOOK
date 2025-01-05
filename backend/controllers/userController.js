@@ -1,14 +1,19 @@
-import mongoose from 'mongoose';
-import jwt from 'jsonwebtoken';
-import bcrypt from 'bcrypt'; 
-import crypto from 'crypto';
-import User from '../models/userModel.js';
-import Comment from '../models/commentModel.js';
-import Post from '../models/postModel.js';
-import Plan from '../models/planModel.js';
-import { deletePostAndRelated } from './postController.js';
-import { generateCode, generateCookie } from '../utils/generateCode.js';
-import { sendVerificationEmail, sendWelcomeEmail, sendPasswordResetEmail, sendResetSuccessEmail } from '../config/emails.js';
+import mongoose from "mongoose";
+import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
+import crypto from "crypto";
+import User from "../models/userModel.js";
+import Comment from "../models/commentModel.js";
+import Post from "../models/postModel.js";
+import Plan from "../models/planModel.js";
+import { deletePostAndRelated } from "./postController.js";
+import { generateCode, generateCookie } from "../utils/generateCode.js";
+import {
+    sendVerificationEmail,
+    sendWelcomeEmail,
+    sendPasswordResetEmail,
+    sendResetSuccessEmail,
+} from "../config/emails.js";
 
 // Controller to create a new user or sign up
 const createUser = async (req, res) => {
@@ -16,41 +21,41 @@ const createUser = async (req, res) => {
         const { username, email, password, repeatPassword } = req.body;
 
         if (!username || !email || !password || !repeatPassword) {
-            return res.status(400).json({ 
+            return res.status(400).json({
                 success: false,
-                message: 'All fields are required.' 
+                message: "All fields are required.",
             });
         }
 
         let { role } = req.body;
         if (!role) {
-            role = 'User';
+            role = "User";
         }
 
         if (password !== repeatPassword) {
-            return res.status(401).json({ 
+            return res.status(401).json({
                 success: false,
-                message: 'Passwords do not match.' 
+                message: "Passwords do not match.",
             });
         }
 
         if (await User.findOne({ email })) {
-            return res.status(404).json({ 
+            return res.status(404).json({
                 success: false,
-                message: 'Email already exists.' 
+                message: "Email already exists.",
             });
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
         const verificationCode = generateCode();
 
-        const newUser = new User({ 
-            username, 
-            email, 
-            password: hashedPassword, 
+        const newUser = new User({
+            username,
+            email,
+            password: hashedPassword,
             role,
             verificationToken: verificationCode,
-            verificationTokenExpiry: new Date(Date.now() + 60 * 60 * 1000) // 1 hour
+            verificationTokenExpiry: new Date(Date.now() + 60 * 60 * 1000), // 1 hour
         });
         await newUser.save();
 
@@ -58,16 +63,16 @@ const createUser = async (req, res) => {
 
         await sendVerificationEmail(newUser.email, verificationCode);
 
-        res.status(200).json({ 
+        res.status(200).json({
             success: true,
-            message: 'Account created successfully.',
+            message: "Account created successfully.",
             user: newUser,
         });
     } catch (error) {
-        console.error('Error creating user:', error);
-        res.status(500).json({ 
+        console.error("Error creating user:", error);
+        res.status(500).json({
             success: false,
-            message: 'Server error. Could not create user.' 
+            message: "Server error. Could not create user.",
         });
     }
 };
@@ -76,12 +81,17 @@ const createUser = async (req, res) => {
 const verifyEmail = async (req, res) => {
     try {
         const { code } = req.body;
-        const user = await User.findOne({ 
+        const user = await User.findOne({
             verificationToken: code,
-            verificationTokenExpiry: { $gt: new Date() }
+            verificationTokenExpiry: { $gt: new Date() },
         });
         if (!user) {
-            return res.status(404).json({ success: false, message: 'Invalid verification code.' });
+            return res
+                .status(404)
+                .json({
+                    success: false,
+                    message: "Invalid verification code.",
+                });
         }
 
         user.isVerified = true;
@@ -90,16 +100,16 @@ const verifyEmail = async (req, res) => {
         await user.save();
         await sendWelcomeEmail(user.email, user.username);
 
-        res.status(200).json({ 
-            success: true, 
-            message: 'Email verified successfully.',
-            user: user 
+        res.status(200).json({
+            success: true,
+            message: "Email verified successfully.",
+            user: user,
         });
     } catch (error) {
-        console.error('Error verifying email:', error);
-        res.status(500).json({ 
-            success: false, 
-            message: 'Server error. Could not verify email.' 
+        console.error("Error verifying email:", error);
+        res.status(500).json({
+            success: false,
+            message: "Server error. Could not verify email.",
         });
     }
 };
@@ -110,32 +120,32 @@ const loginUser = async (req, res) => {
         const { email, password } = req.body;
 
         if (!email || !password) {
-            return res.status(400).json({ 
+            return res.status(400).json({
                 success: false,
-                message: 'All fields are required.' 
+                message: "All fields are required.",
             });
         }
 
         const user = await User.findOne({ email });
         if (!user) {
-            return res.status(404).json({ 
+            return res.status(404).json({
                 success: false,
-                message: 'User not found.' 
+                message: "User not found.",
             });
         }
 
         const isPasswordValid = await bcrypt.compare(password, user.password);
         if (!isPasswordValid) {
-            return res.status(401).json({ 
+            return res.status(401).json({
                 success: false,
-                message: 'Invalid password.' 
+                message: "Invalid password.",
             });
         }
 
         if (!user.isVerified) {
             return res.status(401).json({
                 success: false,
-                message: 'Email not verified. Please verify your email.'
+                message: "Email not verified. Please verify your email.",
             });
         }
 
@@ -143,16 +153,16 @@ const loginUser = async (req, res) => {
         user.lastLogin = new Date();
         await user.save();
 
-        res.status(200).json({ 
+        res.status(200).json({
             success: true,
-            message: 'Login successful.',
+            message: "Login successful.",
             user: user,
         });
     } catch (error) {
-        console.error('Error logging in:', error);
-        res.status(500).json({ 
+        console.error("Error logging in:", error);
+        res.status(500).json({
             success: false,
-            message: 'Server error. Could not login.' 
+            message: "Server error. Could not login.",
         });
     }
 };
@@ -160,17 +170,17 @@ const loginUser = async (req, res) => {
 // Controller to logout
 const logoutUser = async (req, res) => {
     try {
-        res.clearCookie('token');
+        res.clearCookie("token");
 
-        res.status(200).json({ 
+        res.status(200).json({
             success: true,
-            message: 'Logout successful.' 
+            message: "Logout successful.",
         });
     } catch (error) {
-        console.error('Error logging out:', error);
-        res.status(500).json({ 
+        console.error("Error logging out:", error);
+        res.status(500).json({
             success: false,
-            message: 'Server error. Could not logout.' 
+            message: "Server error. Could not logout.",
         });
     }
 };
@@ -181,69 +191,82 @@ const forgotPassword = async (req, res) => {
         const { email } = req.body;
 
         if (!email) {
-            return res.status(400).json({ 
+            return res.status(400).json({
                 success: false,
-                message: 'Email is required.' 
+                message: "Email is required.",
             });
         }
 
         const user = await User.findOne({ email });
         if (!user) {
-            return res.status(404).json({ 
+            return res.status(404).json({
                 success: false,
-                message: 'User not found.' 
+                message: "User not found.",
             });
         }
 
         const resetToken = crypto.randomBytes(20).toString("hex");
-		const resetTokenExpiresAt = Date.now() + 1 * 60 * 60 * 1000; // 1 hour
+        const resetTokenExpiresAt = Date.now() + 1 * 60 * 60 * 1000; // 1 hour
 
-		user.resetPasswordToken = resetToken;
-		user.resetPasswordTokenExpiry = resetTokenExpiresAt;
+        user.resetPasswordToken = resetToken;
+        user.resetPasswordTokenExpiry = resetTokenExpiresAt;
 
-		await user.save();
+        await user.save();
 
-		await sendPasswordResetEmail(user.email, `${process.env.CLIENT_URL}/reset-password/${resetToken}`);
+        await sendPasswordResetEmail(
+            user.email,
+            `${process.env.CLIENT_URL}/reset-password/${resetToken}`,
+        );
 
-		res.status(200).json({ success: true, message: "Password reset link sent to your email" });
-
+        res.status(200).json({
+            success: true,
+            message: "Password reset link sent to your email",
+        });
     } catch (error) {
-        console.error('Error forgetting password:', error);
-        res.status(500).json({ 
+        console.error("Error forgetting password:", error);
+        res.status(500).json({
             success: false,
-            message: 'Server error. Could not forget password.' 
+            message: "Server error. Could not forget password.",
         });
     }
-}
+};
 
 // Controller to reset password
 const resetPassword = async (req, res) => {
-	try {
-		const { token } = req.params;
-		const { password } = req.body;
+    try {
+        const { token } = req.params;
+        const { password } = req.body;
 
-		const user = await User.findOne({
-			resetPasswordToken: token,
-			resetPasswordTokenExpiry: { $gt: Date.now() },
-		});
+        const user = await User.findOne({
+            resetPasswordToken: token,
+            resetPasswordTokenExpiry: { $gt: Date.now() },
+        });
 
-		if (!user) {
-			return res.status(400).json({ success: false, message: "Invalid or expired reset token" });
-		}
-        
-		const hashedPassword = await bcrypt.hash(password, 10);
-		user.password = hashedPassword;
-		user.resetPasswordToken = undefined;
-		user.resetPasswordTokenExpiry = undefined;
+        if (!user) {
+            return res
+                .status(400)
+                .json({
+                    success: false,
+                    message: "Invalid or expired reset token",
+                });
+        }
 
-		await user.save();
-		await sendResetSuccessEmail(user.email);
+        const hashedPassword = await bcrypt.hash(password, 10);
+        user.password = hashedPassword;
+        user.resetPasswordToken = undefined;
+        user.resetPasswordTokenExpiry = undefined;
 
-		res.status(200).json({ success: true, message: "Password reset successful" });
-	} catch (error) {
-		console.log("Error in resetPassword ", error);
-		res.status(400).json({ success: false, message: error.message });
-	}
+        await user.save();
+        await sendResetSuccessEmail(user.email);
+
+        res.status(200).json({
+            success: true,
+            message: "Password reset successful",
+        });
+    } catch (error) {
+        console.log("Error in resetPassword ", error);
+        res.status(400).json({ success: false, message: error.message });
+    }
 };
 
 // Controller to change password
@@ -252,54 +275,57 @@ const changePassword = async (req, res) => {
         const { username, oldPassword, repeatPassword, newPassword } = req.body;
 
         if (!username || !oldPassword || !repeatPassword || !newPassword) {
-            return res.status(400).json({ 
+            return res.status(400).json({
                 success: false,
-                message: 'All fields are required.' 
+                message: "All fields are required.",
             });
         }
 
         if (newPassword !== repeatPassword) {
-            return res.status(400).json({ 
+            return res.status(400).json({
                 success: false,
-                message: 'Passwords do not match.' 
+                message: "Passwords do not match.",
             });
         }
-        
+
         if (newPassword === oldPassword) {
-            return res.status(400).json({ 
+            return res.status(400).json({
                 success: false,
-                message: 'New password cannot be the same as the old password.' 
+                message: "New password cannot be the same as the old password.",
             });
         }
 
         const user = await User.findOne({ username });
         if (!user) {
-            return res.status(404).json({ 
+            return res.status(404).json({
                 success: false,
-                message: 'User not found.' 
+                message: "User not found.",
             });
         }
 
-        const isPasswordValid = await bcrypt.compare(oldPassword, user.password);
+        const isPasswordValid = await bcrypt.compare(
+            oldPassword,
+            user.password,
+        );
         if (!isPasswordValid) {
-            return res.status(401).json({ 
+            return res.status(401).json({
                 success: false,
-                message: 'Old password is incorrect.' 
+                message: "Old password is incorrect.",
             });
         }
 
         user.password = await bcrypt.hash(newPassword, 10);
         await user.save();
 
-        res.status(200).json({ 
+        res.status(200).json({
             success: true,
-            message: 'Password changed successfully.' 
+            message: "Password changed successfully.",
         });
     } catch (error) {
-        console.error('Error changing password:', error);
-        res.status(500).json({ 
+        console.error("Error changing password:", error);
+        res.status(500).json({
             success: false,
-            message: 'Server error. Could not change password.' 
+            message: "Server error. Could not change password.",
         });
     }
 };
@@ -310,13 +336,13 @@ const getAllUsers = async (req, res) => {
         const users = await User.find();
         res.status(200).json({
             success: true,
-            users: users
+            users: users,
         });
     } catch (error) {
-        console.error('Error fetching users:', error);
+        console.error("Error fetching users:", error);
         res.status(500).json({
             success: false,
-            message: 'Server error. Could not fetch users.'
+            message: "Server error. Could not fetch users.",
         });
     }
 };
@@ -327,9 +353,9 @@ const deleteUser = async (req, res) => {
         const { id } = req.params;
 
         if (!id) {
-            return res.status(400).json({ 
+            return res.status(400).json({
                 success: false,
-                message: 'User ID is required.' 
+                message: "User ID is required.",
             });
         }
 
@@ -350,16 +376,17 @@ const deleteUser = async (req, res) => {
             await Plan.deleteMany({ user: id }, { session });
 
             // Finally delete the user
-            const deletedUser = await User.findByIdAndDelete(id).session(session);
-            
+            const deletedUser =
+                await User.findByIdAndDelete(id).session(session);
+
             if (!deletedUser) {
-                throw new Error('User not found');
+                throw new Error("User not found");
             }
 
             await session.commitTransaction();
-            res.status(200).json({ 
+            res.status(200).json({
                 success: true,
-                message: 'User and related data deleted successfully!' 
+                message: "User and related data deleted successfully!",
             });
         } catch (error) {
             await session.abortTransaction();
@@ -368,27 +395,29 @@ const deleteUser = async (req, res) => {
             session.endSession();
         }
     } catch (error) {
-        console.error('Error deleting user:', error);
-        res.status(500).json({ 
+        console.error("Error deleting user:", error);
+        res.status(500).json({
             success: false,
-            message: 'Server error. Could not delete user.' 
+            message: "Server error. Could not delete user.",
         });
     }
 };
 
 // Controller to check if the user is authenticated
 const checkAuth = async (req, res) => {
-	try {
-		const user = await User.findById(req.userId);
-		if (!user) {
-			return res.status(400).json({ success: false, message: "User not found 1" });
-		}
+    try {
+        const user = await User.findById(req.userId);
+        if (!user) {
+            return res
+                .status(400)
+                .json({ success: false, message: "User not found 1" });
+        }
 
-		res.status(200).json({ success: true, user });
-	} catch (error) {
-		console.log("Error in checkAuth ", error);
-		res.status(400).json({ success: false, message: error.message });
-	}
+        res.status(200).json({ success: true, user });
+    } catch (error) {
+        console.log("Error in checkAuth ", error);
+        res.status(400).json({ success: false, message: error.message });
+    }
 };
 
 const savePostToUser = async (req, res) => {
@@ -397,51 +426,56 @@ const savePostToUser = async (req, res) => {
         const userId = req.userId;
 
         if (!postId) {
-            return res.status(400).json({ message: 'Post ID is required.' });
+            return res.status(400).json({ message: "Post ID is required." });
         }
 
         // Find the user and add the post to `savedPosts`
         const user = await User.findByIdAndUpdate(
             userId,
             { $addToSet: { savedPosts: postId } }, // Add to savedPosts if not already present
-            { new: true } // Return the updated user document
+            { new: true }, // Return the updated user document
         );
 
         if (!user) {
-            return res.status(404).json({ message: 'User not found.' });
+            return res.status(404).json({ message: "User not found." });
         }
 
-        res.status(200).json({savedPosts: user.savedPosts});
+        res.status(200).json({ savedPosts: user.savedPosts });
     } catch (error) {
-        console.error('Error saving post to user:', error);
-        res.status(500).json({ message: 'Server error. Could not save post.' });
+        console.error("Error saving post to user:", error);
+        res.status(500).json({ message: "Server error. Could not save post." });
     }
-}
+};
 
 const deleteSavedPost = async (req, res) => {
     try {
         const { postId } = req.body; // Post ID sent in the request
-        const userId = req.userId;  // Extracted from the verified token in middleware
+        const userId = req.userId; // Extracted from the verified token in middleware
 
         if (!postId) {
-            return res.status(400).json({ message: 'Post ID is required.' });
+            return res.status(400).json({ message: "Post ID is required." });
         }
 
         // Find the user and remove the post from `savedPosts`
         const user = await User.findByIdAndUpdate(
             userId,
             { $pull: { savedPosts: postId } }, // Remove the postId from savedPosts
-            { new: true } // Return the updated user document
+            { new: true }, // Return the updated user document
         );
 
         if (!user) {
-            return res.status(404).json({ message: 'User not found.' });
+            return res.status(404).json({ message: "User not found." });
         }
 
-        res.status(200).json({ message: 'Post removed successfully.', savedPosts: user.savedPosts });
+        res.status(200).json({
+            message: "Post removed successfully.",
+            savedPosts: user.savedPosts,
+        });
     } catch (error) {
-        console.error('Error removing post from user:', error);
-        res.status(500).json({ message: 'Server error. Could not remove post.' });
+        console.error("Error removing post from user:", error);
+        res.status(500).json({
+            message: "Server error. Could not remove post.",
+        });
     }
 };
 
@@ -449,17 +483,22 @@ const getSavedPosts = async (req, res) => {
     try {
         const userId = req.userId; // Extracted from the token in middleware
         const user = await User.findById(userId)
-                            .select('savedPosts')
-                            .populate('savedPosts'); // Assuming savedPosts stores Post IDs;
+            .select("savedPosts")
+            .populate("savedPosts"); // Assuming savedPosts stores Post IDs;
 
         if (!user) {
-            return res.status(404).json({ success: false, message: 'User not found.' });
+            return res
+                .status(404)
+                .json({ success: false, message: "User not found." });
         }
 
         res.status(200).json({ success: true, savedPosts: user.savedPosts });
     } catch (error) {
-        console.error('Error fetching saved posts:', error);
-        res.status(500).json({ success: false, message: 'Server error. Could not fetch saved posts.' });
+        console.error("Error fetching saved posts:", error);
+        res.status(500).json({
+            success: false,
+            message: "Server error. Could not fetch saved posts.",
+        });
     }
 };
 
@@ -469,21 +508,25 @@ const changeRole = async (req, res) => {
         const { id, role } = req.body;
 
         if (!id || !role) {
-            return res.status(400).json({ message: 'User ID and role are required.' });
+            return res
+                .status(400)
+                .json({ message: "User ID and role are required." });
         }
 
         const user = await User.findByIdAndUpdate(id, { role }, { new: true });
 
         if (!user) {
-            return res.status(404).json({ message: 'User not found.' });
+            return res.status(404).json({ message: "User not found." });
         }
 
-        res.status(200).json({ message: 'Role updated successfully.', user });
+        res.status(200).json({ message: "Role updated successfully.", user });
     } catch (error) {
-        console.error('Error changing role:', error);
-        res.status(500).json({ message: 'Server error. Could not change role.' });
+        console.error("Error changing role:", error);
+        res.status(500).json({
+            message: "Server error. Could not change role.",
+        });
     }
-}
+};
 
 const getPersonalPosts = async (req, res) => {
     try {
@@ -491,7 +534,9 @@ const getPersonalPosts = async (req, res) => {
         const userId = req.userId;
 
         // Fetch all posts where the author matches the current user's ID
-        const personalPosts = await Post.find({ author: userId }).populate('author').populate('comments');
+        const personalPosts = await Post.find({ author: userId })
+            .populate("author")
+            .populate("comments");
 
         // Return the posts in the response
         res.status(200).json({
@@ -499,10 +544,10 @@ const getPersonalPosts = async (req, res) => {
             personalPosts: personalPosts,
         });
     } catch (error) {
-        console.error('Error fetching personal posts:', error);
+        console.error("Error fetching personal posts:", error);
         res.status(500).json({
             success: false,
-            message: 'An error occurred while fetching personal posts',
+            message: "An error occurred while fetching personal posts",
         });
     }
 };
@@ -515,7 +560,9 @@ const editProfile = async (req, res) => {
 
         // Validate input
         if (!username && !description && !avatar) {
-            return res.status(400).json({ message: 'No fields to update provided.' });
+            return res
+                .status(400)
+                .json({ message: "No fields to update provided." });
         }
 
         // Find and update the user
@@ -526,22 +573,28 @@ const editProfile = async (req, res) => {
                 ...(description && { description }),
                 ...(avatar && { avatar }),
             },
-            { new: true, runValidators: true } // Return the updated user and ensure validation
+            { new: true, runValidators: true }, // Return the updated user and ensure validation
         );
 
         if (!updatedUser) {
-            return res.status(404).json({ message: 'User not found.' });
+            return res.status(404).json({ message: "User not found." });
         }
 
-        res.status(200).json({ message: 'User updated successfully.', user: updatedUser });
+        res.status(200).json({
+            message: "User updated successfully.",
+            user: updatedUser,
+        });
     } catch (error) {
-        console.error('Error updating user:', error);
-        res.status(500).json({ message: 'An error occurred while updating the user.', error: error.message });
+        console.error("Error updating user:", error);
+        res.status(500).json({
+            message: "An error occurred while updating the user.",
+            error: error.message,
+        });
     }
 };
 
-export { 
-    createUser, 
+export {
+    createUser,
     verifyEmail,
     loginUser,
     logoutUser,
@@ -556,5 +609,5 @@ export {
     getSavedPosts,
     changeRole,
     getPersonalPosts,
-    editProfile
+    editProfile,
 };

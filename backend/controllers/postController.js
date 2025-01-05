@@ -1,31 +1,33 @@
-import mongoose from 'mongoose';
-import User from '../models/userModel.js';
-import Post from '../models/postModel.js';
-import Comment from '../models/commentModel.js';
-import Plan from '../models/planModel.js';
+import mongoose from "mongoose";
+import User from "../models/userModel.js";
+import Post from "../models/postModel.js";
+import Comment from "../models/commentModel.js";
+import Plan from "../models/planModel.js";
 
 // Controller to get all the posts
 const getAllPosts = async (req, res) => {
     try {
         const posts = await Post.find()
             .limit(20)
-            .populate('author')
-            .populate('ingredients.ingredient')
+            .populate("author")
+            .populate("ingredients.ingredient")
             .lean();
 
-        const transformedPosts = posts.map(post => ({
+        const transformedPosts = posts.map((post) => ({
             ...post,
-            ingredients: post.ingredients.map(ing => ({
+            ingredients: post.ingredients.map((ing) => ({
                 name: ing.ingredient.name,
                 nutrition: ing.ingredient.nutrition,
-                weight: ing.weight
-            }))
+                weight: ing.weight,
+            })),
         }));
 
         res.status(200).json(transformedPosts);
     } catch (error) {
-        console.error('Error getting all posts:', error);
-        res.status(500).json({ message: 'Server error. Could not get all posts.' });
+        console.error("Error getting all posts:", error);
+        res.status(500).json({
+            message: "Server error. Could not get all posts.",
+        });
     }
 };
 
@@ -36,57 +38,64 @@ const searchPosts = async (req, res) => {
         let searchCriteria = {};
 
         if (!query && !tags) {
-            return res.status(400).json({ message: 'Query or tags parameter is required.' });
+            return res
+                .status(400)
+                .json({ message: "Query or tags parameter is required." });
         }
 
         // Add title search criteria if query exists
         if (query) {
-            searchCriteria.title = { $regex: query, $options: 'i' };
+            searchCriteria.title = { $regex: query, $options: "i" };
         }
 
         // Add tags filter if tags exist
         // Tags should be passed as comma-separated string: tags=healthy,vegetarian,dinner
         if (tags) {
-            const tagArray = tags.split(',').map(tag => tag.trim());
+            const tagArray = tags.split(",").map((tag) => tag.trim());
             searchCriteria.tags = { $all: tagArray }; // Use $all to match all tags
         }
 
-        const posts = await Post.find(searchCriteria).populate('author').populate('ingredients.ingredient').lean();
+        const posts = await Post.find(searchCriteria)
+            .populate("author")
+            .populate("ingredients.ingredient")
+            .lean();
         res.status(200).json(posts);
     } catch (error) {
-        console.error('Error searching posts:', error);
-        res.status(500).json({ message: 'Server error. Could not search posts.' });
+        console.error("Error searching posts:", error);
+        res.status(500).json({
+            message: "Server error. Could not search posts.",
+        });
     }
 };
 
 // Controller to view a post
 const viewPost = async (req, res) => {
     try {
-        console.log('Params:', req.params);
+        console.log("Params:", req.params);
         const { postId } = req.params;
 
         if (!postId) {
-            return res.status(400).json({ message: 'Post ID is required.' });
+            return res.status(400).json({ message: "Post ID is required." });
         }
 
         const post = await Post.findById(postId)
-            .populate('author')
-            .populate('ingredients.ingredient')
+            .populate("author")
+            .populate("ingredients.ingredient")
             .lean();
 
         const transformedPost = {
             ...post,
-            ingredients: post.ingredients.map(ing => ({
+            ingredients: post.ingredients.map((ing) => ({
                 name: ing.ingredient.name,
                 nutrition: ing.ingredient.nutrition,
-                weight: ing.weight
-            }))
+                weight: ing.weight,
+            })),
         };
 
         res.status(200).json(transformedPost);
     } catch (error) {
-        console.error('Error viewing post:', error);
-        res.status(500).json({ message: 'Server error. Could not view post.' });
+        console.error("Error viewing post:", error);
+        res.status(500).json({ message: "Server error. Could not view post." });
     }
 };
 
@@ -104,13 +113,14 @@ const addPost = async (req, res) => {
             duration,
             tags,
             photo,
-            author
+            author,
         } = req.body;
 
         // Validate required fields
         if (!title || !content || !author) {
             return res.status(400).json({
-                message: 'Title, content (directions), and author are required.'
+                message:
+                    "Title, content (directions), and author are required.",
             });
         }
 
@@ -129,7 +139,7 @@ const addPost = async (req, res) => {
 
         // Add tags if they exist
         if (tags && Array.isArray(tags)) {
-            postData.tags = tags.map(tag => tag.trim().toLowerCase());
+            postData.tags = tags.map((tag) => tag.trim().toLowerCase());
         }
 
         // Add contentIngredients if they exist
@@ -142,10 +152,13 @@ const addPost = async (req, res) => {
         await newPost.save();
 
         // Respond with success
-        res.status(200).json({ message: 'Post added successfully.', post: newPost });
+        res.status(200).json({
+            message: "Post added successfully.",
+            post: newPost,
+        });
     } catch (error) {
-        console.error('Error adding post:', error);
-        res.status(500).json({ message: 'Server error. Could not add post.' });
+        console.error("Error adding post:", error);
+        res.status(500).json({ message: "Server error. Could not add post." });
     }
 };
 
@@ -153,19 +166,19 @@ const addPost = async (req, res) => {
 export const deletePostAndRelated = async (postId, session) => {
     // Delete all comments associated with the post
     await Comment.deleteMany({ post: postId }, { session });
-    
+
     // Remove post reference from plans
     await Plan.updateMany(
         { posts: postId },
         { $pull: { posts: postId } },
-        { session }
+        { session },
     );
 
     // Delete the post
     const deletedPost = await Post.findByIdAndDelete(postId).session(session);
-    
+
     if (!deletedPost) {
-        throw new Error('Post not found');
+        throw new Error("Post not found");
     }
 
     return deletedPost;
@@ -176,7 +189,7 @@ const deletePost = async (req, res) => {
         const { postId } = req.params;
 
         if (!postId) {
-            return res.status(400).json({ message: 'Post ID is required.' });
+            return res.status(400).json({ message: "Post ID is required." });
         }
 
         const session = await mongoose.startSession();
@@ -185,7 +198,9 @@ const deletePost = async (req, res) => {
         try {
             await deletePostAndRelated(postId, session);
             await session.commitTransaction();
-            res.status(200).json({ message: 'Post and related data deleted successfully.' });
+            res.status(200).json({
+                message: "Post and related data deleted successfully.",
+            });
         } catch (error) {
             await session.abortTransaction();
             throw error;
@@ -193,8 +208,10 @@ const deletePost = async (req, res) => {
             session.endSession();
         }
     } catch (error) {
-        console.error('Error deleting post:', error);
-        res.status(500).json({ message: 'Server error. Could not delete post.' });
+        console.error("Error deleting post:", error);
+        res.status(500).json({
+            message: "Server error. Could not delete post.",
+        });
     }
 };
 
@@ -203,11 +220,15 @@ const addPostFromFreeMeal = async (req, res) => {
         const { meals, author } = req.body;
 
         if (!meals || !Array.isArray(meals)) {
-            return res.status(400).json({ message: 'Invalid data format. "meals" should be an array.' });
+            return res
+                .status(400)
+                .json({
+                    message: 'Invalid data format. "meals" should be an array.',
+                });
         }
 
         if (!author) {
-            return res.status(400).json({ message: 'Author ID is required.' });
+            return res.status(400).json({ message: "Author ID is required." });
         }
 
         // Map through the meals array and create documents
@@ -219,12 +240,14 @@ const addPostFromFreeMeal = async (req, res) => {
             content: meal.strInstructions,
             photo: meal.strMealThumb,
             duration: Math.floor(Math.random() * (60 - 30 + 1)) + 30, // Random duration between 30 and 60
-            tags: meal.strTags ? meal.strTags.split(',') : [],
+            tags: meal.strTags ? meal.strTags.split(",") : [],
             video: meal.strYoutube,
             contentIngredients: Array.from({ length: 20 }, (_, i) => {
                 const ingredient = meal[`strIngredient${i + 1}`];
                 const measure = meal[`strMeasure${i + 1}`];
-                return ingredient && ingredient.trim() ? { ingredient, measure } : null;
+                return ingredient && ingredient.trim()
+                    ? { ingredient, measure }
+                    : null;
             }).filter(Boolean),
             source: meal.strSource,
         }));
@@ -233,10 +256,14 @@ const addPostFromFreeMeal = async (req, res) => {
         await Post.insertMany(postDocuments);
 
         // Send a success response
-        res.status(201).json({ message: 'Meals successfully added to the database as posts.' });
+        res.status(201).json({
+            message: "Meals successfully added to the database as posts.",
+        });
     } catch (error) {
-        console.error('Error saving meals as posts:', error);
-        res.status(500).json({ message: 'An error occurred while saving meals to the database.' });
+        console.error("Error saving meals as posts:", error);
+        res.status(500).json({
+            message: "An error occurred while saving meals to the database.",
+        });
     }
 };
 
@@ -246,17 +273,19 @@ const viewUserAllPosts = async (req, res) => {
         const { userId } = req.params;
 
         if (!userId) {
-            return res.status(400).json({ message: 'User ID is required.' });
+            return res.status(400).json({ message: "User ID is required." });
         }
 
         const posts = await Post.find({ author: userId })
-            .populate('author')
-            .populate('ingredients.ingredient')
+            .populate("author")
+            .populate("ingredients.ingredient")
             .lean();
         res.status(200).json(posts);
     } catch (error) {
-        console.error('Error viewing user posts:', error);
-        res.status(500).json({ message: 'Server error. Could not view user posts.' });
+        console.error("Error viewing user posts:", error);
+        res.status(500).json({
+            message: "Server error. Could not view user posts.",
+        });
     }
 };
 
@@ -266,18 +295,20 @@ const addReport = async (req, res) => {
         const { postId, report } = req.body;
 
         if (!postId || !report) {
-            return res.status(400).json({ message: 'Post ID and report are required.' });
+            return res
+                .status(400)
+                .json({ message: "Post ID and report are required." });
         }
 
         const post = await Post.findById(postId);
 
         if (!post) {
-            return res.status(404).json({ message: 'Post not found.' });
+            return res.status(404).json({ message: "Post not found." });
         }
 
         const user = await User.findById(post.author);
         if (!user) {
-            return res.status(404).json({ message: 'Post author not found.' });
+            return res.status(404).json({ message: "Post author not found." });
         }
 
         user.numberReports += 1;
@@ -285,15 +316,16 @@ const addReport = async (req, res) => {
 
         post.reports.push(report);
         await post.save();
-        
-        res.status(200).json({ 
-            message: 'Report added successfully.',
-            updatedNumberReports: user.numberReports 
+
+        res.status(200).json({
+            message: "Report added successfully.",
+            updatedNumberReports: user.numberReports,
         });
-    }
-    catch (error) {
-        console.error('Error adding report:', error);
-        res.status(500).json({ message: 'Server error. Could not add report.' });
+    } catch (error) {
+        console.error("Error adding report:", error);
+        res.status(500).json({
+            message: "Server error. Could not add report.",
+        });
     }
 };
 
@@ -305,23 +337,29 @@ const getPostsByCategory = async (req, res) => {
 
     try {
         // Fetch posts with the formatted category from the database
-        const posts = await Post.find({ category: category }).populate('author');
+        const posts = await Post.find({ category: category }).populate(
+            "author",
+        );
 
         if (!posts.length) {
-            return res.status(201).json({ message: 'No posts found for this category.' });
+            return res
+                .status(201)
+                .json({ message: "No posts found for this category." });
         }
 
         // Respond with the retrieved posts
         res.status(200).json(posts);
     } catch (error) {
         // Handle errors (e.g., database issues)
-        console.error('Error fetching posts by category:', error);
-        res.status(500).json({ message: 'Server error. Please try again later.' });
+        console.error("Error fetching posts by category:", error);
+        res.status(500).json({
+            message: "Server error. Please try again later.",
+        });
     }
 };
 
 const setAuthorForAllPosts = async (req, res) => {
-    const authorId = '676d862128ff79e6061a0cd5'; // The ID to set as the author
+    const authorId = "676d862128ff79e6061a0cd5"; // The ID to set as the author
 
     try {
         // Update all posts with the given author ID
@@ -329,13 +367,13 @@ const setAuthorForAllPosts = async (req, res) => {
 
         // Respond with a success message and the count of updated documents
         res.status(200).json({
-            message: 'Author updated for all posts successfully.',
+            message: "Author updated for all posts successfully.",
             updatedCount: result.nModified,
         });
     } catch (error) {
-        console.error('Error updating author for posts:', error);
+        console.error("Error updating author for posts:", error);
         res.status(500).json({
-            message: 'Failed to update author for posts.',
+            message: "Failed to update author for posts.",
             error: error.message,
         });
     }
@@ -346,33 +384,33 @@ const resetRatingAllPosts = async (req, res) => {
         // Update all posts to add the 'rating' field with a default value of 5
         const result = await Post.updateMany(
             { rating: { $exists: false } }, // Only update documents where 'rating' does not exist
-            { $set: { rating: 4 } }
+            { $set: { rating: 4 } },
         );
 
         // Respond with a success message and the count of updated documents
         res.status(200).json({
-            message: 'Rating field added to all posts successfully.',
+            message: "Rating field added to all posts successfully.",
             updatedCount: result.nModified,
         });
     } catch (error) {
-        console.error('Error adding rating to posts:', error);
+        console.error("Error adding rating to posts:", error);
         res.status(500).json({
-            message: 'Failed to add rating field to posts.',
+            message: "Failed to add rating field to posts.",
             error: error.message,
         });
     }
 };
 
-export { 
+export {
     getAllPosts,
-    searchPosts, 
-    viewPost, 
-    addPost, 
+    searchPosts,
+    viewPost,
+    addPost,
     deletePost,
     addPostFromFreeMeal,
     viewUserAllPosts,
     addReport,
     getPostsByCategory,
     setAuthorForAllPosts,
-    resetRatingAllPosts
+    resetRatingAllPosts,
 };

@@ -14,32 +14,34 @@ const RecipeDetails = () => {
         introduction: "",
         steps: [],
         ingredientsArr: [],
-        isSaved: false
+        isSaved: false,
     });
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         const { item, isSaved } = location.state;
-    
+
         // Split the content into steps with delimiter \r\n
         const steps = item.content
-                        .split('\r\n') // Split content by newline
-                        .filter(step => step.trim() !== '') // Remove empty lines
-                        .filter(step => !/^STEP \d+$/i.test(step.trim())); // Exclude lines matching "STEP i" (case-insensitive)
-    
+            .split("\r\n") // Split content by newline
+            .filter((step) => step.trim() !== "") // Remove empty lines
+            .filter((step) => !/^STEP \d+$/i.test(step.trim())); // Exclude lines matching "STEP i" (case-insensitive)
+
         // Extract the ingredients array from contentIngredients
-        const ingredientsArr = item.contentIngredients.map(({ ingredient, measure }) => `${measure} ${ingredient}`);
-    
+        const ingredientsArr = item.contentIngredients.map(
+            ({ ingredient, measure }) => `${measure} ${ingredient}`,
+        );
+
         // Output the results
         setRecipeInfo({
             item,
             steps,
             ingredientsArr,
-            isSaved
+            isSaved,
         });
-    
+
         setIsLoading(false);
-    
+
         setPrevLocation(location.pathname);
     }, [location]);
 
@@ -63,7 +65,9 @@ const RecipeDetails = () => {
                         {/* YouTube video section */}
                         {recipeInfo.item.video && (
                             <div className="mt-4">
-                                <h3 className="text-lg font-bold mb-3">Watch Video:</h3>
+                                <h3 className="text-lg font-bold mb-3">
+                                    Watch Video:
+                                </h3>
                                 <iframe
                                     width="100%"
                                     height="315"
@@ -85,9 +89,8 @@ const RecipeDetails = () => {
 
             {/* Comment Section */}
             <div className="w-full p-4">
-                <CommentSection recipeId={recipeInfo.item._id}/>
+                <CommentSection recipeId={recipeInfo.item._id} />
             </div>
-
         </div>
     );
 };

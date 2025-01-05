@@ -4,48 +4,53 @@ import { Link, useNavigate } from "react-router-dom";
 import foodPic from "../../assets/foodPic.png";
 
 const Upgrade = () => {
-    const { user } = useAuth()
-    const premiumRole = "PremiumUser"
+    const { user } = useAuth();
+    const premiumRole = "PremiumUser";
 
     const [userID, setID] = useState("");
     const [name, setName] = useState("");
 
     useEffect(() => {
         if (user) {
-            setID(user._id || "")
-            setName(user.username || "")
+            setID(user._id || "");
+            setName(user.username || "");
         }
     }, [user]);
 
-    const subscribeClick = async() => {
-        console.log(userID)
-        console.log(user.role)
+    const subscribeClick = async () => {
+        console.log(userID);
+        console.log(user.role);
         try {
-            const response = await fetch("http://localhost:3000/api/users/change-role", {
-              method: "PUT",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({ id: userID, role: premiumRole }),
-              credentials: "include",
-            });
-        
+            const response = await fetch(
+                "http://localhost:3000/api/users/change-role",
+                {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ id: userID, role: premiumRole }),
+                    credentials: "include",
+                },
+            );
+
             const data = await response.json(); // Parse the JSON response
-        
+
             console.log("Response Data:", data); // Log the entire response for debugging
-        
+
             if (response.ok) {
-              // Check the response's HTTP status code
-              alert(`Welcome, ${name}! You have successfully upgraded your account to a premium user!`);
+                // Check the response's HTTP status code
+                alert(
+                    `Welcome, ${name}! You have successfully upgraded your account to a premium user!`,
+                );
             } else {
-              // Display the error message returned from the server
-              alert(`Error: ${data.message}`);
+                // Display the error message returned from the server
+                alert(`Error: ${data.message}`);
             }
-          } catch (error) {
+        } catch (error) {
             console.error("Error making the request:", error);
             alert("A network error occurred. Please try again later.");
-          }
-    }
+        }
+    };
 
     return (
         <div>
@@ -65,10 +70,12 @@ const Upgrade = () => {
                 {/* Text Section */}
                 <div className="lg:w-1/2 w-full lg:pr-8">
                     <h1 className="text-xl font-semibold text-gray-800 mb-4">
-                        These features are exclusively available to premium users
+                        These features are exclusively available to premium
+                        users
                     </h1>
                     <h2 className="text-3xl font-bold text-blue-600 mb-6">
-                        Join now to access groundbreaking and incredible features
+                        Join now to access groundbreaking and incredible
+                        features
                     </h2>
                     <ul className="space-y-4 mb-6">
                         <li className="flex items-start">
@@ -110,14 +117,16 @@ const Upgrade = () => {
                     <p className="text-gray-500 mb-6">
                         Billed as $1 every 4 weeks for the first year
                     </p>
-                    <button className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-700 transition"
-                    onClick={subscribeClick}>
+                    <button
+                        className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-700 transition"
+                        onClick={subscribeClick}
+                    >
                         Subscribe Now
                     </button>
-                    <Link to = "/">
-                    <button className="text-gray-500 w-full text-sm mt-4 text-center">
-                        Cancel or Pause anytime
-                    </button>
+                    <Link to="/">
+                        <button className="text-gray-500 w-full text-sm mt-4 text-center">
+                            Cancel or Pause anytime
+                        </button>
                     </Link>
                 </div>
 

@@ -1,38 +1,41 @@
-import { useState } from 'react';
-import { useAuth } from '../../contexts/AuthContext';
+import { useState } from "react";
+import { useAuth } from "../../contexts/AuthContext";
 
 const ReportButton = ({ postId }) => {
     const [showModal, setShowModal] = useState(false);
-    const [reportReason, setReportReason] = useState('');
+    const [reportReason, setReportReason] = useState("");
     const { user } = useAuth();
 
     // Only show button for regular or premium users
-    if (!user || user.role === 'admin') return null;
+    if (!user || user.role === "admin") return null;
 
     const handleSubmitReport = async () => {
         try {
-            const response = await fetch('http://localhost:3000/api/posts/add-report', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
+            const response = await fetch(
+                "http://localhost:3000/api/posts/add-report",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    credentials: "include",
+                    body: JSON.stringify({
+                        postId,
+                        report: reportReason,
+                    }),
                 },
-                credentials: 'include',
-                body: JSON.stringify({
-                    postId,
-                    report: reportReason
-                })
-            });
+            );
 
             if (response.ok) {
-                alert('Report submitted successfully');
+                alert("Report submitted successfully");
                 setShowModal(false);
-                setReportReason('');
+                setReportReason("");
             } else {
-                throw new Error('Failed to submit report');
+                throw new Error("Failed to submit report");
             }
         } catch (error) {
-            console.error('Error submitting report:', error);
-            alert('Failed to submit report');
+            console.error("Error submitting report:", error);
+            alert("Failed to submit report");
         }
     };
 
@@ -49,7 +52,9 @@ const ReportButton = ({ postId }) => {
             {showModal && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                     <div className="bg-white p-6 rounded-lg w-96">
-                        <h3 className="text-xl font-bold mb-4">Report Recipe</h3>
+                        <h3 className="text-xl font-bold mb-4">
+                            Report Recipe
+                        </h3>
                         <textarea
                             className="w-full h-32 border rounded p-2 mb-4"
                             placeholder="Please describe why you're reporting this recipe..."

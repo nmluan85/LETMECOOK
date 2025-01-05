@@ -18,17 +18,22 @@ const ForgotPassword = ({ onBack }) => {
 
         try {
             setIsLoading(true);
-            const response = await fetch("http://localhost:3000/api/users/forgot-password", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
+            const response = await fetch(
+                "http://localhost:3000/api/users/forgot-password",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ email }),
                 },
-                body: JSON.stringify({ email }),
-            });
+            );
             const data = await response.json();
-            
+
             if (data.success) {
-                setResponseMessage("Password reset instructions sent to your email");
+                setResponseMessage(
+                    "Password reset instructions sent to your email",
+                );
             } else {
                 setResponseMessage(data.message);
             }
@@ -55,7 +60,9 @@ const ForgotPassword = ({ onBack }) => {
             </div>
 
             {responseMessage && (
-                <p className={`text-sm mb-4 ${responseMessage.includes('sent') ? 'text-green-500' : 'text-red-500'}`}>
+                <p
+                    className={`text-sm mb-4 ${responseMessage.includes("sent") ? "text-green-500" : "text-red-500"}`}
+                >
                     {responseMessage}
                 </p>
             )}
@@ -71,13 +78,16 @@ const ForgotPassword = ({ onBack }) => {
             >
                 {isLoading ? "Loading..." : "Reset Password"}
             </button>
-            
+
             <p className="text-sm text-gray-500 mt-4 mb-14">
-                Remember your password? 
-                <span 
+                Remember your password?
+                <span
                     className="font-bold text-primary-default hover:text-primary-800 cursor-pointer"
                     onClick={onBack}
-                > Back to Login</span>
+                >
+                    {" "}
+                    Back to Login
+                </span>
             </p>
         </form>
     );

@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import TrendingCard from "./trending_card";
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from "../../contexts/AuthContext";
 
 const TrendingDishes = () => {
     const [listPost, setListPost] = useState([]);
@@ -12,20 +12,20 @@ const TrendingDishes = () => {
 
     // Fetch all posts
     useEffect(() => {
-        fetch('http://localhost:3000/api/posts/all')
-            .then(response => {
+        fetch("http://localhost:3000/api/posts/all")
+            .then((response) => {
                 if (!response.ok) {
-                    throw new Error('Failed to fetch all posts');
+                    throw new Error("Failed to fetch all posts");
                 }
                 return response.json();
             })
-            .then(data => {
+            .then((data) => {
                 const recentPosts = data.slice(0, 4); // Take the 4 most recent items
                 setListPost(recentPosts);
                 setIsLoadingPosts(false);
             })
-            .catch(error => {
-                console.error('Error fetching all posts:', error);
+            .catch((error) => {
+                console.error("Error fetching all posts:", error);
                 setError(error.message);
                 setIsLoadingPosts(false);
             });
@@ -35,24 +35,24 @@ const TrendingDishes = () => {
     useEffect(() => {
         if (isLoggedIn) {
             setIsLoadingSavedPosts(true);
-            fetch('http://localhost:3000/api/users/save-post', {
-                method: 'GET',
+            fetch("http://localhost:3000/api/users/save-post", {
+                method: "GET",
                 headers: {
-                    'Content-Type': 'application/json',
+                    "Content-Type": "application/json",
                 },
-                credentials: 'include', // Include cookies for authentication
+                credentials: "include", // Include cookies for authentication
             })
-                .then(response => {
+                .then((response) => {
                     if (!response.ok) {
-                        throw new Error('Failed to fetch saved posts');
+                        throw new Error("Failed to fetch saved posts");
                     }
                     return response.json();
                 })
-                .then(savedData => {
+                .then((savedData) => {
                     setSavedPosts(savedData.savedPosts);
                 })
-                .catch(error => {
-                    console.error('Error fetching saved posts:', error);
+                .catch((error) => {
+                    console.error("Error fetching saved posts:", error);
                     setError(error.message);
                 })
                 .finally(() => {
@@ -75,7 +75,8 @@ const TrendingDishes = () => {
                 Trending dishes
             </h1>
             <p className="text-center text-gray-600 mt-2">
-                Curated Culinary Delights: Handpicked Favorites by Our Expert Editors!
+                Curated Culinary Delights: Handpicked Favorites by Our Expert
+                Editors!
             </p>
 
             <div className="ml-40 mr-40 grid grid-cols-1 md:grid-cols-2 gap-6 mt-8 mx-4">
@@ -83,7 +84,9 @@ const TrendingDishes = () => {
                     <div key={index}>
                         <TrendingCard
                             recipe={item}
-                            isSaved={savedPosts.some(savedPost => savedPost._id === item._id)}
+                            isSaved={savedPosts.some(
+                                (savedPost) => savedPost._id === item._id,
+                            )}
                         />
                     </div>
                 ))}

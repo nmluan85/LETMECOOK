@@ -6,26 +6,27 @@ export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const login = (User) => {
         setUser(User);
-        setIsLoggedIn(true)
+        setIsLoggedIn(true);
     };
     const logout = async () => {
         try {
             // setIsLoading(true);
-            const response = await fetch("http://localhost:3000/api/users/logout", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
+            const response = await fetch(
+                "http://localhost:3000/api/users/logout",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    credentials: "include",
                 },
-                credentials: 'include', 
-            });
+            );
             const data = await response.json();
             if (data.success) {
                 setUser(null);
-                setIsLoggedIn(false)
-                window.location.href = '/';
-
-            }       
-            else {
+                setIsLoggedIn(false);
+                window.location.href = "/";
+            } else {
                 // setResponseMessage(data.message);
             }
         } catch (error) {
@@ -37,13 +38,16 @@ export const AuthProvider = ({ children }) => {
     useEffect(() => {
         const verifyAuth = async () => {
             try {
-                const response = await fetch("http://localhost:3000/api/users/check-auth", {
-                    method: "GET",
-                    headers: {
-                        "Content-Type": "application/json",
+                const response = await fetch(
+                    "http://localhost:3000/api/users/check-auth",
+                    {
+                        method: "GET",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        credentials: "include",
                     },
-                    credentials: "include",
-                });
+                );
                 const data = await response.json();
                 if (data.success) {
                     setUser(data.user);
@@ -61,9 +65,9 @@ export const AuthProvider = ({ children }) => {
         verifyAuth();
     }, []);
     return (
-        <AuthContext.Provider value={{ isLoggedIn, user, login, logout}}>
+        <AuthContext.Provider value={{ isLoggedIn, user, login, logout }}>
             {children}
         </AuthContext.Provider>
     );
-}
+};
 export const useAuth = () => useContext(AuthContext);

@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import Slider from 'react-slick';
-import RecipeCard from '../../recipeCard/recipeCard';
-import NextArrow from './NextArrow';
-import PrevArrow from './PrevArrow';
-import { useAuth } from '../../../contexts/AuthContext';
+import React, { useEffect, useState } from "react";
+import Slider from "react-slick";
+import RecipeCard from "../../recipeCard/recipeCard";
+import NextArrow from "./NextArrow";
+import PrevArrow from "./PrevArrow";
+import { useAuth } from "../../../contexts/AuthContext";
 
 const SeasonRecipe = () => {
     const [listPost, setListPost] = useState([]);
@@ -15,10 +15,10 @@ const SeasonRecipe = () => {
 
     // Fetch all posts
     useEffect(() => {
-        fetch('http://localhost:3000/api/posts/all')
+        fetch("http://localhost:3000/api/posts/all")
             .then((response) => {
                 if (!response.ok) {
-                    throw new Error('Failed to fetch all posts');
+                    throw new Error("Failed to fetch all posts");
                 }
                 return response.json();
             })
@@ -27,7 +27,7 @@ const SeasonRecipe = () => {
                 setIsLoadingPosts(false);
             })
             .catch((error) => {
-                console.error('Error fetching all posts:', error);
+                console.error("Error fetching all posts:", error);
                 setError(error.message);
                 setIsLoadingPosts(false);
             });
@@ -37,16 +37,16 @@ const SeasonRecipe = () => {
     useEffect(() => {
         if (isLoggedIn) {
             setIsLoadingSavedPosts(true);
-            fetch('http://localhost:3000/api/users/save-post', {
-                method: 'GET',
+            fetch("http://localhost:3000/api/users/save-post", {
+                method: "GET",
                 headers: {
-                    'Content-Type': 'application/json',
+                    "Content-Type": "application/json",
                 },
-                credentials: 'include',
+                credentials: "include",
             })
                 .then((response) => {
                     if (!response.ok) {
-                        throw new Error('Failed to fetch saved posts');
+                        throw new Error("Failed to fetch saved posts");
                     }
                     return response.json();
                 })
@@ -54,7 +54,7 @@ const SeasonRecipe = () => {
                     setSavedPosts(savedData.savedPosts);
                 })
                 .catch((error) => {
-                    console.error('Error fetching saved posts:', error);
+                    console.error("Error fetching saved posts:", error);
                     setError(error.message);
                 })
                 .finally(() => {
@@ -119,7 +119,9 @@ const SeasonRecipe = () => {
                     <div className="pt-4 pb-6 pl-2 pr-2" key={index}>
                         <RecipeCard
                             recipe={item}
-                            isSaved={savedPosts.some((savedPost) => savedPost._id === item._id)}
+                            isSaved={savedPosts.some(
+                                (savedPost) => savedPost._id === item._id,
+                            )}
                         />
                     </div>
                 ))}

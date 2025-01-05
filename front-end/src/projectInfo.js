@@ -24,6 +24,6 @@ Recipe Categories:
 - Vegan & Vegetarian
 - International Cuisine
 - Quick & Easy Meals for Starters
-`
+`;
 
 export default projectInfo;

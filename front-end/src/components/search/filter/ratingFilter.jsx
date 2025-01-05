@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { FaStar, FaChevronUp, FaChevronDown } from 'react-icons/fa';
-import { Collapse } from 'react-collapse';
+import React, { useState } from "react";
+import { FaStar, FaChevronUp, FaChevronDown } from "react-icons/fa";
+import { Collapse } from "react-collapse";
 
 const RatingFilter = ({ ratings, onRatingsChange }) => {
     const [isOpen, setIsOpen] = useState(true);
@@ -36,7 +36,9 @@ const RatingFilter = ({ ratings, onRatingsChange }) => {
                                     <FaStar
                                         key={i}
                                         className={
-                                            i < 5 - index ? 'text-yellow-400' : 'text-gray-300'
+                                            i < 5 - index
+                                                ? "text-yellow-400"
+                                                : "text-gray-300"
                                         }
                                     />
                                 ))}

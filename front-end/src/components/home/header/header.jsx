@@ -1,19 +1,19 @@
-import ChefIcon from '../../../assets/icons/chef.png';
-import SearchIcon from '../../../assets/icons/search.png';
+import ChefIcon from "../../../assets/icons/chef.png";
+import SearchIcon from "../../../assets/icons/search.png";
 import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { RiArchive2Line } from "react-icons/ri";
-import { useAuth } from '../../../contexts/AuthContext';
-import { useLoginModal } from '../../../contexts/LoginModalContext';
-import ProfileModal from '../../profile/profileModal';
+import { useAuth } from "../../../contexts/AuthContext";
+import { useLoginModal } from "../../../contexts/LoginModalContext";
+import ProfileModal from "../../profile/profileModal";
 const Header = () => {
     const navigate = useNavigate();
-    const {openLoginModal, closeLoginModal} = useLoginModal();
+    const { openLoginModal, closeLoginModal } = useLoginModal();
     const [isExpanded, setIsExpanded] = useState(false);
-    const {isLoggedIn, user, login, logout} = useAuth();
+    const { isLoggedIn, user, login, logout } = useAuth();
     const [searchTerm, setSearchTerm] = useState("");
     const [avatar, setAvatar] = useState(
-        "https://storage.googleapis.com/a1aa/image/LfeF62dMscvPXUwP7Wxy4tP0kj4t1fAVP6LnZtZTyuS0VuvnA.jpg"
+        "https://storage.googleapis.com/a1aa/image/LfeF62dMscvPXUwP7Wxy4tP0kj4t1fAVP6LnZtZTyuS0VuvnA.jpg",
     );
     useEffect(() => {
         if (user) {
@@ -35,21 +35,20 @@ const Header = () => {
     };
     const handleLoginClick = () => {
         openLoginModal(true);
-    }
+    };
     const handleSignUpClick = () => {
         openLoginModal(false);
-    }
+    };
     const handleNutritionClick = () => {
         if (isLoggedIn) {
             navigate("/nutrition");
-        }
-        else {
+        } else {
             openLoginModal(true);
         }
-    }
+    };
     const handleExpandProfileMenu = () => {
         setIsExpanded(!isExpanded);
-    }
+    };
     const navOptions = [
         { label: "What to cook", href: "#" },
         { label: "Recipes", href: "/recipes" },
@@ -58,24 +57,26 @@ const Header = () => {
         { label: "About Us", href: "#" },
         ...(isLoggedIn
             ? [
-                {   
-                    paddingX: "px-4",
-                    paddingY: "py-2",
-                    backgroundColor: "bg-primary-100",
-                    hoverBackgroundColor: "hover:bg-primary-150",
-                    rounded: "rounded-full",
-                    label: "Your Recipe Box",
-                    href: "/profile",
-                    icon: <RiArchive2Line className="inline-block text-primary-default" />,
-                },
-                {
-                    rounded: "rounded-full",
-                    src: avatar,
-                    height: "h-10",
-                    width: "w-10",
-                    mright: "mr-2",
-                    onClick: () => handleExpandProfileMenu()
-                }
+                  {
+                      paddingX: "px-4",
+                      paddingY: "py-2",
+                      backgroundColor: "bg-primary-100",
+                      hoverBackgroundColor: "hover:bg-primary-150",
+                      rounded: "rounded-full",
+                      label: "Your Recipe Box",
+                      href: "/profile",
+                      icon: (
+                          <RiArchive2Line className="inline-block text-primary-default" />
+                      ),
+                  },
+                  {
+                      rounded: "rounded-full",
+                      src: avatar,
+                      height: "h-10",
+                      width: "w-10",
+                      mright: "mr-2",
+                      onClick: () => handleExpandProfileMenu(),
+                  },
               ]
             : []),
     ];
@@ -84,8 +85,14 @@ const Header = () => {
             <div className="flex justify-between items-center py-4 px-6 w-full">
                 <Link to="/">
                     <div className="flex items-center mr-5">
-                        <img src={ChefIcon} alt="Logo" className="h-10 w-10 mr-2"/>
-                        <span className="text-xl font-bold primary-color">LETMECOOK</span>
+                        <img
+                            src={ChefIcon}
+                            alt="Logo"
+                            className="h-10 w-10 mr-2"
+                        />
+                        <span className="text-xl font-bold primary-color">
+                            LETMECOOK
+                        </span>
                     </div>
                 </Link>
                 <div className="flex-grow max-w mx-4">
@@ -152,12 +159,12 @@ const Header = () => {
             </div>
             {isExpanded && (
                 <div className="absolute top-20 right-2 bg-transparent shadow-lg rounded-md">
-                <ProfileModal
-                    onComplete={() => {
-                        setIsExpanded(false);
-                        // navigate("/edit-profile");
-                    }}
-                />
+                    <ProfileModal
+                        onComplete={() => {
+                            setIsExpanded(false);
+                            // navigate("/edit-profile");
+                        }}
+                    />
                 </div>
             )}
         </div>

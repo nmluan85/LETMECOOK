@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
-import SearchResult from '../../components/search/searchResult/searchResult';
-import './Search.css'; // Import the CSS file
-import FilterSection from '../../components/search/filter/filter2';
+import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
+import SearchResult from "../../components/search/searchResult/searchResult";
+import "./Search.css"; // Import the CSS file
+import FilterSection from "../../components/search/filter/filter2";
 
 const Search = () => {
     const location = useLocation();
@@ -23,7 +23,7 @@ const Search = () => {
         <div className="search-container">
             <main className="search-main">
                 <div className="filters">
-                    <FilterSection onApplyFilters={handleApplyFilters}/>
+                    <FilterSection onApplyFilters={handleApplyFilters} />
                 </div>
                 <div className="search-results">
                     <SearchResult queri={query} filters={filters} />
