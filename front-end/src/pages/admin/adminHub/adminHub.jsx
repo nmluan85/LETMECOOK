@@ -11,6 +11,8 @@ const AdminHub = () => {
     const [showRoleModal, setShowRoleModal] = useState(false);
     const [userToChangeRole, setUserToChangeRole] = useState(null);
     const [selectedRole, setSelectedRole] = useState("");
+    const [searchQuery, setSearchQuery] = useState('');
+    const [filteredUsers, setFilteredUsers] = useState([]);
 
     useEffect(() => {
         const fetchUsers = async () => {
@@ -111,6 +113,14 @@ const AdminHub = () => {
         }
     };
 
+    const handleSearch = () => {
+        const searchResults = users.filter((user) =>
+            user.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            user.email.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+        setFilteredUsers(searchResults);
+    };
+
     if (isLoading) return <div>Loading users...</div>;
     if (error) return <div>Error: {error}</div>;
 
@@ -131,9 +141,14 @@ const AdminHub = () => {
                     <input
                         type="text"
                         placeholder="Search User"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
                         className="w-80 p-2 border border-gray-300 rounded-md"
                     />
-                    <button className="bg-blue-600 text-white py-2 px-4 rounded-full hover:bg-blue-700">
+                    <button 
+                        onClick={handleSearch}
+                        className="bg-blue-600 text-white py-2 px-4 rounded-full hover:bg-blue-700"
+                    >
                         Search
                     </button>
                 </div>
@@ -150,7 +165,7 @@ const AdminHub = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {users.map((user) => (
+                        {(filteredUsers.length > 0 ? filteredUsers : users).map((user) => (
                             <tr key={user._id} className="border-t">
                                 <td className="p-4">
                                     <div className="flex items-center space-x-4">
