@@ -3,15 +3,23 @@
 ```bash
 cd .\backend\
 ```
-2. Run the server:
+2. Install the necessary packages:
+```bash
+npm install
+```
+3. Run the server:
 ```bash
 npm run server
 ```
-3. From the directory, go to the front-end folder:
+4. From the directory, go to the front-end folder:
 ```bash
 cd .\front-end\
 ```
-4. Run the web application:
+5. Install the necessary packages:
+```bash
+npm install --legacy-peer-deps
+```
+6. Run the web application:
 ```bash
 npm run dev
 ```
