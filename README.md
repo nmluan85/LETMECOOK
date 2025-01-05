@@ -1,3 +1,27 @@
+# How to run the application
+1. From the directory, go to the backend folder and install the necessary packages:
+```bash
+cd .\backend\
+```
+```bash
+npm install
+```
+2. Run the server:
+```bash
+npm run server
+```
+3. From the directory, go to the front-end folder and install the necessary packages:
+```bash
+cd .\front-end\
+```
+```bash
+npm install --legacy-peer-deps
+```
+4. Run the web application:
+```bash
+npm run dev
+```
+
 # API Test Cases
 
 ## 1. Ingredients API Tests
