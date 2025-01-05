@@ -36,7 +36,7 @@ npm run dev
 * Email: `duyphuc070104@gmail.com`
 * Password: `123456`
 
-**Note**: Admin can manage accounts(change role or delete account) by clicking on avatar then go to "Manage Accounts".
+* **Note**: Admin can manage accounts(change role or delete account) by clicking on avatar then go to "Manage Accounts".
 
 # Guidance for Some Use Cases
 
