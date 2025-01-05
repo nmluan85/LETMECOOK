@@ -37,7 +37,7 @@ npm run dev
 
 # Guidance for Some Use Cases
 
-**Note:** From anywhere, to go back to the homepage, just click on our website icon on the header at the top left.
+**Note:** From anywhere, to go back to the homepage just click on our website icon on the header at top left.
 
 ## Searching
 - Use the search bar, then click enter or press the search icon.
