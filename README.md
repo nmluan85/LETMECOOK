@@ -24,16 +24,16 @@ npm run dev
 
 # Accounts for testing
 1. Normal user:
-Email: `mry37570@msssg.com`
-Password: `123456`
+* Email: `mry37570@msssg.com`
+* Password: `123456`
 
 2. Premium user:
-Email: `spr23668@kisoq.com`
-Password: `123456`
+* Email: `spr23668@kisoq.com`
+* Password: `123456`
 
 3. Admin:
-Email: `duyphuc070104@gmail.com`
-Password: `123456`
+* Email: `duyphuc070104@gmail.com`
+* Password: `123456`
 
 # API Test Cases
 
