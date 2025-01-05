@@ -21,7 +21,8 @@ const ProtectedRoute = ({children, roles}) => {
         } else {
             setIsLoading(false);
         }
-    }, [isLoggedIn, user]);
+    });
+
     return (
         <>
             {isLoading ? <LoadingScreen /> : children}
