@@ -70,6 +70,7 @@ const SignUp = ({onSuccess, changeState}) => {
                 login(data.user);
                 setResponseMessage(data.message);
                 onSuccess();
+                window.location.reload();
             }
             else {
                 setResponseMessage(data.message || "Login failed. Please try again.");

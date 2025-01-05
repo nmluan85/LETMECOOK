@@ -2,6 +2,7 @@ import CategoryPreview from "../../components/allRecipes/categoryPreview";
 import { useState } from "react";
 import { useEffect } from "react";
 import { useAuth } from "../../contexts/AuthContext";
+import LoadingScreen from "../../components/loading";
 
 const AllRecipes = () => {
     const [savedPosts, setSavedPosts] = useState([]);
@@ -51,11 +52,15 @@ const AllRecipes = () => {
 
     return (
         <div>
-            {categories.map((category, index) => (
-                <div key={index}>
-                    <CategoryPreview category={category} savedPosts={savedPosts} />
-                </div>
-            ))}
+            {isLoading ? (
+                <LoadingScreen />
+            ) : (
+                categories.map((category, index) => (
+                    <div key={index}>
+                        <CategoryPreview category={category} savedPosts={savedPosts} />
+                    </div>
+                ))
+            )}
         </div>
     );
 };

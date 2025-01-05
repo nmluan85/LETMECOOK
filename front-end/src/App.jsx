@@ -78,9 +78,9 @@ const router = createBrowserRouter(
 
         <Route path="/nutrition"
             element={
-                // <ProtectedRoute roles={["premium"]}>
+                <ProtectedRoute roles={["PremiumUser", "Admin"]}>
                     <NutritionTracking />
-                // </ProtectedRoute>
+                </ProtectedRoute>
             }
         />
         <Route path="/category/:category" element={<CategoryFullRecipes />} />

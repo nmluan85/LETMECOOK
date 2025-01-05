@@ -20,9 +20,8 @@ const NutritionTracking = () => {
     useEffect(() => {
         const getAllPlans = async () => {
             try {
-                const test = "6774f5a8d3191c559faeaf74"
                 setIsLoading(true);
-                const response = await fetch("http://localhost:3000/api/plans/all/" + test, {
+                const response = await fetch(`http://localhost:3000/api/plans/all/${user._id}`, {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",
