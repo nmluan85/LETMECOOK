@@ -1,3 +1,21 @@
+# How to run the application
+1. From the directory, go to the backend folder:
+```bash
+cd .\backend\
+```
+2. Run the server:
+```bash
+npm run server
+```
+3. From the directory, go to the front-end folder:
+```bash
+cd .\front-end\
+```
+4. Run the web application:
+```bash
+npm run dev
+```
+
 # API Test Cases
 
 ## 1. Ingredients API Tests
