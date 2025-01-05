@@ -1,25 +1,23 @@
 # How to run the application
-1. From the directory, go to the backend folder:
+1. From the directory, go to the backend folder and install the necessary packages:
 ```bash
 cd .\backend\
 ```
-2. Install the necessary packages:
 ```bash
 npm install
 ```
-3. Run the server:
+2. Run the server:
 ```bash
 npm run server
 ```
-4. From the directory, go to the front-end folder:
+3. From the directory, go to the front-end folder and install the necessary packages:
 ```bash
 cd .\front-end\
 ```
-5. Install the necessary packages:
 ```bash
 npm install --legacy-peer-deps
 ```
-6. Run the web application:
+4. Run the web application:
 ```bash
 npm run dev
 ```
