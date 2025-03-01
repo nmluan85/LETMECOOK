@@ -239,7 +239,7 @@ const addPostFromFreeMeal = async (req, res) => {
             area: meal.strArea,
             content: meal.strInstructions,
             photo: meal.strMealThumb,
-            duration: Math.floor(Math.random() * (60 - 30 + 1)) + 30, // Random duration between 30 and 60
+            duration: Math.floor(Math.random() * (60 - 30 + 1)) + 30,
             tags: meal.strTags ? meal.strTags.split(",") : [],
             video: meal.strYoutube,
             contentIngredients: Array.from({ length: 20 }, (_, i) => {
