@@ -3,28 +3,33 @@ import React, { useState } from "react";
 const NewRecipeInfoSection = ({ onChange }) => {
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
-    const [photo, setPhoto] = useState(null);
+    const [photoFile, setPhotoFile] = useState(null);
     const [photoPreview, setPhotoPreview] = useState("");
 
     const handleTitleChange = (e) => {
         const value = e.target.value;
         setTitle(value);
-        onChange({ title: value, description, photo: photoPreview });
+        onChange({ title: value, description, photoFile, photoPreview });
     };
 
     const handleDescriptionChange = (e) => {
         const value = e.target.value;
         setDescription(value);
-        onChange({ title, description: value, photo: photoPreview });
+        onChange({ title, description: value, photoFile, photoPreview });
     };
 
     const handlePhotoChange = (e) => {
         const file = e.target.files[0];
         if (file) {
-            const previewURL = URL.createObjectURL(file); // Generate the URL here
-            setPhoto(file);
-            setPhotoPreview(previewURL); // Create a preview URL
-            onChange({ title, description, photo: previewURL });
+            const previewURL = URL.createObjectURL(file); // Generate preview URL
+            setPhotoFile(file);
+            setPhotoPreview(previewURL);
+            onChange({ title, description, photoFile: file, photoPreview: previewURL });
+        } else {
+            // Reset if no file selected
+            setPhotoFile(null);
+            setPhotoPreview("");
+            onChange({ title, description, photoFile: null, photoPreview: "" });
         }
     };
 
@@ -100,8 +105,7 @@ const NewRecipeInfoSection = ({ onChange }) => {
                         className="w-full text-sm text-gray-600"
                     />
                     <p className="text-sm text-gray-600 mt-2">
-                        Use JPEG or PNG. Must be at least 960 x 960. Max file
-                        size: 30MB.
+                        Use JPEG or PNG. Must be at least 960 x 960. Max file size: 30MB.
                     </p>
                 </div>
             </div>

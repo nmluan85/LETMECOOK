@@ -100,65 +100,57 @@ const viewPost = async (req, res) => {
 };
 
 // Add new post
-const addPost = async (req, res) => {
+export const addPost = async (req, res) => {
     try {
-        const {
-            title,
-            description,
-            category,
-            area,
-            content, // Directions
-            contentIngredients, // Ingredients with measures
-            video,
-            duration,
-            tags,
-            photo,
-            author,
-        } = req.body;
-
-        // Validate required fields
-        if (!title || !content || !author) {
-            return res.status(400).json({
-                message:
-                    "Title, content (directions), and author are required.",
-            });
-        }
-
-        // Create post object
-        const postData = {
-            title,
-            description: description || "", // Optional
-            category: category || "Miscellaneous", // Optional, with a default
-            area: area || "Unknown", // Optional, with a default
-            content,
-            duration: duration || 0, // Optional, default to 0
-            video: video || "", // Optional
-            photo: photo || "", // Optional
-            author,
-        };
-
-        // Add tags if they exist
-        if (tags && Array.isArray(tags)) {
-            postData.tags = tags.map((tag) => tag.trim().toLowerCase());
-        }
-
-        // Add contentIngredients if they exist
-        if (contentIngredients && Array.isArray(contentIngredients)) {
-            postData.ingredients = contentIngredients;
-        }
-
-        // Save the post
-        const newPost = new Post(postData);
-        await newPost.save();
-
-        // Respond with success
-        res.status(200).json({
-            message: "Post added successfully.",
-            post: newPost,
-        });
+      const {
+        title,
+        description,
+        category,
+        area,
+        content,
+        video,
+        duration,
+        tags,
+        contentIngredients,
+        author,
+      } = req.body;
+  
+      // Parse arrays (since they were sent as JSON strings)
+      const parsedTags = tags ? JSON.parse(tags) : [];
+      const parsedIngredients = contentIngredients ? JSON.parse(contentIngredients) : [];
+  
+      // Build the full URL if a file was uploaded
+      let photoUrl = "";
+      if (req.file) {
+        photoUrl = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`;
+      }
+  
+      // Create post data
+      const postData = {
+        title,
+        description,
+        category: category || "Miscellaneous",
+        area: area || "Unknown",
+        content,
+        video: video || "",
+        duration: duration || 0,
+        tags: parsedTags,
+        ingredients: parsedIngredients,
+        photo: photoUrl, // store the full URL here
+        author,
+      };
+  
+      // Save the post to the database
+      const newPost = new Post(postData);
+      await newPost.save();
+  
+      res.status(200).json({
+        message: "Post added successfully.",
+        post: newPost,
+      });
     } catch (error) {
-        console.error("Error adding post:", error);
-        res.status(500).json({ message: "Server error. Could not add post." });
+      console.error("Error adding post:", error);
+      res.status(500).json({ message: "Server error. Could not add post." });
     }
 };
 

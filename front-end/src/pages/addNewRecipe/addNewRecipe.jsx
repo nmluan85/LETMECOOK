@@ -21,7 +21,7 @@ const AddNewRecipe = () => {
         video: "",
         duration: 0,
         tags: [],
-        photo: "",
+        photoFile: null,
     });
 
     const handleCancel = () => {
@@ -34,38 +34,51 @@ const AddNewRecipe = () => {
 
     const handleSubmit = async () => {
         try {
-            // Call backend API
-            // Add user as the author
-            const postData = { ...recipeData, author: user?._id };
-            const response = await fetch(
-                "http://localhost:3000/api/posts/add",
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify(postData),
-                    credentials: "include",
-                },
-            );
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                console.error("Error adding recipe:", errorData.message);
-                alert(`Failed to submit recipe: ${errorData.message}`);
-                return;
-            }
-
-            const data = await response.json();
-            console.log(data);
-
-            alert(`Recipe submitted successfully`);
-            // Redirect to profile page
-            navigate("/profile");
+          const formData = new FormData();
+          formData.append("author", user?._id);
+      
+          // Append text fields
+          formData.append("title", recipeData.title);
+          formData.append("description", recipeData.description);
+          formData.append("category", recipeData.category);
+          formData.append("area", recipeData.area);
+          formData.append("content", recipeData.content);
+          formData.append("video", recipeData.video);
+          formData.append("duration", recipeData.duration);
+          
+          // If you have arrays (tags, contentIngredients), convert them to JSON strings
+          formData.append("tags", JSON.stringify(recipeData.tags));
+          formData.append("contentIngredients", JSON.stringify(recipeData.contentIngredients));
+          
+          // Append the File object (if it exists)
+          if (recipeData.photoFile) {
+            formData.append("image", recipeData.photoFile);
+          }
+      
+          // Make the POST request using multipart/form-data
+          const response = await fetch("http://localhost:3000/api/posts/add", {
+            method: "POST",
+            body: formData, 
+            credentials: "include", 
+            // NOTE: Don't set 'Content-Type' manually; the browser will set the correct boundary.
+          });
+      
+          if (!response.ok) {
+            const errorData = await response.json();
+            console.error("Error adding recipe:", errorData.message);
+            alert(`Failed to submit recipe: ${errorData.message}`);
+            return;
+          }
+      
+          const data = await response.json();
+          console.log(data);
+          alert("Recipe submitted successfully");
+          navigate("/profile");
         } catch (error) {
-            console.error("Error submitting recipe:", error);
+          console.error("Error submitting recipe:", error);
         }
     };
+      
 
     return (
         <div className="bg-white text-gray-800 max-w-4xl mx-auto p-6 flex-col">
@@ -73,7 +86,7 @@ const AddNewRecipe = () => {
                 onChange={(data) => {
                     handleChange("title", data.title);
                     handleChange("description", data.description);
-                    handleChange("photo", data.photo);
+                    handleChange("photoFile", data.photoFile); // store the File object
                 }}
             />
             <hr className="mb-6 mt-2" />

@@ -26,6 +26,10 @@ app.use(
 app.use(express.json({ limit: '50mb' }));
 app.use(cookieParser());
 
+// Serve static files from the "uploads" directory
+// This lets you access images via URLs, e.g. http://localhost:3000/uploads/filename.jpg
+app.use("/uploads", express.static("uploads"));
+
 // Routes
 app.use("/api/users", userRouter);
 app.use("/api/posts", postRouter);
