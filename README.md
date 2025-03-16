@@ -25,16 +25,16 @@ npm run dev
 # Accounts for testing
 **Here are some accounts you can use for testing if you dont wanna create a new one:**
 1. Normal user:
-* Email: `mry37570@msssg.com`
-* Password: `123456`
+* Email: ``
+* Password: ``
 
 2. Premium user:
-* Email: `spr23668@kisoq.com`
+* Email: `ssb30534@bcooq.com`
 * Password: `123456`
 
 3. Admin:
-* Email: `duyphuc070104@gmail.com`
-* Password: `123456`
+* Email: ``
+* Password: ``
 
 * **Note**: Admin can manage accounts(change role or delete account) by clicking on avatar then go to "Manage Accounts".
 

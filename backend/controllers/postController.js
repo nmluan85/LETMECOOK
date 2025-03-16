@@ -100,7 +100,7 @@ const viewPost = async (req, res) => {
 };
 
 // Add new post
-export const addPost = async (req, res) => {
+const addPost = async (req, res) => {
     try {
       const {
         title,
