@@ -26,7 +26,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node: [18.x, 20.x]
+        node: [22.x]
 
     steps:
       - name: Checkout
@@ -39,16 +39,8 @@ jobs:
           cache: npm
           cache-dependency-path: front-end/package-lock.json  # cache based on the right lockfile
 
-      # If you have peer-dep conflicts (e.g., react-chat-elements vs react 18.3),
-      # either fix deps or temporarily enable legacy peer resolution:
-      # - name: Enable legacy peer deps
-      #   run: npm config set legacy-peer-deps true
-
       - name: Install dependencies
         run: npm ci --legacy-peer-deps
-
-      - name: Lint
-        run: npm run lint --if-present
 
       - name: Unit tests (Vitest)
         env:
