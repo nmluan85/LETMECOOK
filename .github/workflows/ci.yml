@@ -1,0 +1,65 @@
+name: Frontend CI
+
+on:
+  push:
+    branches: [ main, master ]
+    paths:
+      - 'front-end/**'
+      - '.github/workflows/ci.yml'
+  pull_request:
+    branches: [ main, master ]
+    paths:
+      - 'front-end/**'
+      - '.github/workflows/ci.yml'
+
+concurrency:
+  group: ci-frontend-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Frontend tests (Node ${{ matrix.node }})
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: front-end   # everything below runs inside front-end/
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [18.x, 20.x]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node ${{ matrix.node }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+          cache-dependency-path: front-end/package-lock.json  # cache based on the right lockfile
+
+      # If you have peer-dep conflicts (e.g., react-chat-elements vs react 18.3),
+      # either fix deps or temporarily enable legacy peer resolution:
+      # - name: Enable legacy peer deps
+      #   run: npm config set legacy-peer-deps true
+
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: Lint
+        run: npm run lint --if-present
+
+      - name: Unit tests (Vitest)
+        env:
+          CI: true
+        run: |
+          npm run test:ci || npm run test -- --run
+
+      - name: Upload coverage
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-node${{ matrix.node }}
+          path: front-end/coverage/
+          if-no-files-found: ignore
